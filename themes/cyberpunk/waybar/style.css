@@ -1,0 +1,65 @@
+/* Cyberpunk · Cybrcolors */
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+window#waybar {
+    background: rgba(3, 4, 8, 0.85);     /* no0 @ 85% */
+    color: #898D99;
+}
+#workspaces button {
+    padding: 0 9px;
+    color: #4D5A80;                      /* me0 */
+    background: transparent;
+}
+#workspaces button.active {
+    color: #030408;
+    background: linear-gradient(90deg, #F230B2, #29BECC);
+    border-radius: 8px;
+}
+#workspaces button:hover {
+    color: #29BECC;
+    background: #0A0E1A;
+    box-shadow: none;
+}
+#mpris {
+    color: #30F291;                      /* gr0 — now playing */
+    background: #0A0E1A;
+    padding: 0 12px;
+    margin: 4px 4px;
+    border-radius: 8px;
+}
+#mpris.paused { color: #4D5A80; }
+#clock {
+    color: #030408;
+    background: linear-gradient(90deg, #A130F2, #F230B2);
+    padding: 0 16px;
+    margin: 4px 0;
+    border-radius: 8px;
+    font-weight: bold;
+}
+#idle_inhibitor, #temperature, #cpu, #memory, #network,
+#pulseaudio, #bluetooth, #battery, #tray {
+    padding: 0 11px;
+    margin: 4px 2px;
+    background: #0A0E1A;
+    border-radius: 8px;
+}
+#idle_inhibitor            { color: #898D99; }
+#idle_inhibitor.activated  { color: #F2D230; }   /* ye0 — keeping awake */
+#temperature               { color: #29BECC; }
+#temperature.critical      { color: #F24848; }   /* re0 */
+#cpu        { color: #30F291; }          /* gr0 */
+#memory     { color: #F2D230; }          /* ye0 */
+#network    { color: #29BECC; }          /* cy0 */
+#pulseaudio { color: #F230B2; }          /* pi0 */
+#pulseaudio.muted { color: #4D5A80; }
+#bluetooth  { color: #3061F2; }          /* bl0 */
+#bluetooth.disabled { color: #4D5A80; }
+#battery    { color: #A130F2; }          /* vi0 */
+#battery.charging { color: #30F291; }
+#battery.warning  { color: #F2D230; }
+#battery.critical { color: #F24848; }    /* re0 */

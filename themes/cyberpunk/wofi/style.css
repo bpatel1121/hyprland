@@ -1,0 +1,25 @@
+/* Cyberpunk · Cybrcolors */
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 15px;
+}
+window {
+    background-color: #030408;           /* no0 */
+    border: 2px solid #F230B2;           /* pi0 pink */
+    border-radius: 12px;
+}
+#input {
+    margin: 10px;
+    padding: 8px 12px;
+    color: #29BECC;                      /* cy0 */
+    background-color: #0A0E1A;           /* no2 */
+    border: 2px solid #29BECC;
+    border-radius: 8px;
+}
+#input image { color: #F230B2; }
+#inner-box { margin: 4px 10px 10px 10px; }
+#outer-box, #scroll { margin: 0; }
+#text { color: #898D99; margin: 0 6px; } /* wh0 */
+#entry { padding: 7px 8px; border-radius: 8px; }
+#entry:selected { background-color: #A130F2; }   /* vi0 */
+#entry:selected #text, #text:selected { color: #030408; }

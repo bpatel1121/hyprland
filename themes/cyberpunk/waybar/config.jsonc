@@ -1,0 +1,83 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 34,
+    "spacing": 6,
+    "modules-left": ["hyprland/workspaces", "mpris"],
+    "modules-center": ["clock"],
+    "modules-right": ["idle_inhibitor", "temperature", "cpu", "memory", "pulseaudio", "network", "bluetooth", "battery", "tray"],
+
+    "hyprland/workspaces": {
+        "format": "{name}",
+        "on-click": "activate"
+    },
+
+	"mpris": {
+        	"interval": 1,
+        	"format": "{player_icon} {title}  {artist}  {position}/{length}",
+        	"format-paused": "{status_icon} {title}  {artist}  {position}/{length}",
+       		"player-icons": { "default": "", "spotify": "" },
+        	"status-icons": { "paused": "" },
+        	"max-length": 60,
+        	"on-click": "playerctl play-pause",
+        	"on-scroll-up": "playerctl next",
+        	"on-scroll-down": "playerctl previous",
+        	"tooltip-format": "{title} — {artist} ({album})  {position}/{length}"
+   	 },
+
+    "clock": {
+        "format": "  {:%H:%M} ",
+        "format-alt": "  {:%a %d %b} ",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    },
+
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": { "activated": "", "deactivated": "" },
+        "tooltip-format-activated": "screen kept awake",
+        "tooltip-format-deactivated": "idle allowed"
+    },
+
+    "temperature": {
+        "critical-threshold": 80,
+        "format": " {temperatureC}°",
+        "format-critical": " {temperatureC}°"
+    },
+
+    "cpu":    { "format": " {usage}%", "interval": 2, "on-click": "wezterm start -- btop" },
+    "memory": { "format": " {percentage}%", "on-click": "wezterm start -- btop" },
+
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": " muted",
+        "format-icons": { "default": ["", "", ""] },
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+    },
+
+    "network": {
+        "format-wifi": " {signalStrength}%",
+        "format-ethernet": " {ifname}",
+        "format-disconnected": " off",
+        "tooltip-format": "{ipaddr}",
+        "on-click": "wezterm start -- nmtui"
+    },
+
+    "bluetooth": {
+        "format": " {status}",
+        "format-connected": " {device_alias}",
+        "format-off": "",
+        "format-disabled": "",
+        "on-click": "wezterm start -- bluetoothctl"
+    },
+
+    "battery": {
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "states": { "warning": 30, "critical": 15 }
+    },
+
+    "tray": { "spacing": 8 }
+}
