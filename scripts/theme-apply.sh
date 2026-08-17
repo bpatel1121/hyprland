@@ -24,6 +24,13 @@ else
 fi
 disown 2>/dev/null || true
 
+# --- WezTerm (recolor open terminals) ---
+# WezTerm auto-reloads when its main config file changes. The theme colors are
+# pulled in via dofile behind the `current` symlink, and repointing a symlink
+# doesn't reliably trip the file watcher — so nudge wezterm.lua's mtime.
+# (It's a symlink into linux-setup; touch follows it. mtime doesn't dirty git.)
+touch -c "$HOME/.config/wezterm/wezterm.lua" 2>/dev/null || true
+
 # --- Mako (symlink the theme's config, then reload) ---
 if [ -f "$CUR/mako/config" ]; then
     mkdir -p "$HOME/.config/mako"
