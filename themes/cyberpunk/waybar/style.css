@@ -20,8 +20,10 @@
     min-height: 0;
 }
 
+/* Explicit rgba(0,0,0,0), not `transparent` — some GTK/waybar combos paint
+ * the keyword as black on layer-shell surfaces. */
 window#waybar {
-    background: transparent;
+    background-color: rgba(0, 0, 0, 0);
     color: #C8D0E0;
 }
 
@@ -36,20 +38,15 @@ window#waybar {
 }
 /* THE FLOW: a 2px neon line along the top edge of each island. Reading
  * left→right across the bar it sweeps cyan → violet → pink — one gradient
- * story told in three segments. (inset box-shadow = top border that doesn't
- * shift layout; the faint outer glow matches each island's line color.) */
-.modules-left {
-    box-shadow: inset 0 2px 0 #29BECC,                 /* cy0 */
-                0 0 12px rgba(41, 190, 204, 0.12);
-}
-.modules-center {
-    box-shadow: inset 0 2px 0 #A130F2,                 /* vi0 */
-                0 0 12px rgba(161, 48, 242, 0.14);
-}
-.modules-right {
-    box-shadow: inset 0 2px 0 #F230B2,                 /* pi0 */
-                0 0 12px rgba(242, 48, 178, 0.12);
-}
+ * story told in three segments.
+ *
+ * INSET shadows only. NO outer glows on the islands: GTK composites outer
+ * box-shadows against the transparent bar surface as dark/black halos on
+ * many setups — that's the "black around the islands" bug. Inset renders
+ * against the island's own opaque background, which is always safe. */
+.modules-left   { box-shadow: inset 0 2px 0 #29BECC; }  /* cy0 */
+.modules-center { box-shadow: inset 0 2px 0 #A130F2; }  /* vi0 */
+.modules-right  { box-shadow: inset 0 2px 0 #F230B2; }  /* pi0 */
 
 /* ---- Workspaces ----------------------------------------------------------- */
 /* Dormant workspaces are NEUTRAL GRAY, not blue — the old me0 slate read as
