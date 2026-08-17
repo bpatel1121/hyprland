@@ -8,7 +8,7 @@
     "margin-right": 14,
     "modules-left": ["hyprland/workspaces", "mpris"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/updates", "idle_inhibitor", "temperature", "cpu", "memory", "pulseaudio", "network", "bluetooth", "battery", "tray"],
+    "modules-right": ["custom/updates", "temperature", "pulseaudio", "network", "bluetooth", "battery", "tray"],
 
     "hyprland/workspaces": {
         "format": "{name}",
@@ -21,7 +21,7 @@
         "format-paused": "{status_icon} {title}  {artist}  {position}/{length}",
         "player-icons": { "default": "", "spotify": "" },
         "status-icons": { "paused": "" },
-        "max-length": 60,
+        "max-length": 40,
         "on-click": "playerctl play-pause",
         "on-scroll-up": "playerctl next",
         "on-scroll-down": "playerctl previous",
@@ -45,21 +45,13 @@
         "on-click": "wezterm start -- sh -c 'sudo pacman -Syu; pkill -SIGRTMIN+8 waybar; read -p done'"
     },
 
-    "idle_inhibitor": {
-        "format": "{icon}",
-        "format-icons": { "activated": "", "deactivated": "" },
-        "tooltip-format-activated": "screen kept awake",
-        "tooltip-format-deactivated": "idle allowed"
-    },
-
+    // Silent watchdog: renders NOTHING below 80° (empty format hides it),
+    // appears pulsing red only when the machine is actually hot.
     "temperature": {
         "critical-threshold": 80,
-        "format": " {temperatureC}°",
+        "format": "",
         "format-critical": " {temperatureC}°"
     },
-
-    "cpu":    { "format": " {usage}%", "interval": 2, "on-click": "wezterm start -- btop" },
-    "memory": { "format": " {percentage}%", "on-click": "wezterm start -- btop" },
 
     "pulseaudio": {
         "format": "{icon} {volume}%",
@@ -81,11 +73,13 @@
         "on-click": "wezterm start -- nmtui"
     },
 
+    // Icon-only: connected = lit icon (device name in tooltip), off = hidden.
     "bluetooth": {
-        "format": " {status}",
-        "format-connected": " {device_alias}",
+        "format": "",
+        "format-connected": "",
         "format-off": "",
         "format-disabled": "",
+        "tooltip-format-connected": "{device_alias}",
         "on-click": "wezterm start -- bluetoothctl"
     },
 

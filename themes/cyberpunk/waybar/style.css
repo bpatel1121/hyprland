@@ -34,19 +34,37 @@ window#waybar {
     border-radius: 14px;
     padding: 2px 8px;
 }
-/* one whisper of neon per side — cyan left, violet center, pink right */
-.modules-left   { box-shadow: 0 0 12px rgba(41, 190, 204, 0.10); }
-.modules-center { box-shadow: 0 0 12px rgba(161, 48, 242, 0.12); }
-.modules-right  { box-shadow: 0 0 12px rgba(242, 48, 178, 0.10); }
+/* THE FLOW: a 2px neon line along the top edge of each island. Reading
+ * left→right across the bar it sweeps cyan → violet → pink — one gradient
+ * story told in three segments. (inset box-shadow = top border that doesn't
+ * shift layout; the faint outer glow matches each island's line color.) */
+.modules-left {
+    box-shadow: inset 0 2px 0 #29BECC,                 /* cy0 */
+                0 0 12px rgba(41, 190, 204, 0.12);
+}
+.modules-center {
+    box-shadow: inset 0 2px 0 #A130F2,                 /* vi0 */
+                0 0 12px rgba(161, 48, 242, 0.14);
+}
+.modules-right {
+    box-shadow: inset 0 2px 0 #F230B2,                 /* pi0 */
+                0 0 12px rgba(242, 48, 178, 0.12);
+}
 
 /* ---- Workspaces ----------------------------------------------------------- */
+/* Dormant workspaces are NEUTRAL GRAY, not blue — the old me0 slate read as
+ * odd neon-blue digits. Occupied-but-inactive is brighter than empty, so the
+ * eye can still tell where windows live. */
 #workspaces button {
     padding: 0 9px;
     margin: 3px 1px;
-    color: #4D5A80;                                /* me0 — dormant */
+    color: rgba(137, 141, 153, 0.85);              /* wh0 — has windows */
     background: transparent;
     border-radius: 9px;
     transition: color 0.2s ease-in-out;
+}
+#workspaces button.empty {
+    color: rgba(137, 141, 153, 0.35);              /* wh0 faded — nothing there */
 }
 #workspaces button.active {
     color: #030408;
@@ -86,17 +104,19 @@ window#waybar {
     box-shadow: 0 0 10px rgba(161, 48, 242, 0.35);
 }
 
-/* ---- Right island: instruments -------------------------------------------- */
-#custom-updates, #idle_inhibitor, #temperature, #cpu, #memory,
-#network, #pulseaudio, #bluetooth, #battery, #tray {
+/* ---- Right island: lean instrument set -------------------------------------
+ * updates · (temp watchdog) · volume · net ↑↓ · bt icon · battery · tray
+ * CPU/mem/idle-inhibitor cut deliberately — btop answers those better when you
+ * actually care, and fewer readouts lets the ones left actually get read. */
+#custom-updates, #temperature, #network, #pulseaudio,
+#bluetooth, #battery, #tray {
     padding: 0 10px;
     margin: 3px 1px;
     background: transparent;
     border-radius: 9px;
 }
 /* separator hairlines between instruments, HUD-style */
-#idle_inhibitor, #temperature, #cpu, #memory,
-#network, #pulseaudio, #bluetooth, #battery {
+#network, #battery {
     border-left: 1px solid rgba(33, 38, 56, 0.9);  /* me1 */
 }
 
@@ -105,23 +125,21 @@ window#waybar {
     font-weight: bold;
 }
 
-#idle_inhibitor            { color: #898D99; }
-#idle_inhibitor.activated  { color: #F2D230; }     /* ye0 — keeping awake */
-
-#temperature               { color: #29BECC; }
+/* invisible until hot — then it announces itself */
+#temperature          { padding: 0; margin: 3px 0; }
 #temperature.critical {
+    padding: 0 10px;
+    margin: 3px 1px;
     color: #F24848;                                /* re0 */
     animation: pulse-red 1s ease-in-out infinite alternate;
 }
 
-#cpu        { color: #30F291; }                    /* gr0 */
-#memory     { color: #F2D230; }                    /* ye0 */
-#network    { color: #29BECC; }                    /* cy0 */
-#network.disconnected { color: #4D5A80; }
 #pulseaudio { color: #F230B2; }                    /* pi0 */
-#pulseaudio.muted { color: #4D5A80; }
+#pulseaudio.muted { color: rgba(137, 141, 153, 0.5); }
+#network    { color: #29BECC; }                    /* cy0 */
+#network.disconnected { color: rgba(137, 141, 153, 0.5); }
 #bluetooth  { color: #3061F2; }                    /* bl0 */
-#bluetooth.disabled { color: #4D5A80; }
+#bluetooth.disabled { color: rgba(137, 141, 153, 0.5); }
 
 #battery    { color: #A130F2; }                    /* vi0 */
 #battery.charging { color: #30F291; }
