@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Switch the active theme: theme-switch.sh <cyberpunk|zen|hacker|professional>
+# Switch the active theme: theme-switch.sh <name> — any directory in themes/
 set -uo pipefail
 HYPR="$HOME/.config/hypr"
 name="${1:?usage: theme-switch.sh <name>}"

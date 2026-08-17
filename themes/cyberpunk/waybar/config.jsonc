@@ -1,34 +1,48 @@
 {
     "layer": "top",
     "position": "top",
-    "height": 34,
-    "spacing": 6,
+    "height": 36,
+    "spacing": 0,
+    "margin-top": 8,
+    "margin-left": 14,
+    "margin-right": 14,
     "modules-left": ["hyprland/workspaces", "mpris"],
     "modules-center": ["clock"],
-    "modules-right": ["idle_inhibitor", "temperature", "cpu", "memory", "pulseaudio", "network", "bluetooth", "battery", "tray"],
+    "modules-right": ["custom/updates", "idle_inhibitor", "temperature", "cpu", "memory", "pulseaudio", "network", "bluetooth", "battery", "tray"],
 
     "hyprland/workspaces": {
         "format": "{name}",
         "on-click": "activate"
     },
 
-	"mpris": {
-        	"interval": 1,
-        	"format": "{player_icon} {title}  {artist}  {position}/{length}",
-        	"format-paused": "{status_icon} {title}  {artist}  {position}/{length}",
-       		"player-icons": { "default": "", "spotify": "" },
-        	"status-icons": { "paused": "" },
-        	"max-length": 60,
-        	"on-click": "playerctl play-pause",
-        	"on-scroll-up": "playerctl next",
-        	"on-scroll-down": "playerctl previous",
-        	"tooltip-format": "{title} — {artist} ({album})  {position}/{length}"
-   	 },
+    "mpris": {
+        "interval": 1,
+        "format": "{player_icon} {title}  {artist}  {position}/{length}",
+        "format-paused": "{status_icon} {title}  {artist}  {position}/{length}",
+        "player-icons": { "default": "", "spotify": "" },
+        "status-icons": { "paused": "" },
+        "max-length": 60,
+        "on-click": "playerctl play-pause",
+        "on-scroll-up": "playerctl next",
+        "on-scroll-down": "playerctl previous",
+        "tooltip-format": "{title} — {artist} ({album})  {position}/{length}"
+    },
 
     "clock": {
         "format": "  {:%H:%M} ",
         "format-alt": "  {:%a %d %b} ",
         "tooltip-format": "<tt>{calendar}</tt>"
+    },
+
+    // Pending pacman updates. Hidden entirely at 0 (empty output hides a
+    // custom module). Needs `checkupdates` from pacman-contrib.
+    // signal 8: refresh instantly after an update with: pkill -SIGRTMIN+8 waybar
+    "custom/updates": {
+        "exec": "c=$(checkupdates 2>/dev/null | wc -l); [ \"$c\" -gt 0 ] && echo \" $c\"",
+        "interval": 1800,
+        "signal": 8,
+        "tooltip": false,
+        "on-click": "wezterm start -- sh -c 'sudo pacman -Syu; pkill -SIGRTMIN+8 waybar; read -p done'"
     },
 
     "idle_inhibitor": {
@@ -56,11 +70,14 @@
         "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
     },
 
+    // Live throughput readout — the HUD part. Wifi details move to the tooltip.
     "network": {
-        "format-wifi": " {signalStrength}%",
-        "format-ethernet": " {ifname}",
+        "interval": 2,
+        "format-wifi": "  {bandwidthDownBytes}  {bandwidthUpBytes}",
+        "format-ethernet": "  {bandwidthDownBytes}  {bandwidthUpBytes}",
         "format-disconnected": " off",
-        "tooltip-format": "{ipaddr}",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%)  {ipaddr}",
+        "tooltip-format-ethernet": "{ifname}  {ipaddr}",
         "on-click": "wezterm start -- nmtui"
     },
 
