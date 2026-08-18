@@ -1,0 +1,219 @@
+/* Gruvbox · dark — matte HUD, frosted islands, lamplight not neon
+ *
+ * DESIGN RULES (inherited from the cyberpunk stylesheet — keep when editing):
+ *
+ *   1. The bar window is TRANSPARENT; the three module groups are detached
+ *      "islands" frosted by the `waybar-blur` layer rule in hyprland.lua.
+ *
+ *   2. NEVER use a non-inset `box-shadow`, and NEVER the `transparent`
+ *      keyword — GTK3 composites both as black halos on layer-shell surfaces.
+ *      Always `background-color: rgba(0,0,0,0); background-image: none;`.
+ *
+ *   3. Glow is built only from text-shadow and inset box-shadow (halo-safe).
+ *      In THIS theme it is also scarce on purpose: gruvbox is matte lamplight,
+ *      so only the active workspace and alert pulses glow at all. If you're
+ *      adding a text-shadow, you're probably breaking the mood.
+ *
+ *   4. The bar is TWO-TONE at rest — an aqua instrument panel in an orange
+ *      frame (cyberpunk's pink/cyan pair, re-cast warm/cool):
+ *        orange  the frame — island hairline + edge, continuing into the
+ *                orange->yellow window border just beneath
+ *        aqua    every readout — active workspace, clock, volume, network,
+ *                bluetooth, battery
+ *      Every other color is STATE, appearing only when something is true:
+ *        yellow  repo updates pending — Pac-Man keeps his color in every theme
+ *        green   AUR updates pending · battery charging
+ *        red     battery low (steady) · critical temp / battery (pulsing)
+ *        gray    dormant / muted / disconnected / nothing to update
+ *      Purple appears nowhere in the bar; it belongs to the wofi launcher,
+ *      the one surface that covers the bar rather than living in it.
+ *
+ * Palette is gruvbox dark only (github.com/morhetz/gruvbox).
+ * GTK3 note: @define-color works, CSS var() does NOT.
+ */
+
+@define-color bg0h   #1d2021;   /* ground        */
+@define-color bg0    #282828;   /* raised        */
+@define-color bg1    #3c3836;   /* hairline      */
+@define-color bg3    #665c54;   /* dim           */
+@define-color orange #fe8019;   /* frame          */
+@define-color yellow #fabd2f;   /* warning        */
+@define-color aqua   #8ec07c;   /* readouts       */
+@define-color green  #b8bb26;   /* good          */
+@define-color red    #fb4934;   /* alert         */
+@define-color gray   #928374;   /* dormant       */
+@define-color fg     #ebdbb2;   /* text          */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+/* Explicit rgba(0,0,0,0), not `transparent` — see rule 2. */
+window#waybar {
+    background-color: rgba(0, 0, 0, 0);
+    color: @fg;
+}
+
+/* ---- The three islands ----------------------------------------------------
+ * One unified orange accent across all three, not a per-island color flow.
+ * The fill is translucent on purpose — the Hyprland layer rule frosts it.
+ * Warmer and slightly more opaque than cyberpunk: aged wood, not glass. */
+.modules-left,
+.modules-center,
+.modules-right {
+    background-color: rgba(29, 32, 33, 0.78);
+    border: 1px solid rgba(254, 128, 25, 0.18);          /* lit edge */
+    border-radius: 12px;
+    padding: 2px 8px;
+    box-shadow: inset 0 2px 0 rgba(254, 128, 25, 0.75);  /* the accent hairline */
+}
+
+/* ---- Workspaces ------------------------------------------------------------ */
+#workspaces {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    padding: 0;
+    margin: 0;
+}
+#workspaces button {
+    padding: 0 9px;
+    margin: 3px 1px;
+    color: rgba(146, 131, 116, 0.85);                    /* gray — has windows */
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    border-radius: 8px;
+    transition: color 0.2s ease-in-out;
+}
+#workspaces button.empty {
+    color: rgba(146, 131, 116, 0.35);                    /* nothing there */
+}
+/* The one lit element: an aqua lozenge, matte — gradient reads as paint, the
+ * inset rim replaces the outer glow rule 2 forbids. */
+#workspaces button.active {
+    color: @bg0h;
+    background-image: linear-gradient(180deg, #a9d4a0, #8ec07c);
+    box-shadow: inset 0 0 0 1px rgba(235, 219, 178, 0.85);
+    text-shadow: 0 0 3px rgba(29, 32, 33, 0.4);
+    font-weight: bold;
+}
+#workspaces button:hover {
+    color: @aqua;
+    background-color: @bg0;
+    background-image: none;
+    box-shadow: none;
+}
+#workspaces button.urgent {
+    color: @bg0h;
+    background-color: @red;
+    background-image: none;
+    animation: pulse-red 1s ease-in-out infinite alternate;
+}
+
+/* ---- Left island: now playing ---------------------------------------------
+ * Same three-cue play/pause vocabulary as cyberpunk (glyph, color, chip), but
+ * no glow — the chip lighting up IS the signal here. Spotify keeps its green
+ * exception, which lands on gruvbox's own green anyway. */
+#mpris {
+    color: @aqua;
+    background-color: rgba(142, 192, 124, 0.08);
+    background-image: none;
+    padding: 0 12px;
+    margin: 3px 2px;
+    border-radius: 8px;
+}
+#mpris.spotify {
+    color: @green;
+    background-color: rgba(184, 187, 38, 0.08);
+}
+/* Paused powers the chip down. Listed after .spotify so it wins for both. */
+#mpris.paused,
+#mpris.spotify.paused {
+    color: rgba(146, 131, 116, 0.55);
+    background-color: rgba(0, 0, 0, 0);
+}
+#mpris.stopped { color: rgba(146, 131, 116, 0.35); background-color: rgba(0, 0, 0, 0); }
+
+/* ---- Center island: the clock ---------------------------------------------
+ * Bold aqua, no glow — a painted sign, not a lit tube. */
+#clock {
+    color: @aqua;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    padding: 0 16px;
+    margin: 3px 2px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+/* ---- Right island: lean instrument set ------------------------------------
+ * updates · (temp watchdog) · volume · net ↑↓ · bt icon · battery · tray */
+#custom-updates, #custom-aur, #temperature, #network, #pulseaudio,
+#bluetooth, #battery, #tray {
+    padding: 0 10px;
+    margin: 3px 1px;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    border-radius: 8px;
+}
+#tray > .passive { background-color: rgba(0, 0, 0, 0); background-image: none; }
+#tray > .needs-attention { background-color: rgba(0, 0, 0, 0); background-image: none; }
+
+/* separator hairlines between instruments; #pulseaudio starts the telemetry
+ * group so the two update counters read as their own cluster. */
+#pulseaudio, #network, #battery {
+    border-left: 1px solid rgba(235, 219, 178, 0.10);
+}
+
+/* ---- Update counters -------------------------------------------------------
+ * Pac-Man (repos) and party popper (AUR), classes from waybar-updates.sh.
+ * Pac-Man is yellow in every theme — here that's simply gruvbox yellow. */
+#custom-updates, #custom-aur { font-weight: bold; }
+#custom-updates.pending { color: @yellow; }  /* Pac-Man yellow, and nothing else */
+#custom-aur.pending     { color: @green; }   /* yay */
+#custom-updates.zero,
+#custom-aur.zero        { color: rgba(146, 131, 116, 0.45); }
+
+/* invisible until hot — then it announces itself */
+#temperature          { padding: 0; margin: 3px 0; }
+#temperature.critical {
+    padding: 0 10px;
+    margin: 3px 1px;
+    color: @red;
+    animation: pulse-red 1s ease-in-out infinite alternate;
+}
+
+/* Aqua = every readout. Anything NOT aqua below is a state, not a color choice. */
+#pulseaudio { color: @aqua; }
+#pulseaudio.muted     { color: rgba(146, 131, 116, 0.5); }
+#network    { color: @aqua; }
+#network.disconnected { color: rgba(146, 131, 116, 0.5); }
+#bluetooth  { color: @aqua; }
+#bluetooth.disabled   { color: rgba(146, 131, 116, 0.5); }
+
+#battery    { color: @aqua; }
+#battery.charging { color: @green; }
+/* Warning and critical share red and differ by motion — yellow belongs to
+ * Pac-Man alone, so <30% goes steady red and <15% starts pulsing. */
+#battery.warning  { color: @red; }
+#battery.critical:not(.charging) {
+    color: @red;
+    animation: pulse-red 1s ease-in-out infinite alternate;
+}
+
+/* ---- Alert pulse (the only animation, and the only glow) ------------------- */
+@keyframes pulse-red {
+    from { text-shadow: 0 0 2px  rgba(251, 73, 52, 0.4); }
+    to   { text-shadow: 0 0 10px rgba(251, 73, 52, 0.9); }
+}
+
+/* ---- Tooltips -------------------------------------------------------------- */
+tooltip {
+    background-color: rgba(29, 32, 33, 0.95);
+    border: 1px solid rgba(254, 128, 25, 0.30);   /* orange, matching the frame */
+    border-radius: 10px;
+}
+tooltip label { color: @fg; }

@@ -1,0 +1,29 @@
+/* Gruvbox · dark — wofi
+ * Purple is the launcher's color in every theme: the one surface that covers
+ * the bar gets the one hue the bar never uses. Here that's gruvbox purple. */
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 15px;
+}
+/* Translucent so the `wofi-blur` layer rule in hyprland.lua has something to
+ * frost — at full opacity the blur is invisible. */
+window {
+    background-color: rgba(29, 32, 33, 0.82);   /* bg0_h */
+    border: 2px solid #d3869b;                  /* purple */
+    border-radius: 10px;
+}
+#input {
+    margin: 10px;
+    padding: 8px 12px;
+    color: #ebdbb2;                      /* fg */
+    background-color: #282828;           /* bg0 */
+    border: 2px solid rgba(211, 134, 155, 0.5);
+    border-radius: 8px;
+}
+#input image { color: #d3869b; }
+#inner-box { margin: 4px 10px 10px 10px; }
+#outer-box, #scroll { margin: 0; }
+#text { color: #928374; margin: 0 6px; } /* gray */
+#entry { padding: 7px 8px; border-radius: 8px; }
+#entry:selected { background-color: #d3869b; }   /* purple */
+#entry:selected #text, #text:selected { color: #1d2021; }

@@ -154,6 +154,21 @@ The session and screenshot pieces need `hyprlock hypridle fastfetch cava` from
 all in `extra` — note upstream renamed `adw-gtk3` to
 `adw-gtk-theme` and `swww` to `awww`, so the old names no longer resolve.
 
+## The gruvbox theme
+
+[Gruvbox dark](https://github.com/morhetz/gruvbox) over a pixel-art alley at
+dusk — the same design language as cyberpunk with the temperament flipped from
+neon to matte. The role assignments carry over one-to-one: **orange** is the
+frame (islands' hairline, window border, mako's edge, btop's boxes), **aqua**
+is every readout, and state colors keep their meanings — yellow for pending
+repo updates (Pac-Man stays yellow in every theme), green for AUR/charging,
+red for alerts, purple reserved for wofi. What changes is the light: glow is
+almost entirely absent (the alert pulse is the only text-shadow in the bar),
+shadows are a low ember instead of a bloom, and the lock/login clock is cream
+with a warm undertone — lamplight, not neon. The two themes deliberately share
+their waybar `config.jsonc` and wlogout `layout` verbatim: behavior identical,
+skin swapped, which is the whole thesis of this repo.
+
 `hyprexpo` is the one piece not installed by a package manager. It builds
 out-of-tree via `hyprpm`, which needs a superuser prompt, so run it by hand:
 

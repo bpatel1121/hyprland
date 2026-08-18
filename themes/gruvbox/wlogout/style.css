@@ -1,0 +1,49 @@
+/* Gruvbox · dark — wlogout
+ *
+ * Same two carried-over rules as every GTK3 layer-shell surface here:
+ *   1. NO non-inset box-shadow, never the `transparent` keyword (black halos).
+ *   2. Color is semantic: ORANGE frames, AQUA is the live/hovered state, RED
+ *      is reserved for the two destructive actions.
+ * Buttons carry Nerd Font glyphs as text (set in `layout`), not wlogout's
+ * white SVG icons, which GTK3 cannot tint.
+ */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 18px;
+    background-image: none;
+    box-shadow: none;
+    text-shadow: none;
+    border: none;
+    outline: none;
+}
+
+window {
+    background-color: rgba(29, 32, 33, 0.85);
+}
+
+button {
+    color: #ebdbb2;
+    background-color: rgba(40, 40, 40, 0.92);
+    background-image: none;
+    border: 1px solid rgba(254, 128, 25, 0.35);   /* orange — the frame */
+    border-radius: 14px;
+    margin: 12px;
+    transition: color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+/* Hover/focus lights the tile aqua — same "aqua = live" rule as the bar.
+ * No text-shadow: matte theme, the color change carries it. */
+button:hover,
+button:focus {
+    color: #8ec07c;
+    background-color: #282828;
+    border: 1px solid #8ec07c;
+}
+
+/* The two that can't be undone go red on hover instead. */
+#reboot:hover,   #reboot:focus,
+#shutdown:hover, #shutdown:focus {
+    color: #fb4934;
+    border: 1px solid #fb4934;
+}

@@ -1,0 +1,47 @@
+// Gruvbox · dark — fastfetch
+//
+// Same frame/content split as waybar: ORANGE keys, AQUA values. The `colors`
+// module at the bottom puts the actual palette on screen.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+    "logo": {
+        "source": "arch",
+        "padding": { "top": 1, "right": 3 },
+        // orange then aqua — the logo carries the same two colors as the bar
+        "color": { "1": "38;2;254;128;25", "2": "38;2;142;192;124" }
+    },
+
+    "display": {
+        "separator": "  ",
+        "color": {
+            "keys":  "38;2;254;128;25",    // orange
+            "title": "38;2;142;192;124"    // aqua
+        }
+    },
+
+    "modules": [
+        "break",
+        { "type": "title", "keyWidth": 10 },
+        "separator",
+
+        { "type": "os",         "key": "󰣇 os     " },
+        { "type": "kernel",     "key": "󰌢 kernel " },
+        { "type": "uptime",     "key": "󰅐 uptime " },
+        { "type": "packages",   "key": "󰮯 pkgs   " },
+        { "type": "shell",      "key": "󰆍 shell  " },
+        { "type": "wm",         "key": "󰕮 wm     " },
+        { "type": "terminal",   "key": "󰆍 term   " },
+        { "type": "font",       "key": "󰛖 font   " },
+
+        "break",
+        { "type": "cpu",        "key": "󰻠 cpu    " },
+        { "type": "gpu",        "key": "󰢮 gpu    " },
+        { "type": "memory",     "key": "󰍛 memory " },
+        { "type": "disk",       "key": "󰋊 disk   " },
+
+        "break",
+        { "type": "colors", "symbol": "circle", "paddingLeft": 2 },
+        "break"
+    ]
+}

@@ -1,0 +1,67 @@
+# Gruvbox · dark — starship
+#
+# theme-apply.sh symlinks this to ~/.config/starship.toml.
+#
+# Same minimal one-line layout as cyberpunk, palette re-cast:
+#   path    cream   #ebdbb2   where you are
+#   branch  orange  #fe8019   what you're on (the frame color)
+#   arrow   aqua    #8ec07c   where you type  (red when the last cmd failed)
+#   dirty ● yellow  #fabd2f   uncommitted work exists
+#
+# Glyph choices (󰘬 ● ❯ ❮ ↑ ↓ ×) are the JetBrainsMono-Nerd-Font-verified set
+# from the cyberpunk config — see its comments before "fixing" any of them.
+
+# The literal space before $character is load-bearing (see cyberpunk config).
+format = "$directory$git_branch$git_status$custom $character"
+add_newline = true
+
+[directory]
+style = "fg:#ebdbb2 bold"
+format = "[$path]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = true
+read_only = " ro"
+read_only_style = "fg:#fb4934"
+
+[git_branch]
+symbol = "󰘬 "
+style = "fg:#fe8019"
+format = "  [$symbol$branch]($style)"
+
+# Off in favour of the single dirty dot below (same reasoning as cyberpunk).
+[git_status]
+disabled = true
+
+# One yellow dot when the working tree has anything uncommitted, nothing when
+# clean. Do NOT add a `shell = [...]` key and keep the `when` condition — see
+# the cyberpunk config for why both matter.
+[custom.git_dirty]
+description = "one dot when there are uncommitted changes"
+when = 'test -n "$(git status --porcelain 2>/dev/null)"'
+command = "printf ●"
+style = "fg:#fabd2f"
+format = " [$output]($style)"
+
+# Aqua on success — far from red on the hue wheel, so failure reads at a
+# glance; gruvbox's aqua also holds better contrast on bg0_h than its blue.
+[character]
+success_symbol = "[❯](fg:#8ec07c)"
+error_symbol = "[❯](fg:#fb4934)"
+vimcmd_symbol = "[❮](fg:#928374)"
+
+# Everything else off — this is the "minimal" part.
+[cmd_duration]
+disabled = true
+[package]
+disabled = true
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[docker_context]
+disabled = true
