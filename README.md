@@ -1,5 +1,5 @@
 # hyprland
-![demo](assets/demo.gif)
+![demo](hypr-demo.gif)
 ![ci](https://github.com/bpatel1121/hyprland/actions/workflows/ci.yml/badge.svg)
 
 My Hyprland desktop as a theme system. This repo's root **is** `~/.config/hypr` —
