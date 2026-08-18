@@ -9,15 +9,17 @@
     "logo": {
         "source": "arch",
         "padding": { "top": 1, "right": 3 },
-        // pi0 pink then cy0 cyan — the logo carries the same two colors as the bar
-        "color": { "1": "38;2;242;48;178", "2": "38;2;41;190;204" }
+        // ANSI palette INDEXES, not literal RGB: bright-magenta is pi0 pink
+        // and cyan is cy0 in the theme's wezterm palette — and because these
+        // are indexes, already-printed output recolors live on SUPER+T.
+        "color": { "1": "95", "2": "36" }
     },
 
     "display": {
         "separator": "  ",
         "color": {
-            "keys":  "38;2;242;48;178",   // pi0
-            "title": "38;2;41;190;204"    // cy0
+            "keys":  "95",   // bright magenta -> pi0 pink via the palette
+            "title": "36"    // cyan -> cy0
         }
     },
 

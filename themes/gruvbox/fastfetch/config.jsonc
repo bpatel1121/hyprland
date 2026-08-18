@@ -8,15 +8,18 @@
     "logo": {
         "source": "arch",
         "padding": { "top": 1, "right": 3 },
-        // orange then aqua — the logo carries the same two colors as the bar
-        "color": { "1": "38;2;254;128;25", "2": "38;2;131;165;152" }
+        // ANSI palette INDEXES, not literal RGB, so already-printed output
+        // recolors live on SUPER+T. Gruvbox's 16 has no orange slot: keys ride
+        // bright-yellow (#fabd2f amber — arguably MORE CRT); values are
+        // bright-blue, which IS #83a598 exactly.
+        "color": { "1": "93", "2": "94" }
     },
 
     "display": {
         "separator": "  ",
         "color": {
-            "keys":  "38;2;254;128;25",    // orange
-            "title": "38;2;131;165;152"    // aqua
+            "keys":  "93",   // bright yellow -> #fabd2f amber
+            "title": "94"    // bright blue -> #83a598, exact
         }
     },
 

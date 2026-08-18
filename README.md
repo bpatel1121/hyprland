@@ -159,6 +159,12 @@ A second bar chip counts tasks due within 24 hours — hidden at zero, red
 the moment anything is overdue. Because events and todos share one storage
 layer, a single future `vdirsyncer` pairing syncs both.
 
+The line between them: **events happen, todos get done.** A lecture or
+meeting has an hour you show up for — khal. Homework, grading, an email you
+owe — todoman, with a `--due`. If it can be checked off, it is not an event.
+The bar reflects the split: the calendar chip names the next event and when
+it starts; the todo chip just counts what you owe.
+
 ## The login screen (SDDM)
 
 SDDM is the one surface theme-apply.sh cannot reach: it runs as its own user
