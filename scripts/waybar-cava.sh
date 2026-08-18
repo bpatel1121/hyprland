@@ -39,7 +39,22 @@ for _ in $(seq "$bars"); do rest+="▁"; done
 
 last=""
 silent_run=0
+frame=0
+status="Stopped"
 cava -p "$cfg" 2>/dev/null | while IFS=';' read -ra vals; do
+    # The wave exists only while a song is PLAYING: it collapses together
+    # with the mpris chip when paused/stopped. Safe now that music lives in
+    # the left island — collapse no longer reflows the centered clock. The
+    # status check is cached (one playerctl per second, not per frame).
+    if [ $(( frame % 12 )) -eq 0 ]; then
+        status=$(playerctl status 2>/dev/null || echo Stopped)
+    fi
+    frame=$(( frame + 1 ))
+    if [ "$status" != "Playing" ]; then
+        msg='{"text":""}'
+        if [ "$msg" != "$last" ]; then printf '%s\n' "$msg"; last=$msg; fi
+        continue
+    fi
     out=""
     silent=1
     for v in "${vals[@]}"; do

@@ -49,7 +49,7 @@
     // position/length moved to the tooltip. At max-length 40 they were eating
     // the budget and truncating the artist away before ever showing.
     "mpris": {
-        "interval": 1,
+        "interval": 5,
         "format": "{player_icon}  {title} · {artist}",
         "format-paused": "{status_icon}  {title} · {artist}",
         "player-icons": { "default": "󰐊", "spotify": "󰓇" },
