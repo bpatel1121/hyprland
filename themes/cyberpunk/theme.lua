@@ -10,7 +10,8 @@ return {
     rounding = 12, rounding_power = 2,
     active_opacity = 1.0, inactive_opacity = 0.92,
     blur   = { enabled = true, size = 8, passes = 3, vibrancy = 0.20 },
-    -- Glow is pi0 pink. Amber owns the solid chrome (borders, waybar accents),
+    -- Glow is pi0 pink. Amber leads the window border gradient (amber -> pink);
+    -- waybar's frame/hairline is pink (see waybar/style.css rule 5), and
     -- pink owns the bloom — amber-and-magenta neon noir, not the pink->teal
     -- gradient that read as cotton candy. Pink is much less searing than amber
     -- at the same alpha, so it can carry a wide, generous range.

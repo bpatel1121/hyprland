@@ -121,8 +121,8 @@ all provisioned by linux-setup. Refresh either instantly with
 
 The session and screenshot pieces need `hyprlock hypridle fastfetch cava` from
 `extra` and `wlogout` from the AUR. The desktop-wide theming adds
-`adw-gtk-theme papirus-icon-theme capitaine-cursors qt5ct qt6ct kvantum
-starship awww`, all in `extra` — note upstream renamed `adw-gtk3` to
+`adw-gtk-theme papirus-icon-theme capitaine-cursors qt6ct starship awww`,
+all in `extra` — note upstream renamed `adw-gtk3` to
 `adw-gtk-theme` and `swww` to `awww`, so the old names no longer resolve.
 
 `hyprexpo` is the one piece not installed by a package manager. It builds

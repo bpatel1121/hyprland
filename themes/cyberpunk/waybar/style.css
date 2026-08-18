@@ -72,7 +72,7 @@ window#waybar {
 }
 
 /* ---- The three islands ----------------------------------------------------
- * One unified amber accent across all three, not a per-island color flow: the
+ * One unified pink accent across all three, not a per-island color flow: the
  * bar reads as a single deliberate HUD, and color is then free to mean state
  * rather than location. The fill is translucent on purpose — the Hyprland
  * layer rule frosts it. If you ever drop that rule, raise the alpha to ~0.95. */
