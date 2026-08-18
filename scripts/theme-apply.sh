@@ -91,7 +91,10 @@ if [ -f "$CUR/swaync/style.css" ]; then
     mkdir -p "$HOME/.config/swaync"
     ln -sfn "$HYPR/swaync/config.json" "$HOME/.config/swaync/config.json"
     ln -sfn "$CUR/swaync/style.css"    "$HOME/.config/swaync/style.css"
-    swaync-client -R 2>/dev/null || true
+    # CSS reload only — NEVER `swaync-client -R` here: the config is shared
+    # across themes (nothing to reload), and swaync's config reload re-adds
+    # the mpris player card without clearing the old one, so every theme
+    # switch stacked a duplicate now-playing card in the center.
     swaync-client -rs 2>/dev/null || true
 fi
 
