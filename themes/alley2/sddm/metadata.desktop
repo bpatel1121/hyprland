@@ -1,0 +1,16 @@
+[SddmGreeterTheme]
+Name=hypr-alley2
+Description=Wallpaper-generated (Material You) login greeter
+Author=Brij Patel
+Copyright=(c) Brij Patel
+License=GPL-3.0
+Type=sddm-theme
+Version=1.0
+Website=https://github.com/bpatel1121/hyprland
+Screenshot=
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=
+Theme-Id=hypr-alley2
+Theme-API=2.0
+QtVersion=6

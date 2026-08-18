@@ -1,0 +1,65 @@
+# Generated · Material You (matugen) — btop
+#
+# theme-apply.sh symlinks this to ~/.config/btop/themes/current.theme, and
+# btop.conf is set to color_theme = "current" once. The indirection means a new
+# theme only has to drop a btop/theme.theme in its own directory — btop.conf
+# never needs touching again.
+#
+# Palette roles follow the rest of the desktop: pink frames the boxes, cyan is
+# the live readout, and the gradients climb cyan -> green -> amber -> red so a
+# hot CPU reads the same way a loud cava bar or a critical waybar module does.
+
+theme[main_bg]="#1a110e"
+theme[main_fg]="#f1dfd9"
+theme[title]="#ffb596"
+theme[hi_fg]="#e6beae"
+theme[selected_bg]="#271e1a"
+theme[selected_fg]="#ffb596"
+theme[inactive_fg]="#a08d85"
+theme[graph_text]="#d8c2ba"
+theme[meter_bg]="#53443e"
+theme[proc_misc]="#30F291"
+
+# Box outlines — pink is the frame color everywhere in this desktop.
+theme[cpu_box]="#ffb596"
+theme[mem_box]="#ffb596"
+theme[net_box]="#ffb596"
+theme[proc_box]="#ffb596"
+theme[div_line]="#53443e"
+
+# Temperature: cool cyan -> amber -> red at the top.
+theme[temp_start]="#e6beae"
+theme[temp_mid]="#F2D230"
+theme[temp_end]="#ffb4ab"
+
+# CPU load.
+theme[cpu_start]="#e6beae"
+theme[cpu_mid]="#30F291"
+theme[cpu_end]="#ffb4ab"
+
+# Free / cached / available / used memory.
+theme[free_start]="#53443e"
+theme[free_mid]="#30F291"
+theme[free_end]="#30F291"
+theme[cached_start]="#53443e"
+theme[cached_mid]="#e6beae"
+theme[cached_end]="#e6beae"
+theme[available_start]="#53443e"
+theme[available_mid]="#F2D230"
+theme[available_end]="#F2D230"
+theme[used_start]="#53443e"
+theme[used_mid]="#ffb596"
+theme[used_end]="#ffb4ab"
+
+# Disk io.
+theme[download_start]="#53443e"
+theme[download_mid]="#e6beae"
+theme[download_end]="#e6beae"
+theme[upload_start]="#53443e"
+theme[upload_mid]="#ffb596"
+theme[upload_end]="#ffb596"
+
+# Process box gradient.
+theme[process_start]="#e6beae"
+theme[process_mid]="#F2D230"
+theme[process_end]="#ffb4ab"

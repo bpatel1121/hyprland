@@ -31,6 +31,10 @@ if [ -n "$motion" ]; then
     disown 2>/dev/null || true
 fi
 
+# --- Choreography: the bar dips out first, the wallpaper washes over, and
+# the bar returns last, dressed in the new theme (layersIn fades it back).
+pkill -x waybar 2>/dev/null || true
+
 # --- Wallpaper -------------------------------------------------------------
 # Prefer swww/awww: it cross-fades between wallpapers, which is what makes a
 # theme switch look like a transition rather than a snap. Falls back to
@@ -49,9 +53,11 @@ if [ -n "${wall:-}" ]; then
         # Start the daemon if it isn't up, then wait for it to answer.
         "$SWWW" query >/dev/null 2>&1 || { "${SWWW}-daemon" >/dev/null 2>&1 & disown; }
         for _ in 1 2 3 4 5 6; do "$SWWW" query >/dev/null 2>&1 && break; sleep 0.3; done
+        # `wave` sweeps the new wallpaper in behind a moving wavy edge — the
+        # most cinematic transition swww has. Angle keeps it off-axis.
         "$SWWW" img "$wall" \
-            --transition-type grow --transition-pos 0.5,0.5 \
-            --transition-duration 1.5 --transition-fps 60 >/dev/null 2>&1 || true
+            --transition-type wave --transition-angle 30 \
+            --transition-duration 1.8 --transition-fps 60 >/dev/null 2>&1 || true
     else
         for _ in 1 2 3 4 5 6; do hyprctl hyprpaper listloaded >/dev/null 2>&1 && break; sleep 0.3; done
         hyprctl hyprpaper unload all         >/dev/null 2>&1 || true
@@ -61,8 +67,9 @@ if [ -n "${wall:-}" ]; then
 fi
 
 # --- Waybar (launched with the theme's config/style if present) ---
-pkill -x waybar 2>/dev/null || true
-sleep 0.2
+# Killed above, before the wallpaper transition; the pause lets the wave land
+# before the bar fades back in with the new skin.
+sleep 0.9
 if [ -f "$CUR/waybar/config.jsonc" ] && [ -f "$CUR/waybar/style.css" ]; then
     waybar -c "$CUR/waybar/config.jsonc" -s "$CUR/waybar/style.css" >/dev/null 2>&1 &
 else

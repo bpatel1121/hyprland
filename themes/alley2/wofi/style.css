@@ -1,0 +1,35 @@
+/* Generated · Material You (matugen) */
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 15px;
+}
+/* Translucent so the `wofi-blur` layer rule in hyprland.lua has something to
+ * frost — at full opacity the blur is invisible. */
+window {
+    background-color: rgba(26, 17, 14,, 0.80);   /* no0 */
+    border: 2px solid #d2c78f;               /* vi0 violet */
+    border-radius: 12px;
+}
+#input {
+    margin: 10px;
+    padding: 8px 12px;
+    color: #f1dfd9;                      /* fg */
+    background-color: #271e1a;           /* no2 */
+    border: 2px solid rgba(210, 199, 143,, 0.5);
+    border-radius: 8px;
+}
+#input image { color: #d2c78f; }
+#inner-box { margin: 4px 10px 10px 10px; }
+#outer-box, #scroll { margin: 0; }
+#text { color: #d8c2ba; margin: 0 6px; } /* wh0 */
+#entry { padding: 10px 10px; border-radius: 8px; }
+#entry:selected { background-color: #d2c78f; }   /* vi0 */
+#entry:selected #text, #text:selected { color: #1a110e; }
+
+/* ---- Icon grid (launched with --allow-images --columns 2) ---- */
+#entry img {
+    margin-right: 10px;
+}
+#entry:selected img {
+    -gtk-icon-effect: none;
+}
