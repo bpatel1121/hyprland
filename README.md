@@ -18,7 +18,6 @@ scripts/
 ├── theme-apply.sh              sync wallpaper/waybar/mako/wezterm to current
 ├── theme-menu.sh               wofi picker (bound to SUPER+T)
 ├── waybar-updates.sh pacman|aur   update counters, as waybar JSON
-└── verify-cleanup.sh           read-only audit of the package cleanup
 themes/
 ├── current -> cyberpunk        relative symlink — the single source of truth
 └── cyberpunk/
