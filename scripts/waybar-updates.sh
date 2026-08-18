@@ -11,7 +11,20 @@ set -uo pipefail
 case "${1:-}" in
     pacman)
         icon="󰮯"                                  # md-pac_man U+F0BAF
-        list=$(checkupdates 2>/dev/null || true)   # pacman-contrib
+        # checkupdates exits 0 = updates, 2 = none, 1 = error. The login-time
+        # run can fire before the network is up, and treating that error as
+        # empty rendered "up to date" for a whole interval — the counter that
+        # "never updated". Retry for up to a minute, then say "?" honestly.
+        list=""; rc=1
+        for _ in 1 2 3 4 5 6; do
+            list=$(checkupdates 2>/dev/null); rc=$?
+            { [ "$rc" -eq 0 ] || [ "$rc" -eq 2 ]; } && break
+            sleep 10
+        done
+        if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then
+            printf '{"text":"%s ?","class":"zero","tooltip":"update check failed (network?)"}\n' "$icon"
+            exit 0
+        fi
         ;;
     aur)
         icon="󱁖"                                  # md-party_popper U+F1056

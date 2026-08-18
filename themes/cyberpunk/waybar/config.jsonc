@@ -83,7 +83,7 @@
     "custom/updates": {
         "exec": "$HOME/.config/hypr/scripts/waybar-updates.sh pacman",
         "return-type": "json",
-        "interval": 1800,
+        "interval": 900,
         "signal": 8,
         "on-click": "wezterm start -- sh -c 'sudo pacman -Syu; pkill -SIGRTMIN+8 waybar; read -p done'"
     },
