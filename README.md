@@ -8,7 +8,7 @@ provisioning; nothing to symlink.
 
 One config, swappable skins: `hyprland.lua` holds layout, binds, and behavior,
 and everything visual lives in `themes/<name>/`. Switching themes re-skins
-Hyprland, waybar, wofi, mako, wezterm, and the wallpaper together.
+Hyprland, waybar, wofi, swaync, wezterm, and the wallpaper together.
 
 ## How it works
 
@@ -18,7 +18,7 @@ swaync/config.json              notification-center layout (shared; styles are p
 hypridle.conf                   dim 5m -> lock 10m -> screen off 15m
 scripts/
 ├── theme-switch.sh <name>      repoint themes/current → <name>, reload, apply
-├── theme-apply.sh              sync wallpaper/waybar/mako/wezterm to current
+├── theme-apply.sh              sync wallpaper/waybar/swaync/wezterm to current
 ├── theme-menu.sh               wofi picker (bound to SUPER+T)
 ├── waybar-updates.sh pacman|aur   update counters, as waybar JSON
 ├── waybar-cava.sh              streaming soundwave for the now-playing chip
@@ -251,7 +251,7 @@ all in `extra` — note upstream renamed `adw-gtk3` to
 [Gruvbox dark](https://github.com/morhetz/gruvbox) over a pixel-art alley at
 dusk — the same design language as cyberpunk with the temperament flipped from
 neon to matte. The role assignments carry over one-to-one: **orange** is the
-frame (islands' hairline, window border, mako's edge, btop's boxes), **muted sky blue** (`#83a598`, the alley's twilight)
+frame (islands' hairline, window border, notification edge, btop's boxes), **muted sky blue** (`#83a598`, the alley's twilight)
 is every readout, and state colors keep their meanings — yellow for pending
 repo updates (Pac-Man stays yellow in every theme), green for AUR/charging,
 red for alerts, purple reserved for wofi. What changes is the identity:
@@ -270,8 +270,7 @@ workspaces) — behavior identical, skin swapped, which is the repo's thesis.
 Notifications are `swaync`: themed floating toasts plus a pull-down control
 center (`SUPER+SHIFT+N`) with history, a do-not-disturb switch, and a media
 player card. Behavior lives in `swaync/config.json` (shared); looks live in
-each theme's `swaync/style.css`. The autostart falls back to mako on a box
-without swaync — degrade, don't die.
+each theme's `swaync/style.css`.
 
 Volume and brightness keys route through `swayosd`, so every press answers
 with a themed on-screen pill (neon in cyberpunk, indicator-lamp in gruvbox);

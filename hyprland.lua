@@ -12,23 +12,23 @@ local home = os.getenv("HOME")
 ------------------
 -- https://wiki.hypr.land/Configuring/Basics/Monitors/
 hl.monitor({
-    output   = "",
-    mode     = "preferred",
+    output = "",
+    mode = "preferred",
     position = "auto",
-    scale    = "auto",
+    scale = "auto",
 })
-
 
 ---------------------
 ---- MY PROGRAMS ----
 ---------------------
-local terminal    = "wezterm start"                       -- main terminal (SUPER+Q)
+local terminal = "wezterm start" -- main terminal (SUPER+Q)
 local fileManager = "wezterm start -- yazi"
 -- --allow-images + columns turns wofi from a dmenu strip into an icon-grid
 -- launcher; the theme css sizes it. Width/height here rather than css because
 -- wofi treats geometry as config, not style.
-local menu        = "wofi --show drun --allow-images --columns 2 --width 640 --height 480 --style " .. os.getenv("HOME") .. "/.config/hypr/themes/current/wofi/style.css"
-
+local menu = "wofi --show drun --allow-images --columns 2 --width 640 --height 480 --style "
+    .. os.getenv("HOME")
+    .. "/.config/hypr/themes/current/wofi/style.css"
 
 -------------------
 ---- AUTOSTART ----
@@ -39,15 +39,16 @@ hl.on("hyprland.start", function()
     -- fallback when it isn't installed. Only ONE may run — they fight over the
     -- background — so theme-apply.sh picks whichever it finds and this starts
     -- the same one. (Upstream renamed swww -> awww; both names are handled.)
-    hl.exec_cmd("sh -c 'command -v swww-daemon >/dev/null && exec swww-daemon; "
-             .. "command -v awww-daemon >/dev/null && exec awww-daemon; "
-             .. "exec hyprpaper'")
-    -- Notification daemon: swaync (notification center + toggles panel),
-    -- falling back to mako on a box that only has that — degrade, don't die.
-    hl.exec_cmd("sh -c 'command -v swaync >/dev/null && exec swaync; exec mako'")
+    hl.exec_cmd(
+        "sh -c 'command -v swww-daemon >/dev/null && exec swww-daemon; "
+            .. "command -v awww-daemon >/dev/null && exec awww-daemon; "
+            .. "exec hyprpaper'"
+    )
+    -- Notification daemon: swaync (notification center + toggles panel).
+    hl.exec_cmd("swaync")
     -- Volume/brightness OSD server (clients fire from the binds below).
     hl.exec_cmd("sh -c 'command -v swayosd-server >/dev/null && exec swayosd-server'")
-    hl.exec_cmd("hypridle")                                    -- dim -> lock -> dpms off
+    hl.exec_cmd("hypridle") -- dim -> lock -> dpms off
     -- Battery/charger events through the themed notifications (laptops; a
     -- desktop simply never triggers them). -s skips the startup replay.
     hl.exec_cmd("sh -c 'command -v poweralertd >/dev/null && exec poweralertd -s'")
@@ -59,11 +60,10 @@ hl.on("hyprland.start", function()
     -- panels) fails silently with no prompt at all. The package was installed
     -- but never started, so this had been quietly broken.
     hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
-    hl.exec_cmd(home .. "/.config/hypr/scripts/theme-apply.sh")-- themed waybar + wallpaper
+    hl.exec_cmd(home .. "/.config/hypr/scripts/theme-apply.sh") -- themed waybar + wallpaper
     hl.exec_cmd("firefox")
     -- hl.exec_cmd(terminal)  -- you had this: opens a terminal on every login. Uncomment if wanted.
 end)
-
 
 -------------------------------
 ---- ENVIRONMENT VARIABLES ----
@@ -85,7 +85,6 @@ hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 -- flickering, black textures in XWayland, or cursor glitches, that's the first
 -- thing to revisit: https://wiki.hypr.land/Configuring/Nvidia/
 
-
 -----------------------
 ---- LOOK AND FEEL ----
 -----------------------
@@ -95,13 +94,17 @@ hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 -- broken theme file so you never get locked out at a black screen.
 local ok, theme = pcall(dofile, home .. "/.config/hypr/themes/current/theme.lua")
 if not ok or type(theme) ~= "table" then
-    theme = {  -- safe fallback (Nord-ish) if no theme is selected yet
-        gaps_in = 5, gaps_out = 16, border_size = 2,
-        active_border   = { colors = { "rgba(88c0d0ff)", "rgba(5e81acff)" }, angle = 45 },
+    theme = { -- safe fallback (Nord-ish) if no theme is selected yet
+        gaps_in = 5,
+        gaps_out = 16,
+        border_size = 2,
+        active_border = { colors = { "rgba(88c0d0ff)", "rgba(5e81acff)" }, angle = 45 },
         inactive_border = "rgba(434c5eff)",
-        rounding = 8, rounding_power = 2,
-        active_opacity = 1.0, inactive_opacity = 1.0,
-        blur   = { enabled = true, size = 4, passes = 2, vibrancy = 0.15 },
+        rounding = 8,
+        rounding_power = 2,
+        active_opacity = 1.0,
+        inactive_opacity = 1.0,
+        blur = { enabled = true, size = 4, passes = 2, vibrancy = 0.15 },
         shadow = { enabled = true, range = 6, render_power = 3, color = 0x66000000 },
     }
 end
@@ -113,29 +116,29 @@ hl.env("XCURSOR_THEME", (type(theme.cursor) == "string" and theme.cursor) or "ca
 
 hl.config({
     general = {
-        gaps_in  = theme.gaps_in,
+        gaps_in = theme.gaps_in,
         gaps_out = theme.gaps_out,
         border_size = theme.border_size,
         col = {
-            active_border   = theme.active_border,
+            active_border = theme.active_border,
             inactive_border = theme.inactive_border,
         },
         resize_on_border = false,
-        allow_tearing    = false,
+        allow_tearing = false,
         layout = "dwindle",
     },
 
     decoration = {
-        rounding       = theme.rounding,
+        rounding = theme.rounding,
         rounding_power = theme.rounding_power or 2,
-        active_opacity   = theme.active_opacity   or 1.0,
+        active_opacity = theme.active_opacity or 1.0,
         inactive_opacity = theme.inactive_opacity or 1.0,
         -- Focus reads instantly when everything else steps back half a stop.
         -- Themes tune it with dim_strength; omit to disable.
         dim_inactive = type(theme.dim_strength) == "number",
         dim_strength = theme.dim_strength or 0.0,
         shadow = theme.shadow,
-        blur   = theme.blur,
+        blur = theme.blur,
     },
 
     animations = {
@@ -145,37 +148,37 @@ hl.config({
 
 -- Animation curves + timings (shared across themes).
 -- https://wiki.hypr.land/Configuring/Advanced-and-Cool/Animations/
-hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1},    {0.32, 1}    } })
-hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1}    } })
-hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}       } })
-hl.curve("almostLinear",   { type = "bezier", points = { {0.5, 0.5},   {0.75, 1}    } })
-hl.curve("quick",          { type = "bezier", points = { {0.15, 0},    {0.1, 1}     } })
-hl.curve("easy",           { type = "spring", mass = 1, stiffness = 71.2633, dampening = 15.8273644 })
+hl.curve("easeOutQuint", { type = "bezier", points = { { 0.23, 1 }, { 0.32, 1 } } })
+hl.curve("easeInOutCubic", { type = "bezier", points = { { 0.65, 0.05 }, { 0.36, 1 } } })
+hl.curve("linear", { type = "bezier", points = { { 0, 0 }, { 1, 1 } } })
+hl.curve("almostLinear", { type = "bezier", points = { { 0.5, 0.5 }, { 0.75, 1 } } })
+hl.curve("quick", { type = "bezier", points = { { 0.15, 0 }, { 0.1, 1 } } })
+hl.curve("easy", { type = "spring", mass = 1, stiffness = 71.2633, dampening = 15.8273644 })
 
-hl.animation({ leaf = "global",        enabled = true,  speed = 10,   bezier = "default" })
-hl.animation({ leaf = "border",        enabled = true,  speed = 5.39, bezier = "easeOutQuint" })
-hl.animation({ leaf = "windows",       enabled = true,  speed = 4.79, spring = "easy" })
-hl.animation({ leaf = "windowsIn",     enabled = true,  speed = 4.1,  spring = "easy",         style = "popin 87%" })
-hl.animation({ leaf = "windowsOut",    enabled = true,  speed = 1.49, bezier = "linear",       style = "popin 87%" })
-hl.animation({ leaf = "fadeIn",        enabled = true,  speed = 1.73, bezier = "almostLinear" })
-hl.animation({ leaf = "fadeOut",       enabled = true,  speed = 1.46, bezier = "almostLinear" })
-hl.animation({ leaf = "fade",          enabled = true,  speed = 3.03, bezier = "quick" })
-hl.animation({ leaf = "layers",        enabled = true,  speed = 3.81, bezier = "easeOutQuint" })
-hl.animation({ leaf = "layersIn",      enabled = true,  speed = 4,    bezier = "easeOutQuint", style = "slide" })   -- wofi drops in, mako glides in
-hl.animation({ leaf = "layersOut",     enabled = true,  speed = 1.5,  bezier = "linear",       style = "fade" })
-hl.animation({ leaf = "fadeLayersIn",  enabled = true,  speed = 1.79, bezier = "almostLinear" })
-hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "almostLinear" })
+hl.animation({ leaf = "global", enabled = true, speed = 10, bezier = "default" })
+hl.animation({ leaf = "border", enabled = true, speed = 5.39, bezier = "easeOutQuint" })
+hl.animation({ leaf = "windows", enabled = true, speed = 4.79, spring = "easy" })
+hl.animation({ leaf = "windowsIn", enabled = true, speed = 4.1, spring = "easy", style = "popin 87%" })
+hl.animation({ leaf = "windowsOut", enabled = true, speed = 1.49, bezier = "linear", style = "popin 87%" })
+hl.animation({ leaf = "fadeIn", enabled = true, speed = 1.73, bezier = "almostLinear" })
+hl.animation({ leaf = "fadeOut", enabled = true, speed = 1.46, bezier = "almostLinear" })
+hl.animation({ leaf = "fade", enabled = true, speed = 3.03, bezier = "quick" })
+hl.animation({ leaf = "layers", enabled = true, speed = 3.81, bezier = "easeOutQuint" })
+hl.animation({ leaf = "layersIn", enabled = true, speed = 4, bezier = "easeOutQuint", style = "slide" }) -- wofi drops in, toasts glide in
+hl.animation({ leaf = "layersOut", enabled = true, speed = 1.5, bezier = "linear", style = "fade" })
+hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 1.79, bezier = "almostLinear" })
+hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "almostLinear" })
 -- Workspaces SLIDE. Only visible when windows exist to move — an empty->empty
 -- switch shows nothing, which is not a bug. If slides ever look clipped,
 -- suspect anything that writes config at high frequency (see border-motion.sh,
 -- deliberately throttled to one step per 2s for exactly this reason).
-hl.animation({ leaf = "workspaces",    enabled = true,  speed = 2.8,  bezier = "easeOutQuint", style = "slide" })
-hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 2.8,  bezier = "easeOutQuint", style = "slide" })
-hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 2.8,  bezier = "easeOutQuint", style = "slide" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 2.8, bezier = "easeOutQuint", style = "slide" })
+hl.animation({ leaf = "workspacesIn", enabled = true, speed = 2.8, bezier = "easeOutQuint", style = "slide" })
+hl.animation({ leaf = "workspacesOut", enabled = true, speed = 2.8, bezier = "easeOutQuint", style = "slide" })
 -- The scratchpad crossfades instead: it's an overlay appearing above your
 -- space, not a place you travel to — different physics, different verb.
 hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 1.8, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
+hl.animation({ leaf = "zoomFactor", enabled = true, speed = 7, bezier = "quick" })
 
 -- Border motion (borderangle loop) is NOT set here: the Lua animation binding
 -- doesn't expose borderangle, so theme-apply.sh applies it via
@@ -183,8 +186,8 @@ hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "
 -- keywords, but theme-switch reloads before theme-apply, so the order holds.
 
 -- Layouts
-hl.config({ dwindle   = { preserve_split = true } })
-hl.config({ master    = { new_status = "master" } })
+hl.config({ dwindle = { preserve_split = true } })
+hl.config({ master = { new_status = "master" } })
 hl.config({ scrolling = { fullscreen_on_one_column = true } })
 
 ----------------
@@ -193,23 +196,22 @@ hl.config({ scrolling = { fullscreen_on_one_column = true } })
 hl.config({
     misc = {
         force_default_wallpaper = -1,
-        disable_hyprland_logo   = false,
+        disable_hyprland_logo = false,
     },
 })
-
 
 ---------------
 ---- INPUT ----
 ---------------
 hl.config({
     input = {
-        kb_layout  = "us",
+        kb_layout = "us",
         kb_variant = "",
-        kb_model   = "",
+        kb_model = "",
         kb_options = "",
-        kb_rules   = "",
+        kb_rules = "",
         follow_mouse = 1,
-        sensitivity  = 0,
+        sensitivity = 0,
         touchpad = {
             natural_scroll = false,
         },
@@ -217,14 +219,13 @@ hl.config({
 })
 
 hl.gesture({
-    fingers   = 3,
+    fingers = 3,
     direction = "horizontal",
-    action    = "workspace",
+    action = "workspace",
 })
 
 -- Example per-device config (commented; matches nothing on your system):
 -- hl.device({ name = "epic-mouse-v1", sensitivity = -0.5 })
-
 
 ---------------------
 ---- KEYBINDINGS ----
@@ -240,7 +241,7 @@ hl.bind(mainMod .. " + X", hl.dsp.window.kill())
 hl.bind(mainMod .. " + 0", hl.dsp.exit())
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + N", hl.dsp.layout("togglesplit"))   -- dwindle only
+hl.bind(mainMod .. " + N", hl.dsp.layout("togglesplit")) -- dwindle only
 -- Move focused window out of the scratchpad into the current workspace
 hl.bind(mainMod .. " + SHIFT + M", hl.dsp.window.move({ workspace = "e+0" }))
 hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "1" }))
@@ -259,23 +260,29 @@ hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(home .. "/.config/hypr/script
 -- right` in the vim-direction block below. Both surfaces are themed and follow
 -- themes/current/.
 hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("hyprlock"))
-hl.bind(mainMod .. " + ESCAPE",   hl.dsp.exec_cmd("wlogout -p layer-shell"))
+hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("wlogout -p layer-shell"))
 
 -- Screenshots (grim + slurp + wl-clipboard — all installed)
 -- Screenshots confirm themselves: clipboard captures are invisible actions,
 -- and invisible actions breed double-takes. The toast is the receipt.
-hl.bind("Print",         hl.dsp.exec_cmd("grim - | wl-copy && notify-send -t 2500 'Screenshot' 'full screen copied to clipboard'"))
-hl.bind("SUPER + Print", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy && notify-send -t 2500 "Screenshot" "region copied to clipboard"'))
+hl.bind(
+    "Print",
+    hl.dsp.exec_cmd("grim - | wl-copy && notify-send -t 2500 'Screenshot' 'full screen copied to clipboard'")
+)
+hl.bind(
+    "SUPER + Print",
+    hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy && notify-send -t 2500 "Screenshot" "region copied to clipboard"')
+)
 
 -- Focus (arrows + vim HJKL)
-hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
-hl.bind(mainMod .. " + H",     hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + L",     hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + K",     hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + J",     hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + K", hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + J", hl.dsp.focus({ direction = "down" }))
 
 -- Swap windows (SHIFT + HJKL)
 hl.bind(mainMod .. " + SHIFT + H", hl.dsp.window.swap({ direction = "left" }))
@@ -285,41 +292,70 @@ hl.bind(mainMod .. " + SHIFT + J", hl.dsp.window.swap({ direction = "down" }))
 
 -- Workspaces: SUPER + [0-9] to focus, SUPER + SHIFT + [0-9] to move window
 for i = 1, 10 do
-    local key = i % 10  -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
+    local key = i % 10 -- 10 maps to key 0
+    hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
 -- Scratchpad (special workspace "magic")
-hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
+hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 
 -- Scroll through workspaces
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 
 -- Move / resize with mouse
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Volume / brightness on SUPER + F-keys, through swayosd so an on-screen
 -- pill answers every press; falls back to bare wpctl/brightnessctl when
 -- swayosd isn't installed — same action, just silent.
-hl.bind("SUPER + F1", hl.dsp.exec_cmd("sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume mute-toggle; wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle'"),   { repeating = true })
-hl.bind("SUPER + F2", hl.dsp.exec_cmd("sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume lower; wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-'"),    { repeating = true })
-hl.bind("SUPER + F3", hl.dsp.exec_cmd("sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume raise; wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+'"),{ repeating = true })
-hl.bind("SUPER + F5", hl.dsp.exec_cmd("sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --brightness lower; brightnessctl set 5%-'"),                         { repeating = true })
-hl.bind("SUPER + F6", hl.dsp.exec_cmd("sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --brightness raise; brightnessctl set 5%+'"),                         { repeating = true })
+hl.bind(
+    "SUPER + F1",
+    hl.dsp.exec_cmd(
+        "sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume mute-toggle; wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle'"
+    ),
+    { repeating = true }
+)
+hl.bind(
+    "SUPER + F2",
+    hl.dsp.exec_cmd(
+        "sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume lower; wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-'"
+    ),
+    { repeating = true }
+)
+hl.bind(
+    "SUPER + F3",
+    hl.dsp.exec_cmd(
+        "sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume raise; wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+'"
+    ),
+    { repeating = true }
+)
+hl.bind(
+    "SUPER + F5",
+    hl.dsp.exec_cmd(
+        "sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --brightness lower; brightnessctl set 5%-'"
+    ),
+    { repeating = true }
+)
+hl.bind(
+    "SUPER + F6",
+    hl.dsp.exec_cmd(
+        "sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --brightness raise; brightnessctl set 5%+'"
+    ),
+    { repeating = true }
+)
 
 -- Notification center (swaync): history, DND toggle, sliders.
 hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd("swaync-client -t"))
 
 -- Media keys (playerctl — in linux-setup's packages/pacman.txt)
-hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
+hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
-
+hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
@@ -331,80 +367,78 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 -- perfectly clear and blurs only the islands themselves. Without this the
 -- translucent islands show raw wallpaper and read as flat dark boxes.
 hl.layer_rule({
-    name  = "waybar-blur",
+    name = "waybar-blur",
     match = { namespace = "^waybar$" },
-    blur  = true,
+    blur = true,
     ignore_alpha = 0.35,
 })
 
 -- The other three layer surfaces get the same treatment, or they sit flat and
 -- opaque next to a frosted bar. Lower ignore_alpha than waybar's because these
 -- are solid panels rather than islands floating on a transparent sheet.
--- Namespaces: mako calls itself "notifications" and wlogout "logout_dialog"
--- (both confirmed in their binaries); wofi's could not be confirmed the same
--- way, so verify with `hyprctl layers` while it's open if the blur looks absent.
+-- Namespaces: wlogout calls itself "logout_dialog" (confirmed in its binary);
+-- wofi's could not be confirmed the same way, so verify with `hyprctl layers`
+-- while it's open if the blur looks absent.
 hl.layer_rule({
-    name  = "wofi-blur",
+    name = "wofi-blur",
     match = { namespace = "^wofi$" },
-    blur  = true,
+    blur = true,
     ignore_alpha = 0.2,
 })
 hl.layer_rule({
-    name  = "mako-blur",
-    match = { namespace = "^notifications$" },
-    blur  = true,
-    ignore_alpha = 0.2,
-})
-hl.layer_rule({
-    name  = "swaync-blur",
+    name = "swaync-blur",
     match = { namespace = "^swaync-(notification-window|control-center)$" },
-    blur  = true,
+    blur = true,
     ignore_alpha = 0.2,
 })
 hl.layer_rule({
-    name  = "swayosd-blur",
+    name = "swayosd-blur",
     match = { namespace = "^swayosd$" },
-    blur  = true,
+    blur = true,
     ignore_alpha = 0.2,
 })
 hl.layer_rule({
-    name  = "wlogout-blur",
+    name = "wlogout-blur",
     match = { namespace = "^(wlogout|logout_dialog)$" },
-    blur  = true,
+    blur = true,
     ignore_alpha = 0.2,
 })
 
 -- The calendar floats: ikhal is a peek-at-your-week surface, not a tiling
 -- citizen. Centered, laptop-friendly size.
 hl.window_rule({
-    name  = "ikhal-float",
+    name = "ikhal-float",
     match = { class = "^ikhal$" },
     float = true,
-    size  = { 1000, 640 },   -- vec2: positional, not named
+    size = { 1000, 640 }, -- vec2: positional, not named
     center = true,
 })
 
 -- The todo list floats too — smaller than the calendar; it's a glance-and-go
 -- surface (SUPER+SHIFT+A).
 hl.window_rule({
-    name  = "todos-float",
+    name = "todos-float",
     match = { class = "^todos$" },
     float = true,
-    size  = { 900, 520 },
+    size = { 900, 520 },
     center = true,
 })
 
 hl.window_rule({
-    name  = "suppress-maximize-events",
+    name = "suppress-maximize-events",
     match = { class = ".*" },
     suppress_event = "maximize",
 })
 
 hl.window_rule({
-    name  = "fix-xwayland-drags",
+    name = "fix-xwayland-drags",
     match = {
-        class = "^$", title = "^$",
-        xwayland = true, float = true, fullscreen = false, pin = false,
+        class = "^$",
+        title = "^$",
+        xwayland = true,
+        float = true,
+        fullscreen = false,
+        pin = false,
     },
     no_focus = true,
 })

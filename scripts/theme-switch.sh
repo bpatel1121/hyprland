@@ -11,5 +11,5 @@ name="${1:?usage: theme-switch.sh <name>}"
 # relative to themes/ and is portable everywhere.
 ln -sfn "$name" "$HYPR/themes/current"                # 1. repoint symlink
 hyprctl reload >/dev/null 2>&1 || true                # 2. re-run hyprland.lua (dofile picks up theme)
-"$HYPR/scripts/theme-apply.sh"                        # 3. sync wallpaper/waybar/mako
+"$HYPR/scripts/theme-apply.sh"                        # 3. sync wallpaper/waybar/...
 command -v notify-send >/dev/null 2>&1 && notify-send "Theme" "Switched to $name" || true

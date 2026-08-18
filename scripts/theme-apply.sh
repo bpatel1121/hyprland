@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sync external apps (wallpaper, waybar, mako) to the ACTIVE theme.
+# Sync external apps (wallpaper, waybar, swaync, ...) to the ACTIVE theme.
 # Does NOT reload Hyprland — hyprland.lua reads the theme itself via dofile.
 set -uo pipefail
 HYPR="$HOME/.config/hypr"
@@ -107,14 +107,7 @@ if [ -f "$CUR/swayosd/style.css" ]; then
     fi
 fi
 
-# --- Mako (legacy fallback — kept for themes that still ship one) ---
-if [ -f "$CUR/mako/config" ]; then
-    mkdir -p "$HOME/.config/mako"
-    ln -sfn "$CUR/mako/config" "$HOME/.config/mako/config"
-    makoctl reload 2>/dev/null || true
-fi
-
-# --- wlogout / cava / fastfetch (plain symlinks, same idea as mako) ---
+# --- wlogout / cava / fastfetch (plain symlinks) ---
 # Each is guarded: a theme that doesn't ship one just keeps whatever is there,
 # per the README's promise that everything but theme.lua degrades gracefully.
 if [ -d "$CUR/wlogout" ]; then
