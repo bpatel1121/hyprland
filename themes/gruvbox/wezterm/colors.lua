@@ -23,7 +23,9 @@ return {
         "#b8bb26",
         "#fabd2f",
         "#83a598",
-        "#d3869b",
+        "#fe8019", -- bright magenta = the FRAME slot: gruvbox's orange.
+                   -- Semantic, like cyberpunk's pink in the same slot — the
+                   -- fastfetch keys (SGR 95) resolve here in every theme.
         "#8ec07c",
         "#ebdbb2",
     },
