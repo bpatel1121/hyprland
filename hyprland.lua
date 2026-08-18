@@ -248,14 +248,6 @@ hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/theme-
 hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + ESCAPE",   hl.dsp.exec_cmd("wlogout -p layer-shell"))
 
--- Workspace overview (hyprexpo plugin). Routed through `hyprctl dispatch`
--- rather than bound to the dispatcher directly on purpose: the plugin is
--- optional and built out-of-tree, so this way the bind is simply inert when
--- hyprexpo isn't loaded instead of being a config error at startup.
--- Enable with: hyprpm update && hyprpm add https://github.com/hyprwm/hyprland-plugins
---              hyprpm enable hyprexpo
-hl.bind(mainMod .. " + TAB", hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo toggle"))
-
 -- Screenshots (grim + slurp + wl-clipboard — all installed)
 hl.bind("Print",         hl.dsp.exec_cmd("grim - | wl-copy"))               -- whole screen -> clipboard
 hl.bind("SUPER + Print", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy')) -- region select -> clipboard

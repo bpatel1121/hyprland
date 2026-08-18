@@ -61,11 +61,9 @@ portal/dconf session read the ini and never consult gsettings. Both theme
 names degrade — a machine without `adw-gtk-theme` or Papirus falls back to
 built-in `Adwaita-dark` rather than going white.
 
-Three helpers are picked at runtime rather than hardcoded, so the repo works on
+Two helpers are picked at runtime rather than hardcoded, so the repo works on
 machines that lack them: the wallpaper daemon (`swww`, its renamed successor
-`awww`, else `hyprpaper`), `starship` (the prompt is skipped if absent), and
-`hyprexpo` (its keybind routes through `hyprctl dispatch`, so it is inert
-rather than a config error when the plugin isn't built).
+`awww`, else `hyprpaper`) and `starship` (the prompt is skipped if absent).
 
 `hyprland.lua` loads the theme with `dofile` + `pcall`, so a missing or broken
 theme falls back to safe defaults instead of a black screen. The `current`
@@ -78,7 +76,6 @@ clone path into the repo.
 |---|---|
 | `SUPER+CTRL+L` | lock (hyprlock) — **not** `SUPER+L`, which is `focus right` |
 | `SUPER+ESCAPE` | power menu (wlogout) |
-| `SUPER+TAB` | workspace overview (hyprexpo, if built — see below) |
 | `SUPER+SHIFT+N` | notification center (swaync) |
 | `SUPER+F1..F3 / F5,F6` | volume / brightness, with a themed OSD pill (swayosd) |
 
@@ -254,9 +251,3 @@ hyprpm reload
 base-devel. Plugins compile against one exact Hyprland version and break on
 every Hyprland upgrade until `hyprpm update` is re-run — the binds and
 defaults here stay inert rather than erroring when a plugin is absent.
-
-**hyprexpo is gone from upstream**: the official hyprland-plugins repo
-dropped it (its directory 404s; issue #672 sits unanswered), leaving only
-community forks of unknown upkeep — not worth a compositor-crash dependency.
-The `SUPER+TAB` overview bind stays wired and inert, ready for the day an
-official overview returns.
