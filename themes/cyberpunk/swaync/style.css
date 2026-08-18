@@ -94,15 +94,32 @@
 .widget-dnd > switch slider { background-color: @gray; border-radius: 9px; }
 .widget-dnd > switch:checked slider { background-color: @no0; }
 
+/* ---- now playing: a lit deck, not a gray GTK card. The card keeps the
+ * blurred album-art backdrop swaync paints (content-derived frost); the
+ * frame, type, and controls speak the theme. ---- */
 .widget-mpris { background-color: rgba(0, 0, 0, 0); }
 .widget-mpris .widget-mpris-player {
-  background-color: rgba(41, 190, 204, 0.07);
+  background-color: rgba(10, 14, 26, 0.55);
+  border: 1px solid rgba(242, 48, 178, 0.30);
   border-radius: 10px;
-  padding: 8px;
+  padding: 10px;
   margin: 6px 2px;
 }
-.widget-mpris .widget-mpris-title  { color: @cyan; font-weight: bold; }
+.widget-mpris .widget-mpris-album-art { border-radius: 8px; }
+.widget-mpris .widget-mpris-title {
+  color: @cyan; font-weight: bold;
+  text-shadow: 0 0 8px rgba(41, 190, 204, 0.45);
+}
 .widget-mpris .widget-mpris-subtitle { color: @gray; }
+/* controls + the carousel arrows — cyan at rest, pink when touched */
+.widget-mpris button {
+  color: @cyan;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  text-shadow: 0 0 8px rgba(41, 190, 204, 0.35);
+}
+.widget-mpris button:hover { color: @pink; text-shadow: 0 0 8px rgba(242, 48, 178, 0.55); }
 
 progressbar progress { background-color: @cyan; border-radius: 4px; }
 progressbar trough   { background-color: @me1;  border-radius: 4px; }

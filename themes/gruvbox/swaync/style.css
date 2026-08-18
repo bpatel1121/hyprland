@@ -97,15 +97,27 @@
 .widget-dnd > switch slider { background-color: @gray; border-radius: 3px; }
 .widget-dnd > switch:checked slider { background-color: @bg0h; }
 
+/* ---- now playing: framed like a CRT panel. Keeps swaync's blurred-art
+ * backdrop (content-derived); frame, type, and controls speak the theme. ---- */
 .widget-mpris { background-color: rgba(0, 0, 0, 0); }
 .widget-mpris .widget-mpris-player {
-  background-color: rgba(131, 165, 152, 0.08);
+  background-color: rgba(40, 40, 40, 0.60);
+  border: 2px solid rgba(254, 128, 25, 0.55);
   border-radius: 4px;
-  padding: 8px;
+  padding: 10px;
   margin: 6px 2px;
 }
+.widget-mpris .widget-mpris-album-art { border-radius: 4px; }
 .widget-mpris .widget-mpris-title    { color: @blue; font-weight: bold; }
 .widget-mpris .widget-mpris-subtitle { color: @gray; }
+/* controls + carousel arrows — muted sky at rest, orange when touched */
+.widget-mpris button {
+  color: @blue;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+}
+.widget-mpris button:hover { color: @orange; }
 
 progressbar progress { background-color: @blue; border-radius: 2px; }
 progressbar trough   { background-color: @bg1;  border-radius: 2px; }
