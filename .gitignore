@@ -5,3 +5,8 @@
 # wallpaper path substituted in. The template is tracked; this copy is not,
 # because it contains an absolute path to the user's home.
 /hyprlock.conf
+
+# Which theme is active is MACHINE state, not repo content — tracked, it
+# dirtied the tree on every SUPER+T and would let a pull overwrite another
+# machine's choice. theme-apply.sh creates it (default: cyberpunk) if absent.
+/themes/current

@@ -5,6 +5,10 @@ set -uo pipefail
 HYPR="$HOME/.config/hypr"
 CUR="$HYPR/themes/current"
 
+# The `current` symlink is gitignored machine state — a fresh clone doesn't
+# have it. Create it on first run so the repo works out of the box.
+[ -e "$CUR" ] || ln -sfn cyberpunk "$CUR"
+
 # --- Polarity (dark|light) ---------------------------------------------------
 # Themes may declare `polarity = "light"` in theme.lua; anything else (or
 # nothing) means dark. Extracted with sed rather than a lua interpreter so the

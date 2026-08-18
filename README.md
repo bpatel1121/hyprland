@@ -22,7 +22,9 @@ scripts/
 ├── border-motion.sh            rotates the border gradient (see "Motion")
 ├── sddm-apply.sh               install the theme's SDDM greeter (sudo, see below)
 themes/
-├── current -> cyberpunk        relative symlink — the single source of truth
+├── current -> <theme>          relative symlink — the single source of truth
+│                               (gitignored: the ACTIVE theme is machine
+│                               state; theme-apply creates it if missing)
 ├── gruvbox/                    dark · pixel alley (see "The gruvbox theme")
 └── cyberpunk/
     ├── theme.lua               borders, gaps, blur, shadow (read by hyprland.lua)
