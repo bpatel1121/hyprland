@@ -86,6 +86,19 @@ window#waybar {
     box-shadow: inset 0 2px 0 rgba(242, 48, 178, 0.85);  /* the accent hairline */
 }
 
+/* ---- Launcher chip: the pink front door ---- */
+#custom-launcher {
+    color: @pink;
+    font-size: 16px;
+    padding: 0 12px 0 10px;
+    margin: 3px 2px;
+    background-color: rgba(242, 48, 178, 0.08);
+    background-image: none;
+    border-radius: 9px;
+    text-shadow: 0 0 8px rgba(242, 48, 178, 0.55);
+}
+#custom-launcher:hover { color: @cyan; text-shadow: 0 0 8px rgba(41, 190, 204, 0.55); }
+
 /* ---- Workspaces ------------------------------------------------------------
  * Dormant workspaces are neutral gray. Occupied-but-inactive is brighter than
  * empty, so the eye can still tell where windows live. */
@@ -144,8 +157,10 @@ window#waybar {
     background-image: none;
     text-shadow: 0 0 8px rgba(41, 190, 204, 0.45);
     padding: 0 12px;
-    margin: 3px 2px;
+    margin: 3px 0 3px 2px;                        /* fuses with the wave */
     border-radius: 9px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 #mpris.spotify {
     color: @green;
@@ -161,6 +176,20 @@ window#waybar {
     text-shadow: none;
 }
 #mpris.stopped { color: rgba(137, 141, 153, 0.35); background-color: rgba(0, 0, 0, 0); text-shadow: none; }
+
+/* ---- The soundwave, fused to the right edge of the mpris chip: shared fill,
+ * zero gap, squared inner corners — one pill, waves rising out of the title. */
+#custom-cava-wave {
+    color: @cyan;
+    background-color: rgba(41, 190, 204, 0.07);
+    background-image: none;
+    text-shadow: 0 0 8px rgba(41, 190, 204, 0.45);
+    padding: 0 10px 0 2px;
+    margin: 3px 2px 3px 0;
+    border-radius: 9px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
 
 /* ---- Center island: the clock ----------------------------------------------
  * No fill, just a lit cyan tube — text-shadow is the one glow primitive that
@@ -180,22 +209,26 @@ window#waybar {
  * updates · (temp watchdog) · volume · net ↑↓ · bt icon · battery · tray
  * CPU/mem/idle-inhibitor cut deliberately — btop answers those better when you
  * actually care, and fewer readouts lets the ones left actually get read. */
+/* Material-chip pass: each instrument sits in its own faint tinted pill, so
+ * the right island reads as a row of components rather than a text strip.
+ * Tints stay at ~7% — chips, not buttons. */
 #custom-updates, #custom-aur, #temperature, #network, #pulseaudio,
 #bluetooth, #battery, #tray {
     padding: 0 10px;
-    margin: 3px 1px;
-    background-color: rgba(0, 0, 0, 0);
+    margin: 3px 2px;
+    background-color: rgba(41, 190, 204, 0.07);
     background-image: none;
     border-radius: 9px;
 }
+#tray { background-color: rgba(0, 0, 0, 0); }
+/* update counters tint to their own state colors when pending */
+#custom-updates.pending { background-color: rgba(242, 210, 48, 0.10); }
+#custom-aur.pending     { background-color: rgba(48, 242, 145, 0.10); }
+#custom-updates.zero, #custom-aur.zero { background-color: rgba(137, 141, 153, 0.06); }
 #tray > .passive { background-color: rgba(0, 0, 0, 0); background-image: none; }
 #tray > .needs-attention { background-color: rgba(0, 0, 0, 0); background-image: none; }
 
-/* separator hairlines between instruments, HUD-style. #pulseaudio starts the
- * telemetry group, so the two update counters read as their own cluster. */
-#pulseaudio, #network, #battery {
-    border-left: 1px solid rgba(200, 208, 224, 0.10);
-}
+/* chips replaced the separator hairlines — the gaps do the grouping now */
 
 /* ---- Update counters -------------------------------------------------------
  * Pac-Man for the repos, a party popper for the AUR — pacman/Pac-Man and
@@ -235,6 +268,22 @@ window#waybar {
 #battery.critical:not(.charging) {
     color: @red;
     animation: pulse-red 1s ease-in-out infinite alternate;
+}
+
+/* ---- Power chip: quiet until you mean it ---- */
+#custom-power {
+    color: rgba(137, 141, 153, 0.6);
+    font-size: 14px;
+    padding: 0 10px;
+    margin: 3px 2px;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    border-radius: 9px;
+}
+#custom-power:hover {
+    color: @red;
+    background-color: rgba(242, 72, 72, 0.10);
+    text-shadow: 0 0 8px rgba(242, 72, 72, 0.6);
 }
 
 /* ---- Alert pulse (the only animation — selective, remember) ---------------- */

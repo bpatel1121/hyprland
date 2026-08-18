@@ -18,6 +18,8 @@ scripts/
 ├── theme-apply.sh              sync wallpaper/waybar/mako/wezterm to current
 ├── theme-menu.sh               wofi picker (bound to SUPER+T)
 ├── waybar-updates.sh pacman|aur   update counters, as waybar JSON
+├── waybar-cava.sh              streaming soundwave for the now-playing chip
+├── border-motion.sh            rotates the border gradient (see "Motion")
 ├── sddm-apply.sh               install the theme's SDDM greeter (sudo, see below)
 themes/
 ├── current -> cyberpunk        relative symlink — the single source of truth
@@ -86,6 +88,28 @@ session locks at 10, the screen sleeps at 15.
 Open wezterm windows recolor live: theme-apply nudges wezterm.lua's mtime,
 which triggers WezTerm's config reload.
 
+## The bar, and motion
+
+Waybar is three frosted islands. Left: an Arch chip that opens the launcher,
+then workspaces 1–5 (always visible; dormant ones dim). Center: the media
+island — now-playing chip with a live **soundwave fused to its edge**
+(`scripts/waybar-cava.sh` streams cava frames as block glyphs, so it needs no
+waybar build flags and vanishes in silence), and the clock. Right: instrument
+chips — update counters, volume, network, bluetooth, battery — and a power
+glyph that only goes red when you hover it. `SUPER+R` (or the Arch chip)
+opens wofi as a two-column icon grid.
+
+Border motion is a daemon, not an animation: Hyprland's `borderangle` loop
+is broken upstream (registers, never ticks — the #9251/#9313 regression
+lineage), so `scripts/border-motion.sh` steps the gradient angle itself via
+`hyprctl eval`, one eased step every 2 seconds — a pulse, not a spin. The
+slow tick is load-bearing: every config write cancels in-flight animations,
+and at 10 ticks/sec the daemon was clipping every workspace slide (the bug
+that looked like "slide doesn't work"). theme-apply starts it only when the
+active theme declares `border_motion`, kills it on switch, and it dies with
+Hyprland. Workspaces slide; a switch between two empty workspaces shows
+nothing moving, which is physics, not a regression.
+
 ## The login screen (SDDM)
 
 SDDM is the one surface theme-apply.sh cannot reach: it runs as its own user
@@ -118,6 +142,11 @@ missing). A theme without an `sddm/` dir simply leaves the login screen alone.
 Copy `themes/cyberpunk` to `themes/<name>`, swap the palette and wallpaper,
 and it appears in the picker automatically. Only `theme.lua` is required —
 every other file degrades gracefully if absent.
+
+Beyond the visual table, `theme.lua` takes optional identity keys:
+`border_motion = <deciseconds/revolution>` runs the border gradient in motion
+(omit it for a still border), and `dim_strength = <0..1>` dims unfocused
+windows so focus reads at a glance.
 
 Themes are **dark by default**. A light theme declares itself with one line in
 `theme.lua`:
@@ -183,9 +212,9 @@ chunky 2px orange borders like TUI boxes, faint **scanlines** across the bar's
 islands (a repeating background-image, so it's halo-safe), and the active
 workspace drawn as a solid orange **block cursor**. No glow anywhere; the red
 alert pulse is the only text-shadow in the theme. Cyberpunk glows; gruvbox
-scans. The two themes deliberately share
-their waybar `config.jsonc` and wlogout `layout` verbatim: behavior identical,
-skin swapped, which is the whole thesis of this repo.
+scans. The two themes share their waybar structure and wlogout `layout`; the
+waybar configs diverge only in glyphs (neon dots vs indicator squares for
+workspaces) — behavior identical, skin swapped, which is the repo's thesis.
 
 `hyprexpo` is the one piece not installed by a package manager. It builds
 out-of-tree via `hyprpm`, which needs a superuser prompt, so run it by hand:

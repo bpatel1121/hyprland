@@ -6,13 +6,26 @@
     "margin-top": 8,
     "margin-left": 14,
     "margin-right": 14,
-    "modules-left": ["hyprland/workspaces", "mpris"],
-    "modules-center": ["clock"],
-    "modules-right": ["custom/updates", "custom/aur", "temperature", "pulseaudio", "network", "bluetooth", "battery", "tray"],
+    "modules-left": ["custom/launcher", "hyprland/workspaces"],
+    // Media island: now-playing + cava live with the clock, away from the
+    // desktop controls. The clock keeps this island alive when nothing plays.
+    "modules-center": ["mpris", "custom/cava-wave", "clock"],
+    "modules-right": ["custom/updates", "custom/aur", "temperature", "pulseaudio", "network", "bluetooth", "battery", "tray", "custom/power"],
+
+    // Bar bookends: Arch chip opens the launcher, power chip opens wlogout.
+    "custom/launcher": {
+        "format": "\udb80\udcc3",
+        "tooltip": false,
+        "on-click": "wofi --show drun --allow-images --columns 2 --width 640 --height 480 --style $HOME/.config/hypr/themes/current/wofi/style.css"
+    },
 
     "hyprland/workspaces": {
         "format": "{name}",
-        "on-click": "activate"
+        "on-click": "activate",
+        // Always show 1-5: dormant workspaces render dim (the .empty CSS
+        // class), so the bar reads as a row of stations instead of one
+        // lonely number. 6+ still appear on demand.
+        "persistent-workspaces": { "*": 5 }
     },
 
     // The icons here used to be EMPTY strings, so {player_icon}/{status_icon}
@@ -28,11 +41,21 @@
         "format-paused": "{status_icon}  {title} · {artist}",
         "player-icons": { "default": "󰐊", "spotify": "󰓇" },
         "status-icons": { "paused": "󰏤" },
-        "max-length": 42,
+        "max-length": 45,
         "on-click": "playerctl play-pause",
         "on-scroll-up": "playerctl next",
         "on-scroll-down": "playerctl previous",
         "tooltip-format": "{title} — {artist} ({album})  {position}/{length}"
+    },
+
+    // The soundwave fused onto the mpris chip. Streams from
+    // scripts/waybar-cava.sh (cava in raw mode -> block glyphs), so it works
+    // on any waybar build. Empty text in silence = the wave only exists
+    // while sound does.
+    "custom/cava-wave": {
+        "exec": "$HOME/.config/hypr/scripts/waybar-cava.sh",
+        "return-type": "json",
+        "tooltip": false
     },
 
     "clock": {
@@ -110,5 +133,11 @@
         "states": { "warning": 30, "critical": 15 }
     },
 
-    "tray": { "spacing": 8 }
+    "tray": { "spacing": 8 },
+
+    "custom/power": {
+        "format": "\u23fb",
+        "tooltip": false,
+        "on-click": "wlogout -p layer-shell"
+    }
 }

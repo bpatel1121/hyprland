@@ -24,7 +24,10 @@ hl.monitor({
 ---------------------
 local terminal    = "wezterm start"                       -- main terminal (SUPER+Q)
 local fileManager = "wezterm start -- yazi"
-local menu        = "wofi --show drun --style " .. os.getenv("HOME") .. "/.config/hypr/themes/current/wofi/style.css"
+-- --allow-images + columns turns wofi from a dmenu strip into an icon-grid
+-- launcher; the theme css sizes it. Width/height here rather than css because
+-- wofi treats geometry as config, not style.
+local menu        = "wofi --show drun --allow-images --columns 2 --width 640 --height 480 --style " .. os.getenv("HOME") .. "/.config/hypr/themes/current/wofi/style.css"
 
 
 -------------------
@@ -113,6 +116,10 @@ hl.config({
         rounding_power = theme.rounding_power or 2,
         active_opacity   = theme.active_opacity   or 1.0,
         inactive_opacity = theme.inactive_opacity or 1.0,
+        -- Focus reads instantly when everything else steps back half a stop.
+        -- Themes tune it with dim_strength; omit to disable.
+        dim_inactive = type(theme.dim_strength) == "number",
+        dim_strength = theme.dim_strength or 0.0,
         shadow = theme.shadow,
         blur   = theme.blur,
     },
@@ -140,14 +147,23 @@ hl.animation({ leaf = "fadeIn",        enabled = true,  speed = 1.73, bezier = "
 hl.animation({ leaf = "fadeOut",       enabled = true,  speed = 1.46, bezier = "almostLinear" })
 hl.animation({ leaf = "fade",          enabled = true,  speed = 3.03, bezier = "quick" })
 hl.animation({ leaf = "layers",        enabled = true,  speed = 3.81, bezier = "easeOutQuint" })
-hl.animation({ leaf = "layersIn",      enabled = true,  speed = 4,    bezier = "easeOutQuint", style = "fade" })
+hl.animation({ leaf = "layersIn",      enabled = true,  speed = 4,    bezier = "easeOutQuint", style = "slide" })   -- wofi drops in, mako glides in
 hl.animation({ leaf = "layersOut",     enabled = true,  speed = 1.5,  bezier = "linear",       style = "fade" })
 hl.animation({ leaf = "fadeLayersIn",  enabled = true,  speed = 1.79, bezier = "almostLinear" })
 hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "almostLinear" })
-hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 1.21, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
+-- Workspaces SLIDE. Only visible when windows exist to move — an empty->empty
+-- switch shows nothing, which is not a bug. If slides ever look clipped,
+-- suspect anything that writes config at high frequency (see border-motion.sh,
+-- deliberately throttled to one step per 2s for exactly this reason).
+hl.animation({ leaf = "workspaces",    enabled = true,  speed = 2.8,  bezier = "easeOutQuint", style = "slide" })
+hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 2.8,  bezier = "easeOutQuint", style = "slide" })
+hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 2.8,  bezier = "easeOutQuint", style = "slide" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
+
+-- Border motion (borderangle loop) is NOT set here: the Lua animation binding
+-- doesn't expose borderangle, so theme-apply.sh applies it via
+-- `hyprctl keyword` from the theme's `border_motion` key instead. Reload wipes
+-- keywords, but theme-switch reloads before theme-apply, so the order holds.
 
 -- Layouts
 hl.config({ dwindle   = { preserve_split = true } })

@@ -13,6 +13,20 @@ polarity=$(sed -n 's/^[[:space:]]*polarity[[:space:]]*=[[:space:]]*"\(light\|dar
     "$CUR/theme.lua" 2>/dev/null | head -n1)
 [ "$polarity" = light ] || polarity=dark
 
+# --- Border motion ------------------------------------------------------------
+# Themes opt in with `border_motion = <speed>` in theme.lua (deciseconds per
+# revolution; bigger = slower). Upstream's borderangle loop animation is
+# broken (registers, never ticks), so scripts/border-motion.sh rotates the
+# gradient angle itself. One instance max: kill any old cycler, start a new
+# one only if the incoming theme asks for motion.
+pkill -f "hypr/scripts/border-motion.sh" 2>/dev/null || true
+motion=$(sed -n 's/^[[:space:]]*border_motion[[:space:]]*=[[:space:]]*\([0-9]\+\).*/\1/p' \
+    "$CUR/theme.lua" 2>/dev/null | head -n1)
+if [ -n "$motion" ]; then
+    "$HYPR/scripts/border-motion.sh" "$motion" >/dev/null 2>&1 &
+    disown 2>/dev/null || true
+fi
+
 # --- Wallpaper -------------------------------------------------------------
 # Prefer swww/awww: it cross-fades between wallpapers, which is what makes a
 # theme switch look like a transition rather than a snap. Falls back to

@@ -24,6 +24,14 @@ window {
 #inner-box { margin: 4px 10px 10px 10px; }
 #outer-box, #scroll { margin: 0; }
 #text { color: #928374; margin: 0 6px; } /* gray */
-#entry { padding: 7px 8px; border-radius: 4px; }
+#entry { padding: 10px 10px; border-radius: 4px; }
 #entry:selected { background-color: #d3869b; }   /* purple */
 #entry:selected #text, #text:selected { color: #1d2021; }
+
+/* ---- Icon grid (launched with --allow-images --columns 2) ---- */
+#entry img {
+    margin-right: 10px;
+}
+#entry:selected img {
+    -gtk-icon-effect: none;
+}

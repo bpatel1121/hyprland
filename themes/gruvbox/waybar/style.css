@@ -75,6 +75,18 @@ window#waybar {
     padding: 2px 8px;
 }
 
+/* ---- Launcher chip: the orange front door (no glow — CRT rules) ---- */
+#custom-launcher {
+    color: @orange;
+    font-size: 16px;
+    padding: 0 12px 0 10px;
+    margin: 3px 2px;
+    background-color: rgba(254, 128, 25, 0.10);
+    background-image: none;
+    border-radius: 4px;
+}
+#custom-launcher:hover { color: @fg; background-color: rgba(254, 128, 25, 0.22); }
+
 /* ---- Workspaces ------------------------------------------------------------ */
 #workspaces {
     background-color: rgba(0, 0, 0, 0);
@@ -125,8 +137,10 @@ window#waybar {
     background-color: rgba(131, 165, 152, 0.08);
     background-image: none;
     padding: 0 12px;
-    margin: 3px 2px;
+    margin: 3px 0 3px 2px;                        /* fuses with the wave */
     border-radius: 4px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 #mpris.spotify {
     color: @green;
@@ -139,6 +153,19 @@ window#waybar {
     background-color: rgba(0, 0, 0, 0);
 }
 #mpris.stopped { color: rgba(146, 131, 116, 0.35); background-color: rgba(0, 0, 0, 0); }
+
+/* ---- The soundwave, fused to the mpris cell: shared fill, zero gap, squared
+ * inner corners. No glow — the motion IS the display. */
+#custom-cava-wave {
+    color: @blue;
+    background-color: rgba(131, 165, 152, 0.08);
+    background-image: none;
+    padding: 0 10px 0 2px;
+    margin: 3px 2px 3px 0;
+    border-radius: 4px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
 
 /* ---- Center island: the clock ---------------------------------------------
  * Bold muted blue, no glow — a painted sign, not a lit tube. */
@@ -154,22 +181,24 @@ window#waybar {
 
 /* ---- Right island: lean instrument set ------------------------------------
  * updates · (temp watchdog) · volume · net ↑↓ · bt icon · battery · tray */
+/* Chip pass, CRT flavor: every instrument in its own faint tinted cell —
+ * a bank of square indicator lamps rather than Material pills. */
 #custom-updates, #custom-aur, #temperature, #network, #pulseaudio,
 #bluetooth, #battery, #tray {
     padding: 0 10px;
-    margin: 3px 1px;
-    background-color: rgba(0, 0, 0, 0);
+    margin: 3px 2px;
+    background-color: rgba(131, 165, 152, 0.08);
     background-image: none;
     border-radius: 4px;
 }
+#tray { background-color: rgba(0, 0, 0, 0); }
+#custom-updates.pending { background-color: rgba(250, 189, 47, 0.12); }
+#custom-aur.pending     { background-color: rgba(152, 151, 26, 0.12); }
+#custom-updates.zero, #custom-aur.zero { background-color: rgba(146, 131, 116, 0.06); }
 #tray > .passive { background-color: rgba(0, 0, 0, 0); background-image: none; }
 #tray > .needs-attention { background-color: rgba(0, 0, 0, 0); background-image: none; }
 
-/* separator hairlines between instruments; #pulseaudio starts the telemetry
- * group so the two update counters read as their own cluster. */
-#pulseaudio, #network, #battery {
-    border-left: 1px solid rgba(235, 219, 178, 0.10);
-}
+/* chips replaced the separator hairlines — the gaps do the grouping now */
 
 /* ---- Update counters -------------------------------------------------------
  * Pac-Man (repos) and party popper (AUR), classes from waybar-updates.sh.
@@ -205,6 +234,21 @@ window#waybar {
 #battery.critical:not(.charging) {
     color: @red;
     animation: pulse-red 1s ease-in-out infinite alternate;
+}
+
+/* ---- Power chip ---- */
+#custom-power {
+    color: rgba(146, 131, 116, 0.6);
+    font-size: 14px;
+    padding: 0 10px;
+    margin: 3px 2px;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    border-radius: 4px;
+}
+#custom-power:hover {
+    color: @red;
+    background-color: rgba(251, 73, 52, 0.12);
 }
 
 /* ---- Alert pulse (the only animation, and the only glow) ------------------- */

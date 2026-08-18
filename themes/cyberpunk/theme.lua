@@ -16,4 +16,7 @@ return {
     -- gradient that read as cotton candy. Pink is much less searing than amber
     -- at the same alpha, so it can carry a wide, generous range.
     shadow = { enabled = true, range = 22, render_power = 3, color = 0xc4f230b2 }, -- pi0 glow
+    -- Stage-1 ricing: the amber->pink border sweeps like a cycling neon sign.
+    dim_strength = 0.15,                             -- unfocused windows step back
+    border_motion = 40,                              -- ~4s per revolution
 }
