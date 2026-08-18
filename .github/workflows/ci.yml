@@ -65,5 +65,18 @@ jobs:
 
       - name: Layer-shell CSS safety rules (no outer box-shadow, no `transparent`)
         run: |
-          ! grep -rn --include='style.css' -E '^\s*box-shadow\s*:\s*[^i]' themes/*/waybar themes/*/wlogout 2>/dev/null | grep -v 'box-shadow: none' | grep -v inset
-          ! grep -rn --include='*.css' -w 'transparent' themes/ 2>/dev/null
+          python3 - <<'PY'
+          import glob, re, sys
+          bad = False
+          def code(f):  # css with comments stripped
+              return re.sub(r'/\*.*?\*/', '', open(f).read(), flags=re.S)
+          for f in glob.glob('themes/*/waybar/style.css') + glob.glob('themes/*/wlogout/style.css'):
+              for m in re.finditer(r'box-shadow\s*:\s*([^;}]*)', code(f)):
+                  v = m.group(1).strip()
+                  if v != 'none' and not v.startswith('inset'):
+                      print(f'FAIL {f}: outer box-shadow: {v}'); bad = True
+          for f in glob.glob('themes/**/*.css', recursive=True):
+              if re.search(r'\btransparent\b', code(f)):
+                  print(f'FAIL {f}: `transparent` keyword'); bad = True
+          sys.exit(1 if bad else 0)
+          PY
