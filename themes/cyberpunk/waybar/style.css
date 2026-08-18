@@ -200,6 +200,8 @@ window#waybar {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
+/* resting wave: constant width, lights off — dim ridge, no glow, no reflow */
+#custom-cava-wave.quiet { color: rgba(41, 190, 204, 0.18); text-shadow: none; }
 
 /* ---- Center island: the clock ----------------------------------------------
  * No fill, just a lit cyan tube — text-shadow is the one glow primitive that

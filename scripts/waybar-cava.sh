@@ -7,8 +7,13 @@
 # Arch's waybar may not carry; this works on any build, needing only the
 # `cava` binary (already provisioned).
 #
-# Silence -> empty text -> the module collapses to nothing, so the wave only
-# exists while sound does.
+# Performance rules (each of these was a real bar-lag bug):
+#   - 12fps, not 30: every frame is a full waybar redraw + Hyprland re-blur.
+#   - Silence NEVER collapses the module: the island reflowing on every
+#     quiet passage made the whole center row jump. Instead the wave rests
+#     at constant width, dimmed by the `quiet` class (styled per theme).
+#   - Identical consecutive frames are not re-emitted — silence costs one
+#     redraw, not twelve per second.
 set -uo pipefail
 
 bars=8
@@ -17,7 +22,7 @@ trap 'rm -f "$cfg"' EXIT
 cat > "$cfg" <<CFG
 [general]
 bars = $bars
-framerate = 30
+framerate = 12
 [input]
 method = pulse
 source = auto
@@ -29,6 +34,11 @@ ascii_max_range = 7
 CFG
 
 glyphs=(▁ ▂ ▃ ▄ ▅ ▆ ▇ █)
+rest=""
+for _ in $(seq "$bars"); do rest+="▁"; done
+
+last=""
+silent_run=0
 cava -p "$cfg" 2>/dev/null | while IFS=';' read -ra vals; do
     out=""
     silent=1
@@ -38,8 +48,18 @@ cava -p "$cfg" 2>/dev/null | while IFS=';' read -ra vals; do
         out+="${glyphs[$v]:-▁}"
     done
     if [ "$silent" -eq 1 ]; then
-        printf '{"text":""}\n'
+        silent_run=$(( silent_run + 1 ))
     else
-        printf '{"text":"%s"}\n' "$out"
+        silent_run=0
+    fi
+    # ~1s of silence before resting — brief dips don't flicker the dim state
+    if [ "$silent_run" -ge 12 ]; then
+        msg='{"text":"'"$rest"'","class":"quiet"}'
+    else
+        msg='{"text":"'"$out"'","class":"live"}'
+    fi
+    if [ "$msg" != "$last" ]; then
+        printf '%s\n' "$msg"
+        last=$msg
     fi
 done

@@ -6,11 +6,12 @@
     "margin-top": 8,
     "margin-left": 14,
     "margin-right": 14,
-    "modules-left": ["custom/launcher", "hyprland/workspaces"],
-    // Media island: now-playing + cava live with the clock, away from the
-    // desktop controls. The clock keeps this island alive when nothing plays.
-    "modules-center": ["mpris", "custom/cava-wave", "clock", "custom/agenda", "custom/todos"],
-    "modules-right": ["custom/updates", "custom/aur", "temperature", "pulseaudio", "network", "bluetooth", "battery", "tray", "custom/dnd", "custom/power"],
+    "modules-left": ["custom/launcher", "hyprland/workspaces", "mpris", "custom/cava-wave"],
+    // Center island: the clock, alone — nothing variable-width shares the
+    // island, so it sits at TRUE screen center, always. Music lives in the
+    // left island; the agenda/todo glance chips lead the right island.
+    "modules-center": ["clock"],
+    "modules-right": ["custom/agenda", "custom/todos", "custom/updates", "custom/aur", "temperature", "pulseaudio", "network", "bluetooth", "battery", "tray", "custom/dnd", "custom/power"],
 
     // Bar bookends: Arch chip opens the launcher, power chip opens wlogout.
     "custom/launcher": {

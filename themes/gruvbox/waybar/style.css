@@ -175,6 +175,8 @@ window#waybar {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
+/* resting wave: constant width, lights off — dim ridge, no reflow */
+#custom-cava-wave.quiet { color: rgba(131, 165, 152, 0.20); }
 
 /* ---- Center island: the clock ---------------------------------------------
  * Bold muted blue, no glow — a painted sign, not a lit tube. */

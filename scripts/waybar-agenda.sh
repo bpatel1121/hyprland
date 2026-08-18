@@ -8,7 +8,8 @@ set -uo pipefail
 HORIZON=$(( 8 * 3600 ))   # show nothing further out than 8h
 
 now=$(date +%s)
-next=$(cal_upcoming | awk -F'|' -v now="$now" '$1 >= now - 90 { print; exit }')
+events=$(cal_upcoming)   # ONE khal invocation — reused for chip and tooltip
+next=$(printf '%s\n' "$events" | awk -F'|' -v now="$now" '$1 >= now - 90 { print; exit }')
 
 if [ -z "$next" ]; then
     printf '{"text":"","class":"idle"}\n'; exit 0
@@ -30,7 +31,7 @@ else
     when="in $(( (delta + 1799) / 3600 ))h"
 fi
 
-tooltip=$(cal_upcoming | head -n 6 | while IFS='|' read -r e _l t; do
+tooltip=$(printf '%s\n' "$events" | head -n 6 | while IFS='|' read -r e _l t; do
     printf '%s  %s\\n' "$(date -d "@$e" '+%a %H:%M')" "$t"
 done)
 
