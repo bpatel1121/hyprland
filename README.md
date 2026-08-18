@@ -12,6 +12,7 @@ Hyprland, waybar, wofi, mako, wezterm, and the wallpaper together.
 
 ```
 hyprland.lua                    behavior + binds; dofiles the active theme
+swaync/config.json              notification-center layout (shared; styles are per-theme)
 hypridle.conf                   dim 5m -> lock 10m -> screen off 15m
 scripts/
 ├── theme-switch.sh <name>      repoint themes/current → <name>, reload, apply
@@ -31,7 +32,8 @@ themes/
     ├── wallpaper.webp
     ├── waybar/                 config.jsonc + style.css (floating islands)
     ├── wofi/style.css
-    ├── mako/config             theme-apply symlinks ~/.config/mako/config here
+    ├── swaync/style.css        notifications + control center (SUPER+SHIFT+N)
+    ├── swayosd/style.css       volume/brightness overlay pill
     ├── hyprlock.conf           TEMPLATE — rendered, not symlinked (see below)
     ├── wlogout/                layout + style.css (power menu)
     ├── cava/config             visualizer, VU-meter gradient
@@ -75,6 +77,8 @@ clone path into the repo.
 | `SUPER+CTRL+L` | lock (hyprlock) — **not** `SUPER+L`, which is `focus right` |
 | `SUPER+ESCAPE` | power menu (wlogout) |
 | `SUPER+TAB` | workspace overview (hyprexpo, if built — see below) |
+| `SUPER+SHIFT+N` | notification center (swaync) |
+| `SUPER+F1..F3 / F5,F6` | volume / brightness, with a themed OSD pill (swayosd) |
 
 Idle is handled by `hypridle`, started at login: backlight dims at 5 min, the
 session locks at 10, the screen sleeps at 15.
@@ -218,13 +222,34 @@ scans. The two themes share their waybar structure and wlogout `layout`; the
 waybar configs diverge only in glyphs (neon dots vs indicator squares for
 workspaces) — behavior identical, skin swapped, which is the repo's thesis.
 
-`hyprexpo` is the one piece not installed by a package manager. It builds
-out-of-tree via `hyprpm`, which needs a superuser prompt, so run it by hand:
+## Notifications, control center, OSD
+
+Notifications are `swaync`: themed floating toasts plus a pull-down control
+center (`SUPER+SHIFT+N`) with history, a do-not-disturb switch, and a media
+player card. Behavior lives in `swaync/config.json` (shared); looks live in
+each theme's `swaync/style.css`. The autostart falls back to mako on a box
+without swaync — degrade, don't die.
+
+Volume and brightness keys route through `swayosd`, so every press answers
+with a themed on-screen pill (neon in cyberpunk, indicator-lamp in gruvbox);
+without swayosd installed the binds fall back to bare wpctl/brightnessctl —
+same action, just silent. Both are in `extra`: `swaync swayosd`, provisioned
+by linux-setup.
+
+## Plugins (built by hand, on purpose)
+
+Two pieces build out-of-tree via `hyprpm`, which needs a superuser prompt, so
+they are deliberate manual steps:
 
 ```
-hyprpm update && hyprpm add https://github.com/hyprwm/hyprland-plugins
-hyprpm enable hyprexpo
+hyprpm update
+hyprpm add https://github.com/hyprwm/hyprland-plugins    # hyprexpo
+hyprpm enable hyprexpo                                    # SUPER+TAB overview
+hyprpm add https://github.com/VirtCode/hypr-dynamic-cursors
+hyprpm enable dynamic-cursors                             # cursor tilt/stretch
+hyprpm reload
 ```
 
-Be aware it is compiled against one exact Hyprland version and breaks on every
-Hyprland upgrade until `hyprpm update` is re-run.
+Be aware both are compiled against one exact Hyprland version and break on
+every Hyprland upgrade until `hyprpm update` is re-run — the binds and
+defaults here stay inert rather than erroring when the plugins are absent.

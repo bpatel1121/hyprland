@@ -1,0 +1,100 @@
+/* Gruvbox · dark — swaync (notifications + control center)
+ *
+ * CRT dialect: near-sharp 4px corners, chunky 2px orange frames, scanlines on
+ * the control center, no glow. Same layer-shell rules as waybar: no outer
+ * box-shadow, no `transparent` keyword.
+ */
+
+@define-color bg0h   #1d2021;
+@define-color bg0    #282828;
+@define-color bg1    #3c3836;
+@define-color orange #fe8019;
+@define-color blue   #83a598;
+@define-color red    #fb4934;
+@define-color gray   #928374;
+@define-color fg     #ebdbb2;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+}
+.notification {
+  background-color: rgba(40, 40, 40, 0.85);   /* frosted by swaync-blur rule */
+  border: 2px solid @orange;
+  border-radius: 4px;
+  margin: 6px 10px;
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @fg; font-weight: bold; }
+.notification-content .body    { color: @gray; }
+.notification-content .time    { color: @gray; font-size: 11px; }
+.notification.critical { border-color: @red; }
+.close-button {
+  background-color: rgba(0, 0, 0, 0);
+  color: @gray;
+  border-radius: 4px;
+  margin: 4px;
+}
+.close-button:hover { color: @red; background-color: @bg0; }
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @fg;
+  border-radius: 4px;
+}
+.notification-action:hover { color: @blue; background-color: @bg0; }
+
+/* ---- control center: a CRT service panel ---- */
+.control-center {
+  background-color: rgba(29, 32, 33, 0.88);
+  background-image: repeating-linear-gradient(180deg,
+      rgba(0, 0, 0, 0.12) 0px, rgba(0, 0, 0, 0.12) 1px,
+      rgba(0, 0, 0, 0)    1px, rgba(0, 0, 0, 0)    3px);
+  border: 2px solid @orange;
+  border-radius: 4px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(254, 128, 25, 0.35); }
+
+.widget-title { color: @blue; font-weight: bold; }
+.widget-title > button {
+  background-color: @bg0;
+  color: @gray;
+  border: 1px solid rgba(254, 128, 25, 0.40);
+  border-radius: 4px;
+}
+.widget-title > button:hover { color: @red; border-color: @red; }
+
+.widget-dnd { color: @fg; }
+.widget-dnd > switch {
+  background-color: @bg0;
+  border: 1px solid @bg1;
+  border-radius: 4px;
+}
+.widget-dnd > switch:checked { background-color: @orange; }
+.widget-dnd > switch slider { background-color: @gray; border-radius: 3px; }
+.widget-dnd > switch:checked slider { background-color: @bg0h; }
+
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(131, 165, 152, 0.08);
+  border-radius: 4px;
+  padding: 8px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-title    { color: @blue; font-weight: bold; }
+.widget-mpris .widget-mpris-subtitle { color: @gray; }
+
+progressbar progress { background-color: @blue; border-radius: 2px; }
+progressbar trough   { background-color: @bg1;  border-radius: 2px; }

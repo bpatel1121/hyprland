@@ -1,0 +1,97 @@
+/* Cyberpunk · Cybrcolors — swaync (notifications + control center)
+ *
+ * Same layer-shell rules as waybar: NO outer box-shadow, no `transparent`
+ * keyword (GTK composites both as black halos). Glow is text-shadow only.
+ * Palette discipline: PINK frames, CYAN is live content, red = urgent only.
+ */
+
+@define-color no0   #030408;
+@define-color no2   #0A0E1A;
+@define-color me1   #212638;
+@define-color pink  #F230B2;
+@define-color cyan  #29BECC;
+@define-color red   #F24848;
+@define-color gray  #898D99;
+@define-color fg    #C8D0E0;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+}
+.notification {
+  background-color: rgba(10, 14, 26, 0.80);   /* frosted by swaync-blur rule */
+  border: 2px solid @pink;
+  border-radius: 14px;
+  margin: 6px 10px;
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @fg; font-weight: bold; }
+.notification-content .body    { color: @gray; }
+.notification-content .time    { color: @gray; font-size: 11px; }
+.notification.critical { border-color: @red; }
+.close-button {
+  background-color: rgba(0, 0, 0, 0);
+  color: @gray;
+  border-radius: 9px;
+  margin: 4px;
+}
+.close-button:hover { color: @red; background-color: @no2; }
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @fg;
+  border-radius: 10px;
+}
+.notification-action:hover { color: @cyan; background-color: @no2; }
+
+/* ---- control center ---- */
+.control-center {
+  background-color: rgba(3, 4, 8, 0.85);      /* frosted */
+  border: 2px solid @pink;
+  border-radius: 14px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(242, 48, 178, 0.30); }
+
+.widget-title { color: @cyan; font-weight: bold; text-shadow: 0 0 8px rgba(41, 190, 204, 0.45); }
+.widget-title > button {
+  background-color: @no2;
+  color: @gray;
+  border: 1px solid rgba(242, 48, 178, 0.35);
+  border-radius: 10px;
+}
+.widget-title > button:hover { color: @red; border-color: @red; }
+
+.widget-dnd { color: @fg; }
+.widget-dnd > switch {
+  background-color: @no2;
+  border: 1px solid @me1;
+  border-radius: 10px;
+}
+.widget-dnd > switch:checked { background-color: @pink; }
+.widget-dnd > switch slider { background-color: @gray; border-radius: 9px; }
+.widget-dnd > switch:checked slider { background-color: @no0; }
+
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(41, 190, 204, 0.07);
+  border-radius: 10px;
+  padding: 8px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-title  { color: @cyan; font-weight: bold; }
+.widget-mpris .widget-mpris-subtitle { color: @gray; }
+
+progressbar progress { background-color: @cyan; border-radius: 4px; }
+progressbar trough   { background-color: @me1;  border-radius: 4px; }

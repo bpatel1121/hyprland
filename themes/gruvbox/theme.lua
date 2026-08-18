@@ -15,6 +15,7 @@ return {
     -- Full matte: a plain dark shadow for depth, no color cast. Gruvbox is
     -- pigment, not light — windows sit ON the alley, they don't glow over it.
     shadow = { enabled = true, range = 12, render_power = 3, color = 0x59000000 },
+    cursor = "Bibata-Modern-Amber",                  -- warm amber pointer
     -- Border motion, but at a crawl: lantern-light drift, not neon spin.
     dim_strength = 0.10,                             -- unfocused windows step back
     border_motion = 110,

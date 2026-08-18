@@ -60,7 +60,6 @@ end)
 -------------------------------
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
-hl.env("XCURSOR_THEME", "capitaine-cursors")
 -- Qt apps have no platform theme of their own on a bare Wayland session, so
 -- they'd render in default Fusion light. qt6ct (with Kvantum available as the
 -- engine) is what lets them follow the dark palette like GTK apps do.
@@ -96,6 +95,11 @@ if not ok or type(theme) ~= "table" then
         shadow = { enabled = true, range = 6, render_power = 3, color = 0x66000000 },
     }
 end
+
+-- Cursor theme comes from the ACTIVE theme (cursor = "..." in theme.lua),
+-- falling back to capitaine. Env covers newly launched apps; theme-apply's
+-- `hyprctl setcursor` + gsettings handle the live switch.
+hl.env("XCURSOR_THEME", (type(theme.cursor) == "string" and theme.cursor) or "capitaine-cursors")
 
 hl.config({
     general = {

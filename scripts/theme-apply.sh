@@ -157,7 +157,14 @@ if [ -d "$CUR/gtk" ]; then
         done
         icons="Adwaita"; [ -d /usr/share/icons/Papirus-Dark ] && icons="Papirus-Dark"
     fi
-    cursor="default"; [ -d /usr/share/icons/capitaine-cursors ] && cursor="capitaine-cursors"
+    # Cursor: the theme may declare `cursor = "Name"` in theme.lua. Fallback
+    # chain: declared theme -> capitaine -> default, checking what's installed.
+    want_cursor=$(sed -n 's/^[[:space:]]*cursor[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' \
+        "$CUR/theme.lua" 2>/dev/null | head -n1)
+    cursor="default"
+    [ -d /usr/share/icons/capitaine-cursors ] && cursor="capitaine-cursors"
+    [ -n "$want_cursor" ] && { [ -d "/usr/share/icons/$want_cursor" ] || [ -d "$HOME/.icons/$want_cursor" ]; } \
+        && cursor="$want_cursor"
 
     if command -v gsettings >/dev/null 2>&1; then
         gs() { gsettings set org.gnome.desktop.interface "$1" "$2" 2>/dev/null || true; }
