@@ -20,7 +20,19 @@
     },
 
     "hyprland/workspaces": {
-        "format": "{name}",
+        // {icon} with digit mappings = numbers as before, PLUS a ghost for
+        // the scratchpad. show-special + special-visible-only makes the ghost
+        // exist only while the scratchpad is actually on screen — it IS the
+        // "you are in the scratchpad" indicator.
+        "format": "{icon}",
+        "format-icons": {
+            "1": "1", "2": "2", "3": "3", "4": "4", "5": "5",
+            "6": "6", "7": "7", "8": "8", "9": "9", "10": "10",
+            "magic": "\udb80\udea0", "special:magic": "\udb80\udea0",
+            "default": "•"
+        },
+        "show-special": true,
+        "special-visible-only": true,
         "on-click": "activate",
         // Always show 1-5: dormant workspaces render dim (the .empty CSS
         // class), so the bar reads as a row of stations instead of one

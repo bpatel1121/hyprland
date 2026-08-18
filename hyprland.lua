@@ -158,6 +158,9 @@ hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "
 hl.animation({ leaf = "workspaces",    enabled = true,  speed = 2.8,  bezier = "easeOutQuint", style = "slide" })
 hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 2.8,  bezier = "easeOutQuint", style = "slide" })
 hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 2.8,  bezier = "easeOutQuint", style = "slide" })
+-- The scratchpad crossfades instead: it's an overlay appearing above your
+-- space, not a place you travel to — different physics, different verb.
+hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 1.8, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
 
 -- Border motion (borderangle loop) is NOT set here: the Lua animation binding

@@ -136,6 +136,16 @@ window#waybar {
     background-image: none;
     box-shadow: none;
 }
+/* The scratchpad ghost — only rendered while the scratchpad is visible.
+ * Pink: it's an overlay of the frame, not one of the cyan stations. */
+#workspaces button.special {
+    color: @pink;
+    background-color: rgba(242, 48, 178, 0.10);
+    background-image: none;
+    text-shadow: 0 0 8px rgba(242, 48, 178, 0.55);
+    border-radius: 9px;
+}
+
 #workspaces button.urgent {
     color: @no0;
     background-color: @red;

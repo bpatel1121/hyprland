@@ -121,6 +121,15 @@ window#waybar {
     background-image: none;
     box-shadow: none;
 }
+/* The scratchpad ghost — an orange indicator lamp, lit only while the
+ * scratchpad is on screen. No glow; the lamp being lit is the signal. */
+#workspaces button.special {
+    color: @orange;
+    background-color: rgba(254, 128, 25, 0.14);
+    background-image: none;
+    border-radius: 4px;
+}
+
 #workspaces button.urgent {
     color: @bg0h;
     background-color: @red;
