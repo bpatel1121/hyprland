@@ -48,6 +48,8 @@ themes/
     ├── gtk/                    gtk.css + settings.ini -> GTK3 *and* GTK4
     ├── btop/theme.theme        linked in as themes/current.theme
     ├── starship.toml           minimal one-line prompt
+    ├── lazygit/config.yml      panel accents for the repo TUI
+    ├── nvim.lua                colorscheme + highlight token (read by linux-setup's nvim)
     ├── sddm/                   login greeter (QML) — installed by sddm-apply.sh
     └── wezterm/colors.lua      read by wezterm.lua from linux-setup
 ```
