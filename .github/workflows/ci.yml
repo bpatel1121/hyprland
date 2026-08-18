@@ -1,0 +1,69 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install validators
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q shellcheck lua5.4
+          pip install --quiet json5 tinycss2
+
+      - name: Shellcheck all scripts
+        run: shellcheck -S warning scripts/*.sh
+
+      - name: Lua syntax (hyprland.lua + every theme.lua / colors.lua)
+        run: |
+          luac5.4 -p hyprland.lua
+          for f in themes/*/theme.lua themes/*/wezterm/colors.lua; do
+            [ -f "$f" ] && luac5.4 -p "$f" && echo "OK $f"
+          done
+
+      - name: Themes return tables with required keys
+        run: |
+          for f in themes/*/theme.lua; do
+            lua5.4 -e "local t=dofile('$f'); assert(type(t)=='table' and t.active_border, '$f')" \
+              && echo "OK $f"
+          done
+
+      - name: JSONC / JSON / TOML parse
+        run: |
+          python3 - <<'PY'
+          import glob, json, json5, tomllib
+          for f in glob.glob('themes/*/waybar/config.jsonc') + glob.glob('themes/*/fastfetch/config.jsonc'):
+              json5.load(open(f)); print('OK', f)
+          for f in glob.glob('swaync/config.json'):
+              json.load(open(f)); print('OK', f)
+          for f in glob.glob('themes/*/starship.toml'):
+              tomllib.load(open(f, 'rb')); print('OK', f)
+          PY
+
+      - name: CSS parse (waybar / wofi / wlogout / gtk / swaync / swayosd)
+        run: |
+          python3 - <<'PY'
+          import glob, tinycss2
+          files = []
+          for pat in ['themes/*/waybar/style.css','themes/*/wofi/style.css',
+                      'themes/*/wlogout/style.css','themes/*/gtk/gtk.css',
+                      'themes/*/swaync/style.css','themes/*/swayosd/style.css']:
+              files += glob.glob(pat)
+          bad = False
+          for f in files:
+              errs = [r for r in tinycss2.parse_stylesheet(open(f).read()) if r.type == 'error']
+              print(('FAIL' if errs else 'OK'), f, errs[:1] if errs else '')
+              bad = bad or bool(errs)
+          raise SystemExit(1 if bad else 0)
+          PY
+
+      - name: Layer-shell CSS safety rules (no outer box-shadow, no `transparent`)
+        run: |
+          ! grep -rn --include='style.css' -E '^\s*box-shadow\s*:\s*[^i]' themes/*/waybar themes/*/wlogout 2>/dev/null | grep -v 'box-shadow: none' | grep -v inset
+          ! grep -rn --include='*.css' -w 'transparent' themes/ 2>/dev/null

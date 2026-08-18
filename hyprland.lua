@@ -42,7 +42,11 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("sh -c 'command -v swww-daemon >/dev/null && exec swww-daemon; "
              .. "command -v awww-daemon >/dev/null && exec awww-daemon; "
              .. "exec hyprpaper'")
-    hl.exec_cmd("mako")                                        -- notifications
+    -- Notification daemon: swaync (notification center + toggles panel),
+    -- falling back to mako on a box that only has that — degrade, don't die.
+    hl.exec_cmd("sh -c 'command -v swaync >/dev/null && exec swaync; exec mako'")
+    -- Volume/brightness OSD server (clients fire from the binds below).
+    hl.exec_cmd("sh -c 'command -v swayosd-server >/dev/null && exec swayosd-server'")
     hl.exec_cmd("hypridle")                                    -- dim -> lock -> dpms off
     -- Polkit agent. Without one running, anything that asks for privilege
     -- escalation through polkit (GUI installers, disk mounts, some settings
@@ -291,13 +295,17 @@ hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
--- Volume (wpctl / wireplumber — installed)
--- Volume / brightness on SUPER + F-keys (media keys aren't reaching Hyprland)
-hl.bind("SUPER + F1", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),   { repeating = true })
-hl.bind("SUPER + F2", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),    { repeating = true })
-hl.bind("SUPER + F3", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),{ repeating = true })
-hl.bind("SUPER + F5", hl.dsp.exec_cmd("brightnessctl set 5%-"),                         { repeating = true })
-hl.bind("SUPER + F6", hl.dsp.exec_cmd("brightnessctl set 5%+"),                         { repeating = true })
+-- Volume / brightness on SUPER + F-keys, through swayosd so an on-screen
+-- pill answers every press; falls back to bare wpctl/brightnessctl when
+-- swayosd isn't installed — same action, just silent.
+hl.bind("SUPER + F1", hl.dsp.exec_cmd("sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume mute-toggle; wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle'"),   { repeating = true })
+hl.bind("SUPER + F2", hl.dsp.exec_cmd("sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume lower; wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-'"),    { repeating = true })
+hl.bind("SUPER + F3", hl.dsp.exec_cmd("sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume raise; wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+'"),{ repeating = true })
+hl.bind("SUPER + F5", hl.dsp.exec_cmd("sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --brightness lower; brightnessctl set 5%-'"),                         { repeating = true })
+hl.bind("SUPER + F6", hl.dsp.exec_cmd("sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --brightness raise; brightnessctl set 5%+'"),                         { repeating = true })
+
+-- Notification center (swaync): history, DND toggle, sliders.
+hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd("swaync-client -t"))
 
 -- Media keys (playerctl — in linux-setup's packages/pacman.txt)
 hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
@@ -337,6 +345,18 @@ hl.layer_rule({
 hl.layer_rule({
     name  = "mako-blur",
     match = { namespace = "^notifications$" },
+    blur  = true,
+    ignore_alpha = 0.2,
+})
+hl.layer_rule({
+    name  = "swaync-blur",
+    match = { namespace = "^swaync-(notification-window|control-center)$" },
+    blur  = true,
+    ignore_alpha = 0.2,
+})
+hl.layer_rule({
+    name  = "swayosd-blur",
+    match = { namespace = "^swayosd$" },
     blur  = true,
     ignore_alpha = 0.2,
 })

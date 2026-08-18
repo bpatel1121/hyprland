@@ -1,5 +1,7 @@
 # hyprland
 
+![ci](https://github.com/bpatel1121/hyprland/actions/workflows/ci.yml/badge.svg)
+
 My Hyprland desktop as a theme system. This repo's root **is** `~/.config/hypr` —
 [linux-setup](https://github.com/bpatel1121/linux-setup) clones it there during
 provisioning; nothing to symlink.
@@ -243,13 +245,18 @@ they are deliberate manual steps:
 
 ```
 hyprpm update
-hyprpm add https://github.com/hyprwm/hyprland-plugins    # hyprexpo
-hyprpm enable hyprexpo                                    # SUPER+TAB overview
 hyprpm add https://github.com/VirtCode/hypr-dynamic-cursors
 hyprpm enable dynamic-cursors                             # cursor tilt/stretch
 hyprpm reload
 ```
 
-Be aware both are compiled against one exact Hyprland version and break on
+`hyprpm` needs `cmake` and `cpio` (in linux-setup's pacman.txt) on top of
+base-devel. Plugins compile against one exact Hyprland version and break on
 every Hyprland upgrade until `hyprpm update` is re-run — the binds and
-defaults here stay inert rather than erroring when the plugins are absent.
+defaults here stay inert rather than erroring when a plugin is absent.
+
+**hyprexpo is gone from upstream**: the official hyprland-plugins repo
+dropped it (its directory 404s; issue #672 sits unanswered), leaving only
+community forks of unknown upkeep — not worth a compositor-crash dependency.
+The `SUPER+TAB` overview bind stays wired and inert, ready for the day an
+official overview returns.

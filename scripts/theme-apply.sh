@@ -84,7 +84,30 @@ disown 2>/dev/null || true
 # (It's a symlink into linux-setup; touch follows it. mtime doesn't dirty git.)
 touch -c "$HOME/.config/wezterm/wezterm.lua" 2>/dev/null || true
 
-# --- Mako (symlink the theme's config, then reload) ---
+# --- swaync (notification center) --------------------------------------------
+# Behavior (the layout json) is shared repo-wide at swaync/config.json; only
+# the style is per-theme. Reload config then style on switch.
+if [ -f "$CUR/swaync/style.css" ]; then
+    mkdir -p "$HOME/.config/swaync"
+    ln -sfn "$HYPR/swaync/config.json" "$HOME/.config/swaync/config.json"
+    ln -sfn "$CUR/swaync/style.css"    "$HOME/.config/swaync/style.css"
+    swaync-client -R 2>/dev/null || true
+    swaync-client -rs 2>/dev/null || true
+fi
+
+# --- swayosd (volume/brightness OSD) ------------------------------------------
+# The server reads its stylesheet at startup, so restyle = restart. Cheap.
+if [ -f "$CUR/swayosd/style.css" ]; then
+    mkdir -p "$HOME/.config/swayosd"
+    ln -sfn "$CUR/swayosd/style.css" "$HOME/.config/swayosd/style.css"
+    if command -v swayosd-server >/dev/null 2>&1; then
+        pkill -x swayosd-server 2>/dev/null || true
+        swayosd-server >/dev/null 2>&1 &
+        disown 2>/dev/null || true
+    fi
+fi
+
+# --- Mako (legacy fallback — kept for themes that still ship one) ---
 if [ -f "$CUR/mako/config" ]; then
     mkdir -p "$HOME/.config/mako"
     ln -sfn "$CUR/mako/config" "$HOME/.config/mako/config"
