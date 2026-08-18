@@ -1,0 +1,6 @@
+# Keep stylua (LazyVim format-on-save) close to this repo's hand style.
+# Without this, its defaults retab the whole file and pollute git blame.
+indent_type = "Spaces"
+indent_width = 4
+column_width = 120
+quote_style = "AutoPreferDouble"
