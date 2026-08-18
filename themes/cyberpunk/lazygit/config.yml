@@ -1,0 +1,17 @@
+# lazygit — cyberpunk. Pink frame, cyan readouts, same vocabulary as the bar:
+# the active panel border is the frame color, selection is a raised surface.
+gui:
+  nerdFontsVersion: "3"
+  showRandomTip: false
+  theme:
+    activeBorderColor: ["#F230B2", "bold"]
+    inactiveBorderColor: ["#4D5A80"]
+    searchingActiveBorderColor: ["#F2D230", "bold"]
+    selectedLineBgColor: ["#212638"]
+    optionsTextColor: ["#29BECC"]
+    cherryPickedCommitFgColor: ["#29BECC"]
+    cherryPickedCommitBgColor: ["#212638"]
+    markedBaseCommitFgColor: ["#29BECC"]
+    markedBaseCommitBgColor: ["#F2D230"]
+    unstagedChangesColor: ["#F24848"]
+    defaultFgColor: ["#C8D0E0"]

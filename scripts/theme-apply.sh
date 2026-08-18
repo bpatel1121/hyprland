@@ -139,6 +139,13 @@ if [ -f "$CUR/starship.toml" ]; then
     ln -sfn "$CUR/starship.toml" "$HOME/.config/starship.toml"
 fi
 
+# lazygit reads its config at startup only — open instances keep the old
+# colors until relaunched. That's fine; it's a transient surface.
+if [ -f "$CUR/lazygit/config.yml" ]; then
+    mkdir -p "$HOME/.config/lazygit"
+    ln -sfn "$CUR/lazygit/config.yml" "$HOME/.config/lazygit/config.yml"
+fi
+
 # btop reads its theme by NAME from btop.conf, which isn't theme-managed. Link
 # every theme in under one fixed name so btop.conf can say color_theme =
 # "current" once and never be touched again.
