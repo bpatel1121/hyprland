@@ -10,7 +10,7 @@
     // Media island: now-playing + cava live with the clock, away from the
     // desktop controls. The clock keeps this island alive when nothing plays.
     "modules-center": ["mpris", "custom/cava-wave", "clock", "custom/agenda", "custom/todos"],
-    "modules-right": ["custom/updates", "custom/aur", "temperature", "pulseaudio", "network", "bluetooth", "battery", "tray", "custom/power"],
+    "modules-right": ["custom/updates", "custom/aur", "temperature", "pulseaudio", "network", "bluetooth", "battery", "tray", "custom/dnd", "custom/power"],
 
     // Bar bookends: Arch chip opens the launcher, power chip opens wlogout.
     "custom/launcher": {
@@ -166,6 +166,25 @@
     },
 
     "tray": { "spacing": 8 },
+
+    // DND indicator — swaync streams state (-swb: subscribe, waybar mode), so
+    // this updates instantly, no polling. Renders ONLY while DND is on: the
+    // muted bell appearing IS the signal. Click opens the center, right-click
+    // toggles DND back off.
+    "custom/dnd": {
+        "exec": "swaync-client -swb",
+        "return-type": "json",
+        "format": "{icon}",
+        "format-icons": {
+            "none": "", "notification": "",
+            "dnd-none": "󰂛", "dnd-notification": "󰂛",
+            "inhibited-none": "", "inhibited-notification": "",
+            "dnd-inhibited-none": "󰂛", "dnd-inhibited-notification": "󰂛"
+        },
+        "tooltip": false,
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw"
+    },
 
     "custom/power": {
         "format": "\u23fb",

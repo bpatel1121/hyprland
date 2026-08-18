@@ -261,6 +261,20 @@ window#waybar {
 }
 /* update counters tint to their own state colors when pending */
 #tray { background-color: rgba(0, 0, 0, 0); }
+
+/* ---- DND chip: exists ONLY while do-not-disturb is on. Amber = warning
+ * vocabulary — you are choosing to miss things. Zeroed at rest so the bar
+ * doesn't reserve space for an off state. ---- */
+#custom-dnd { padding: 0; margin: 0; background-color: rgba(0, 0, 0, 0); background-image: none; }
+#custom-dnd.dnd-none, #custom-dnd.dnd-notification,
+#custom-dnd.dnd-inhibited-none, #custom-dnd.dnd-inhibited-notification {
+    color: @amber;
+    background-color: rgba(242, 210, 48, 0.10);
+    text-shadow: 0 0 8px rgba(242, 210, 48, 0.5);
+    padding: 0 10px;
+    margin: 3px 2px;
+    border-radius: 9px;
+}
 #tray > .passive { background-color: rgba(0, 0, 0, 0); background-image: none; }
 #tray > .needs-attention { background-color: rgba(0, 0, 0, 0); background-image: none; }
 #custom-updates.pending { background-color: rgba(242, 210, 48, 0.10); }

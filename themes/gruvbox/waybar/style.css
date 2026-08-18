@@ -227,6 +227,18 @@ window#waybar {
     border-radius: 4px;
 }
 #tray { background-color: rgba(0, 0, 0, 0); }
+
+/* ---- DND cell: exists ONLY while do-not-disturb is on. Yellow = warning
+ * lamp — you are choosing to miss things. Zeroed at rest (no glow, CRT). ---- */
+#custom-dnd { padding: 0; margin: 0; background-color: rgba(0, 0, 0, 0); background-image: none; }
+#custom-dnd.dnd-none, #custom-dnd.dnd-notification,
+#custom-dnd.dnd-inhibited-none, #custom-dnd.dnd-inhibited-notification {
+    color: @yellow;
+    background-color: rgba(250, 189, 47, 0.12);
+    padding: 0 10px;
+    margin: 3px 2px;
+    border-radius: 4px;
+}
 #tray > .passive { background-color: rgba(0, 0, 0, 0); background-image: none; }
 #tray > .needs-attention { background-color: rgba(0, 0, 0, 0); background-image: none; }
 #custom-updates.pending { background-color: rgba(250, 189, 47, 0.12); }
