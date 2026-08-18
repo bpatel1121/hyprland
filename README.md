@@ -23,6 +23,11 @@ scripts/
 ├── waybar-updates.sh pacman|aur   update counters, as waybar JSON
 ├── waybar-cava.sh              streaming soundwave for the now-playing chip
 ├── border-motion.sh            rotates the border gradient (see "Motion")
+├── calendar-notify.sh          event alert daemon (see "The calendar")
+├── calendar-menu.sh            ikhal in a themed floating terminal (SUPER+A)
+├── waybar-agenda.sh            next-event chip for the bar
+├── todo-menu.sh                todoman list, floating (SUPER+SHIFT+A)
+├── waybar-todos.sh             due-soon todo chip for the bar
 ├── sddm-apply.sh               install the theme's SDDM greeter (sudo, see below)
 themes/
 ├── current -> <theme>          relative symlink — the single source of truth
@@ -77,6 +82,8 @@ clone path into the repo.
 | `SUPER+CTRL+L` | lock (hyprlock) — **not** `SUPER+L`, which is `focus right` |
 | `SUPER+ESCAPE` | power menu (wlogout) |
 | `SUPER+SHIFT+N` | notification center (swaync) |
+| `SUPER+A` | calendar — ikhal's month grid, floating (see "The calendar") |
+| `SUPER+SHIFT+A` | todos — todoman's list, floating (see "The calendar") |
 | `SUPER+F1..F3 / F5,F6` | volume / brightness, with a themed OSD pill (swayosd) |
 
 Idle is handled by `hypridle`, started at login: backlight dims at 5 min, the
@@ -114,6 +121,43 @@ that looked like "slide doesn't work"). theme-apply starts it only when the
 active theme declares `border_motion`, kills it on switch, and it dies with
 Hyprland. Workspaces slide; a switch between two empty workspaces shows
 nothing moving, which is physics, not a regression.
+
+## The calendar
+
+Standard-format calendaring with this desktop's alert layer on top. Storage
+is [khal](https://khal.readthedocs.io): every event an iCalendar `.ics` file
+in `~/.local/share/khal/calendars/` — portable to any calendar app, and
+two-way syncable to Google Calendar or any CalDAV via `vdirsyncer`
+(installed but deliberately unconfigured until you want your phone in the
+loop; khal's config ships from linux-setup's `config/khal/`).
+
+```
+khal new tomorrow 14:00 "Advisor meeting"      # quick add
+khal new mon 10:00 "C191A lecture [15m]"       # [Nm] = per-event alert lead
+SUPER+A                                        # ikhal: the month grid, floating
+```
+
+`calendar-notify.sh` (autostarted) reads khal through `calendar-lib.sh` and
+fires two themed notifications per event — "in N minutes" at the lead (10 by
+default, `[Nm]` in the title overrides) and "now" at start — deduped across
+restarts. The bar's center island grows a next-event chip only when
+something is within 8 hours; click it for the calendar. Recurrence, end
+dates ("until finals"), durations, and multi-day events are all khal-native
+— real RRULEs, not a homegrown format.
+
+Todos live in the same vdir, as standard VTODOs, through
+[todoman](https://todoman.readthedocs.io) (config ships from linux-setup's
+`config/todoman/`):
+
+```
+todo new "grade problem sets" --due "fri 17:00"
+todo done 3
+SUPER+SHIFT+A                                  # the list, floating
+```
+
+A second bar chip counts tasks due within 24 hours — hidden at zero, red
+the moment anything is overdue. Because events and todos share one storage
+layer, a single future `vdirsyncer` pairing syncs both.
 
 ## The login screen (SDDM)
 

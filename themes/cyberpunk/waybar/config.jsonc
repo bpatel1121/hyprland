@@ -9,7 +9,7 @@
     "modules-left": ["custom/launcher", "hyprland/workspaces"],
     // Media island: now-playing + cava live with the clock, away from the
     // desktop controls. The clock keeps this island alive when nothing plays.
-    "modules-center": ["mpris", "custom/cava-wave", "clock"],
+    "modules-center": ["mpris", "custom/cava-wave", "clock", "custom/agenda", "custom/todos"],
     "modules-right": ["custom/updates", "custom/aur", "temperature", "pulseaudio", "network", "bluetooth", "battery", "tray", "custom/power"],
 
     // Bar bookends: Arch chip opens the launcher, power chip opens wlogout.
@@ -68,6 +68,24 @@
         "exec": "$HOME/.config/hypr/scripts/waybar-cava.sh",
         "return-type": "json",
         "tooltip": false
+    },
+
+    // Next calendar event — renders only when something is within 8h
+    // (waybar-agenda.sh emits empty text otherwise). Click opens the agenda.
+    "custom/agenda": {
+        "exec": "$HOME/.config/hypr/scripts/waybar-agenda.sh",
+        "return-type": "json",
+        "interval": 60,
+        "on-click": "$HOME/.config/hypr/scripts/calendar-menu.sh"
+    },
+
+    // Open todos due within 24h (todoman, same vdir as khal). Hidden at
+    // zero; red class when anything is overdue. Click opens the list.
+    "custom/todos": {
+        "exec": "$HOME/.config/hypr/scripts/waybar-todos.sh",
+        "return-type": "json",
+        "interval": 60,
+        "on-click": "$HOME/.config/hypr/scripts/todo-menu.sh"
     },
 
     "clock": {

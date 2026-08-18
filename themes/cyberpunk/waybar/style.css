@@ -215,6 +215,35 @@ window#waybar {
     font-weight: bold;
 }
 
+/* ---- Agenda chip: the next event, only when one is near ---- */
+#custom-agenda {
+    color: @cyan;
+    background-color: rgba(41, 190, 204, 0.07);
+    background-image: none;
+    text-shadow: 0 0 8px rgba(41, 190, 204, 0.45);
+    padding: 0 10px;
+    margin: 3px 2px;
+    border-radius: 9px;
+}
+#custom-agenda.idle { padding: 0; margin: 0; background-color: rgba(0, 0, 0, 0); }
+
+/* ---- Todo chip: open tasks due soon; red when something is overdue ---- */
+#custom-todos {
+    color: @cyan;
+    background-color: rgba(41, 190, 204, 0.07);
+    background-image: none;
+    text-shadow: 0 0 8px rgba(41, 190, 204, 0.45);
+    padding: 0 10px;
+    margin: 3px 2px;
+    border-radius: 9px;
+}
+#custom-todos.overdue {
+    color: @red;
+    background-color: rgba(242, 72, 72, 0.09);
+    text-shadow: 0 0 8px rgba(242, 72, 72, 0.5);
+}
+#custom-todos.zero { padding: 0; margin: 0; background-color: rgba(0, 0, 0, 0); }
+
 /* ---- Right island: lean instrument set -------------------------------------
  * updates · (temp watchdog) · volume · net ↑↓ · bt icon · battery · tray
  * CPU/mem/idle-inhibitor cut deliberately — btop answers those better when you

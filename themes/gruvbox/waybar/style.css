@@ -188,6 +188,32 @@ window#waybar {
     font-weight: bold;
 }
 
+/* ---- Agenda cell: the next event, only when one is near (no glow) ---- */
+#custom-agenda {
+    color: @blue;
+    background-color: rgba(131, 165, 152, 0.08);
+    background-image: none;
+    padding: 0 10px;
+    margin: 3px 2px;
+    border-radius: 4px;
+}
+#custom-agenda.idle { padding: 0; margin: 0; background-color: rgba(0, 0, 0, 0); }
+
+/* ---- Todo cell: open tasks due soon; red when something is overdue ---- */
+#custom-todos {
+    color: @blue;
+    background-color: rgba(131, 165, 152, 0.08);
+    background-image: none;
+    padding: 0 10px;
+    margin: 3px 2px;
+    border-radius: 4px;
+}
+#custom-todos.overdue {
+    color: @red;
+    background-color: rgba(251, 73, 52, 0.10);
+}
+#custom-todos.zero { padding: 0; margin: 0; background-color: rgba(0, 0, 0, 0); }
+
 /* ---- Right island: lean instrument set ------------------------------------
  * updates · (temp watchdog) · volume · net ↑↓ · bt icon · battery · tray */
 /* Chip pass, CRT flavor: every instrument in its own faint tinted cell —

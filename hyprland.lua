@@ -51,6 +51,9 @@ hl.on("hyprland.start", function()
     -- Battery/charger events through the themed notifications (laptops; a
     -- desktop simply never triggers them). -s skips the startup replay.
     hl.exec_cmd("sh -c 'command -v poweralertd >/dev/null && exec poweralertd -s'")
+    -- Calendar alert daemon: themed "in N minutes" / "now" notifications from
+    -- the plain-text events file (see scripts/calendar-lib.sh).
+    hl.exec_cmd(home .. "/.config/hypr/scripts/calendar-notify.sh")
     -- Polkit agent. Without one running, anything that asks for privilege
     -- escalation through polkit (GUI installers, disk mounts, some settings
     -- panels) fails silently with no prompt at all. The package was installed
@@ -245,6 +248,13 @@ hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "1" }))
 -- Theme switcher
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/theme-menu.sh"))
 
+-- Agenda: upcoming events in a themed wofi window; top row edits the file.
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/calendar-menu.sh"))
+
+-- Todos: todoman's list in the same floating-terminal shape (todo new / todo
+-- done from the shell it leaves open). Same vdir as the calendar.
+hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/todo-menu.sh"))
+
 -- Session. Lock is on SUPER+CTRL+L, not SUPER+L — that one is already `focus
 -- right` in the vim-direction block below. Both surfaces are themed and follow
 -- themes/current/.
@@ -362,6 +372,26 @@ hl.layer_rule({
     match = { namespace = "^(wlogout|logout_dialog)$" },
     blur  = true,
     ignore_alpha = 0.2,
+})
+
+-- The calendar floats: ikhal is a peek-at-your-week surface, not a tiling
+-- citizen. Centered, laptop-friendly size.
+hl.window_rule({
+    name  = "ikhal-float",
+    match = { class = "^ikhal$" },
+    float = true,
+    size  = { 1000, 640 },   -- vec2: positional, not named
+    center = true,
+})
+
+-- The todo list floats too — smaller than the calendar; it's a glance-and-go
+-- surface (SUPER+SHIFT+A).
+hl.window_rule({
+    name  = "todos-float",
+    match = { class = "^todos$" },
+    float = true,
+    size  = { 900, 520 },
+    center = true,
 })
 
 hl.window_rule({
