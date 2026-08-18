@@ -10,7 +10,7 @@
     // Media island: now-playing + cava live with the clock, away from the
     // desktop controls. The clock keeps this island alive when nothing plays.
     "modules-center": ["mpris", "custom/cava-wave", "clock", "custom/agenda", "custom/todos"],
-    "modules-right": ["custom/updates", "custom/aur", "temperature", "pulseaudio", "network", "bluetooth", "battery", "custom/power"],
+    "modules-right": ["custom/updates", "custom/aur", "temperature", "pulseaudio", "network", "bluetooth", "battery", "tray", "custom/power"],
 
     // Bar bookends: Arch chip opens the launcher, power chip opens wlogout.
     "custom/launcher": {
@@ -128,8 +128,8 @@
 
     "pulseaudio": {
         "format": "{icon} {volume}%",
-        "format-muted": " muted",
-        "format-icons": { "default": ["", "", ""] },
+        "format-muted": "󰝟 muted",
+        "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] },
         "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
         "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
         "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
@@ -156,12 +156,16 @@
         "on-click": "wezterm start -- bluetoothctl"
     },
 
+    // Only renders on machines that HAVE a battery (the laptop); a desktop
+    // shows nothing here and that is correct, not a bug.
     "battery": {
         "format": "{icon} {capacity}%",
-        "format-charging": " {capacity}%",
-        "format-icons": ["", "", "", "", ""],
+        "format-charging": "󰂄 {capacity}%",
+        "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"],
         "states": { "warning": 30, "critical": 15 }
     },
+
+    "tray": { "spacing": 8 },
 
     "custom/power": {
         "format": "\u23fb",

@@ -245,14 +245,14 @@ window#waybar {
 #custom-todos.zero { padding: 0; margin: 0; background-color: rgba(0, 0, 0, 0); }
 
 /* ---- Right island: lean instrument set -------------------------------------
- * updates · (temp watchdog) · volume · net ↑↓ · bt icon · battery
+ * updates · (temp watchdog) · volume · net ↑↓ · bt icon · battery · tray
  * CPU/mem/idle-inhibitor cut deliberately — btop answers those better when you
  * actually care, and fewer readouts lets the ones left actually get read. */
 /* Material-chip pass: each instrument sits in its own faint tinted pill, so
  * the right island reads as a row of components rather than a text strip.
  * Tints stay at ~7% — chips, not buttons. */
 #custom-updates, #custom-aur, #temperature, #network, #pulseaudio,
-#bluetooth, #battery {
+#bluetooth, #battery, #tray {
     padding: 0 10px;
     margin: 3px 2px;
     background-color: rgba(41, 190, 204, 0.07);
@@ -260,6 +260,9 @@ window#waybar {
     border-radius: 9px;
 }
 /* update counters tint to their own state colors when pending */
+#tray { background-color: rgba(0, 0, 0, 0); }
+#tray > .passive { background-color: rgba(0, 0, 0, 0); background-image: none; }
+#tray > .needs-attention { background-color: rgba(0, 0, 0, 0); background-image: none; }
 #custom-updates.pending { background-color: rgba(242, 210, 48, 0.10); }
 #custom-aur.pending     { background-color: rgba(48, 242, 145, 0.10); }
 #custom-updates.zero, #custom-aur.zero { background-color: rgba(137, 141, 153, 0.06); }
