@@ -48,6 +48,9 @@ hl.on("hyprland.start", function()
     -- Volume/brightness OSD server (clients fire from the binds below).
     hl.exec_cmd("sh -c 'command -v swayosd-server >/dev/null && exec swayosd-server'")
     hl.exec_cmd("hypridle")                                    -- dim -> lock -> dpms off
+    -- Battery/charger events through the themed notifications (laptops; a
+    -- desktop simply never triggers them). -s skips the startup replay.
+    hl.exec_cmd("sh -c 'command -v poweralertd >/dev/null && exec poweralertd -s'")
     -- Polkit agent. Without one running, anything that asks for privilege
     -- escalation through polkit (GUI installers, disk mounts, some settings
     -- panels) fails silently with no prompt at all. The package was installed
@@ -249,8 +252,10 @@ hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + ESCAPE",   hl.dsp.exec_cmd("wlogout -p layer-shell"))
 
 -- Screenshots (grim + slurp + wl-clipboard — all installed)
-hl.bind("Print",         hl.dsp.exec_cmd("grim - | wl-copy"))               -- whole screen -> clipboard
-hl.bind("SUPER + Print", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy')) -- region select -> clipboard
+-- Screenshots confirm themselves: clipboard captures are invisible actions,
+-- and invisible actions breed double-takes. The toast is the receipt.
+hl.bind("Print",         hl.dsp.exec_cmd("grim - | wl-copy && notify-send -t 2500 'Screenshot' 'full screen copied to clipboard'"))
+hl.bind("SUPER + Print", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy && notify-send -t 2500 "Screenshot" "region copied to clipboard"'))
 
 -- Focus (arrows + vim HJKL)
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))

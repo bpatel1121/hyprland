@@ -24,12 +24,16 @@
 .notification-row {
   background-color: rgba(0, 0, 0, 0);
   background-image: none;
+  /* GtkListBoxRow ships default padding — the last few off-grid pixels. */
+  padding: 0;
+  margin: 0;
+  border: none;
 }
 .notification {
   background-color: rgba(40, 40, 40, 0.85);   /* frosted by swaync-blur rule */
-  border: 2px solid @orange;
+  border: 1px solid rgba(254, 128, 25, 0.60);   /* soft chrome — a card, not a poster */
   border-radius: 4px;
-  margin: 6px 10px;
+  margin: 8px 14px;                            /* the same grid as gaps_out and the bar */
   padding: 0;
 }
 .notification-content { padding: 10px 12px; }
@@ -37,26 +41,19 @@
 .notification-content .body    { color: @gray; }
 .notification-content .time    { color: @gray; font-size: 11px; }
 .notification.critical { border-color: @red; }
-/* The X: strip ALL of GTK's default button chrome, then keep it nearly
- * invisible until hovered — an affordance, not a feature. */
+/* No X, anywhere. Dismissal is click-the-notification (default action +
+ * hide-on-action in swaync/config.json) and the control center's "clear"
+ * button. An element that does not exist cannot be misaligned. */
 .close-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
   background-color: rgba(0, 0, 0, 0);
   background-image: none;
-  border: none;
   box-shadow: none;
-  text-shadow: none;
-  color: @gray;
-  opacity: 0.45;
-  padding: 0;
-  margin: 6px 6px 0 0;
-  min-width: 16px;
-  min-height: 16px;
-  border-radius: 2px;
-}
-.close-button:hover {
-  opacity: 1;
-  color: @red;
-  background-color: rgba(251, 73, 52, 0.15);
 }
 .notification-default-action,
 .notification-action {
