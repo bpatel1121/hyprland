@@ -5,7 +5,7 @@
 # Same minimal one-line layout as cyberpunk, palette re-cast:
 #   path    cream   #ebdbb2   where you are
 #   branch  orange  #fe8019   what you're on (the frame color)
-#   arrow   aqua    #8ec07c   where you type  (red when the last cmd failed)
+#   arrow   blue    #83a598   where you type  (red when the last cmd failed)
 #   dirty ● yellow  #fabd2f   uncommitted work exists
 #
 # Glyph choices (󰘬 ● ❯ ❮ ↑ ↓ ×) are the JetBrainsMono-Nerd-Font-verified set
@@ -43,10 +43,10 @@ command = "printf ●"
 style = "fg:#fabd2f"
 format = " [$output]($style)"
 
-# Aqua on success — far from red on the hue wheel, so failure reads at a
-# glance; gruvbox's aqua also holds better contrast on bg0_h than its blue.
+# Muted sky blue on success — cool against the warm frame, far from red so
+# failure reads at a glance; it is the readout color everywhere in this theme.
 [character]
-success_symbol = "[❯](fg:#8ec07c)"
+success_symbol = "[❯](fg:#83a598)"
 error_symbol = "[❯](fg:#fb4934)"
 vimcmd_symbol = "[❮](fg:#928374)"
 

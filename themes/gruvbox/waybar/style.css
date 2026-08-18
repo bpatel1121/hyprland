@@ -1,4 +1,4 @@
-/* Gruvbox · dark — matte HUD, frosted islands, lamplight not neon
+/* Gruvbox · dark — CRT terminal HUD: sharp panels, scanlines, block cursor
  *
  * DESIGN RULES (inherited from the cyberpunk stylesheet — keep when editing):
  *
@@ -9,16 +9,16 @@
  *      keyword — GTK3 composites both as black halos on layer-shell surfaces.
  *      Always `background-color: rgba(0,0,0,0); background-image: none;`.
  *
- *   3. Glow is built only from text-shadow and inset box-shadow (halo-safe).
- *      In THIS theme it is also scarce on purpose: gruvbox is matte lamplight,
- *      so only the active workspace and alert pulses glow at all. If you're
- *      adding a text-shadow, you're probably breaking the mood.
+ *   3. NO glow. The red alert pulse is the only text-shadow allowed. This
+ *      theme's signature is the CRT instead: sharp 90° corners, chunky 2px
+ *      borders, and scanlines (a repeating background-image — halo-safe).
+ *      Cyberpunk glows; gruvbox scans.
  *
- *   4. The bar is TWO-TONE at rest — an aqua instrument panel in an orange
+ *   4. The bar is TWO-TONE at rest — an blue-gray instrument panel in an orange
  *      frame (cyberpunk's pink/cyan pair, re-cast warm/cool):
  *        orange  the frame — island hairline + edge, continuing into the
  *                orange->yellow window border just beneath
- *        aqua    every readout — active workspace, clock, volume, network,
+ *        blue    every readout — active workspace, clock, volume, network,
  *                bluetooth, battery
  *      Every other color is STATE, appearing only when something is true:
  *        yellow  repo updates pending — Pac-Man keeps his color in every theme
@@ -38,8 +38,8 @@
 @define-color bg3    #665c54;   /* dim           */
 @define-color orange #fe8019;   /* frame          */
 @define-color yellow #fabd2f;   /* warning        */
-@define-color aqua   #8ec07c;   /* readouts       */
-@define-color green  #b8bb26;   /* good          */
+@define-color blue   #83a598;   /* readouts — muted sky, the alley twilight */
+@define-color green  #98971a;   /* good          */
 @define-color red    #fb4934;   /* alert         */
 @define-color gray   #928374;   /* dormant       */
 @define-color fg     #ebdbb2;   /* text          */
@@ -59,17 +59,20 @@ window#waybar {
 }
 
 /* ---- The three islands ----------------------------------------------------
- * One unified orange accent across all three, not a per-island color flow.
- * The fill is translucent on purpose — the Hyprland layer rule frosts it.
- * Warmer and slightly more opaque than cyberpunk: aged wood, not glass. */
+ * One unified orange frame across all three. The fill stays translucent so
+ * the Hyprland layer rule frosts the pixel art behind, and the scanlines ride
+ * on top of that frost: a tube television showing the alley. */
 .modules-left,
 .modules-center,
 .modules-right {
-    background-color: rgba(29, 32, 33, 0.78);
-    border: 1px solid rgba(254, 128, 25, 0.18);          /* lit edge */
-    border-radius: 12px;
+    background-color: rgba(29, 32, 33, 0.80);
+    /* CRT scanlines — the signature, the way glow is cyberpunk's. */
+    background-image: repeating-linear-gradient(180deg,
+        rgba(0, 0, 0, 0.14) 0px, rgba(0, 0, 0, 0.14) 1px,
+        rgba(0, 0, 0, 0)    1px, rgba(0, 0, 0, 0)    3px);
+    border: 2px solid rgba(254, 128, 25, 0.55);          /* chunky TUI frame */
+    border-radius: 4px;
     padding: 2px 8px;
-    box-shadow: inset 0 2px 0 rgba(254, 128, 25, 0.75);  /* the accent hairline */
 }
 
 /* ---- Workspaces ------------------------------------------------------------ */
@@ -85,23 +88,23 @@ window#waybar {
     color: rgba(146, 131, 116, 0.85);                    /* gray — has windows */
     background-color: rgba(0, 0, 0, 0);
     background-image: none;
-    border-radius: 8px;
+    border-radius: 4px;
     transition: color 0.2s ease-in-out;
 }
 #workspaces button.empty {
     color: rgba(146, 131, 116, 0.35);                    /* nothing there */
 }
-/* The one lit element: an aqua lozenge, matte — gradient reads as paint, the
- * inset rim replaces the outer glow rule 2 forbids. */
+/* The block cursor: a solid orange rectangle, exactly like a terminal cursor
+ * sitting on the bar. The one place the frame color goes loud. */
 #workspaces button.active {
     color: @bg0h;
-    background-image: linear-gradient(180deg, #a9d4a0, #8ec07c);
-    box-shadow: inset 0 0 0 1px rgba(235, 219, 178, 0.85);
-    text-shadow: 0 0 3px rgba(29, 32, 33, 0.4);
+    background-color: @orange;
+    background-image: none;
+    box-shadow: none;
     font-weight: bold;
 }
 #workspaces button:hover {
-    color: @aqua;
+    color: @blue;
     background-color: @bg0;
     background-image: none;
     box-shadow: none;
@@ -118,16 +121,16 @@ window#waybar {
  * no glow — the chip lighting up IS the signal here. Spotify keeps its green
  * exception, which lands on gruvbox's own green anyway. */
 #mpris {
-    color: @aqua;
-    background-color: rgba(142, 192, 124, 0.08);
+    color: @blue;
+    background-color: rgba(131, 165, 152, 0.08);
     background-image: none;
     padding: 0 12px;
     margin: 3px 2px;
-    border-radius: 8px;
+    border-radius: 4px;
 }
 #mpris.spotify {
     color: @green;
-    background-color: rgba(184, 187, 38, 0.08);
+    background-color: rgba(152, 151, 26, 0.08);
 }
 /* Paused powers the chip down. Listed after .spotify so it wins for both. */
 #mpris.paused,
@@ -138,14 +141,14 @@ window#waybar {
 #mpris.stopped { color: rgba(146, 131, 116, 0.35); background-color: rgba(0, 0, 0, 0); }
 
 /* ---- Center island: the clock ---------------------------------------------
- * Bold aqua, no glow — a painted sign, not a lit tube. */
+ * Bold muted blue, no glow — a painted sign, not a lit tube. */
 #clock {
-    color: @aqua;
+    color: @blue;
     background-color: rgba(0, 0, 0, 0);
     background-image: none;
     padding: 0 16px;
     margin: 3px 2px;
-    border-radius: 8px;
+    border-radius: 4px;
     font-weight: bold;
 }
 
@@ -157,7 +160,7 @@ window#waybar {
     margin: 3px 1px;
     background-color: rgba(0, 0, 0, 0);
     background-image: none;
-    border-radius: 8px;
+    border-radius: 4px;
 }
 #tray > .passive { background-color: rgba(0, 0, 0, 0); background-image: none; }
 #tray > .needs-attention { background-color: rgba(0, 0, 0, 0); background-image: none; }
@@ -186,15 +189,15 @@ window#waybar {
     animation: pulse-red 1s ease-in-out infinite alternate;
 }
 
-/* Aqua = every readout. Anything NOT aqua below is a state, not a color choice. */
-#pulseaudio { color: @aqua; }
+/* Blue = every readout. Anything NOT blue below is a state, not a color choice. */
+#pulseaudio { color: @blue; }
 #pulseaudio.muted     { color: rgba(146, 131, 116, 0.5); }
-#network    { color: @aqua; }
+#network    { color: @blue; }
 #network.disconnected { color: rgba(146, 131, 116, 0.5); }
-#bluetooth  { color: @aqua; }
+#bluetooth  { color: @blue; }
 #bluetooth.disabled   { color: rgba(146, 131, 116, 0.5); }
 
-#battery    { color: @aqua; }
+#battery    { color: @blue; }
 #battery.charging { color: @green; }
 /* Warning and critical share red and differ by motion — yellow belongs to
  * Pac-Man alone, so <30% goes steady red and <15% starts pulsing. */
@@ -214,6 +217,6 @@ window#waybar {
 tooltip {
     background-color: rgba(29, 32, 33, 0.95);
     border: 1px solid rgba(254, 128, 25, 0.30);   /* orange, matching the frame */
-    border-radius: 10px;
+    border-radius: 4px;
 }
 tooltip label { color: @fg; }

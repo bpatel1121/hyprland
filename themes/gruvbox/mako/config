@@ -7,8 +7,8 @@ text-color=#ebdbb2
 # Orange border — the frame color, same rule as waybar's islands.
 border-color=#fe8019
 border-size=2
-border-radius=12
-progress-color=over #8ec07c
+border-radius=4
+progress-color=over #83a598
 padding=12,16
 margin=12
 default-timeout=4000
@@ -29,7 +29,7 @@ on-button-middle=exec makoctl dismiss --all
 group-by=app-name
 
 [urgency=low]
-border-color=#8ec07c
+border-color=#83a598
 text-color=#928374
 default-timeout=3000
 
@@ -40,7 +40,7 @@ default-timeout=0
 
 # Spotify notifications get a green border + bigger album art
 [app-name=Spotify]
-border-color=#b8bb26
+border-color=#98971a
 max-icon-size=64
 default-timeout=6000
 

@@ -9,14 +9,14 @@
         "source": "arch",
         "padding": { "top": 1, "right": 3 },
         // orange then aqua — the logo carries the same two colors as the bar
-        "color": { "1": "38;2;254;128;25", "2": "38;2;142;192;124" }
+        "color": { "1": "38;2;254;128;25", "2": "38;2;131;165;152" }
     },
 
     "display": {
         "separator": "  ",
         "color": {
             "keys":  "38;2;254;128;25",    // orange
-            "title": "38;2;142;192;124"    // aqua
+            "title": "38;2;131;165;152"    // aqua
         }
     },
 

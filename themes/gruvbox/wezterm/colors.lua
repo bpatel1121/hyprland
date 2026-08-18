@@ -5,7 +5,7 @@ return {
     cursor_bg     = "#fe8019",           -- orange, the frame color
     cursor_border = "#fe8019",
     cursor_fg     = "#1d2021",
-    selection_bg  = "#8ec07c",           -- aqua, the readout color
+    selection_bg  = "#83a598",           -- muted blue, the readout color
     selection_fg  = "#1d2021",
     ansi = {
         "#282828", -- black   (bg0)

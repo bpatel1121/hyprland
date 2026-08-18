@@ -9,11 +9,10 @@ return {
     gaps_in = 5, gaps_out = 14, border_size = 2,
     active_border  = { colors = { "rgba(fe8019ff)", "rgba(fabd2fff)" }, angle = 45 },
     inactive_border = "rgba(3c3836ff)",              -- bg1
-    rounding = 10, rounding_power = 2,
+    rounding = 4, rounding_power = 2,   -- near-sharp: CRT panels, softened one notch
     active_opacity = 1.0, inactive_opacity = 0.94,
     blur   = { enabled = true, size = 6, passes = 3, vibrancy = 0.12 },
-    -- Ember, not bloom: neutral orange at modest alpha and a tighter range than
-    -- cyberpunk's pink. Windows should look lit by the wallpaper's lanterns,
-    -- not radiating their own light.
-    shadow = { enabled = true, range = 14, render_power = 3, color = 0x59d65d0e }, -- d65d0e ember
+    -- Full matte: a plain dark shadow for depth, no color cast. Gruvbox is
+    -- pigment, not light — windows sit ON the alley, they don't glow over it.
+    shadow = { enabled = true, range = 12, render_power = 3, color = 0x59000000 },
 }

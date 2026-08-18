@@ -26,8 +26,8 @@ button {
     color: #ebdbb2;
     background-color: rgba(40, 40, 40, 0.92);
     background-image: none;
-    border: 1px solid rgba(254, 128, 25, 0.35);   /* orange — the frame */
-    border-radius: 14px;
+    border: 2px solid rgba(254, 128, 25, 0.55);   /* chunky TUI frame */
+    border-radius: 4px;
     margin: 12px;
     transition: color 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }
@@ -36,14 +36,14 @@ button {
  * No text-shadow: matte theme, the color change carries it. */
 button:hover,
 button:focus {
-    color: #8ec07c;
+    color: #83a598;
     background-color: #282828;
-    border: 1px solid #8ec07c;
+    border: 2px solid #83a598;
 }
 
 /* The two that can't be undone go red on hover instead. */
 #reboot:hover,   #reboot:focus,
 #shutdown:hover, #shutdown:focus {
     color: #fb4934;
-    border: 1px solid #fb4934;
+    border: 2px solid #fb4934;
 }

@@ -6,7 +6,7 @@
  * the window border, so file dialogs look like they belong to this desktop.
  *
  * Palette: bg0_h #1d2021 · bg0 #282828 · bg1 #3c3836 · bg3 #665c54
- *          orange #fe8019 · aqua #8ec07c · green #b8bb26 · yellow #fabd2f
+ *          orange #fe8019 · blue #83a598 · green #98971a · yellow #fabd2f
  *          red #fb4934 · gray #928374 · fg #ebdbb2
  */
 
@@ -33,8 +33,8 @@
 @define-color destructive_color    #fb4934;
 @define-color destructive_bg_color #fb4934;
 @define-color destructive_fg_color #1d2021;
-@define-color success_color        #b8bb26;
-@define-color success_bg_color     #b8bb26;
+@define-color success_color        #98971a;
+@define-color success_bg_color     #98971a;
 @define-color warning_color        #fabd2f;
 @define-color warning_bg_color     #fabd2f;
 @define-color error_color          #fb4934;
@@ -53,7 +53,7 @@
 @define-color unfocused_borders         #3c3836;
 @define-color warning_color_gtk3        #fabd2f;
 
-/* Rounded corners on GTK popovers/menus, to sit with Hyprland's rounding = 10. */
+/* Near-sharp 4px corners on GTK popovers/menus, matching Hyprland's rounding = 4. */
 popover, menu, .context-menu {
-    border-radius: 10px;
+    border-radius: 4px;
 }

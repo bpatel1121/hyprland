@@ -5,6 +5,14 @@ set -uo pipefail
 HYPR="$HOME/.config/hypr"
 CUR="$HYPR/themes/current"
 
+# --- Polarity (dark|light) ---------------------------------------------------
+# Themes may declare `polarity = "light"` in theme.lua; anything else (or
+# nothing) means dark. Extracted with sed rather than a lua interpreter so the
+# script keeps zero dependencies — the key just has to sit on its own line.
+polarity=$(sed -n 's/^[[:space:]]*polarity[[:space:]]*=[[:space:]]*"\(light\|dark\)".*/\1/p' \
+    "$CUR/theme.lua" 2>/dev/null | head -n1)
+[ "$polarity" = light ] || polarity=dark
+
 # --- Wallpaper -------------------------------------------------------------
 # Prefer swww/awww: it cross-fades between wallpapers, which is what makes a
 # theme switch look like a transition rather than a snap. Falls back to
@@ -103,19 +111,32 @@ if [ -d "$CUR/gtk" ]; then
         [ -f "$CUR/gtk/settings.ini" ] && ln -sfn "$CUR/gtk/settings.ini" "$HOME/.config/$d/settings.ini"
     done
 
-    # adw-gtk3-dark comes from the `adw-gtk-theme` package (renamed upstream
-    # from adw-gtk3). Fall back to GTK's built-in Adwaita-dark if it's absent,
-    # so a fresh machine still ends up dark rather than blinding white.
-    gtktheme="Adwaita-dark"
-    for p in /usr/share/themes ~/.themes; do
-        [ -d "$p/adw-gtk3-dark" ] && gtktheme="adw-gtk3-dark"
-    done
-    icons="Adwaita"; [ -d /usr/share/icons/Papirus-Dark ] && icons="Papirus-Dark"
+    # Polarity-aware: the theme's declared polarity picks the GTK theme, icon
+    # variant, and color-scheme together, so a light theme flips the whole
+    # desktop (and everything honoring prefers-color-scheme — Firefox, most
+    # websites — follows for free). adw-gtk3/-dark come from the
+    # `adw-gtk-theme` package (renamed upstream from adw-gtk3); fall back to
+    # GTK's built-ins if it's absent so a fresh machine still matches polarity.
+    if [ "$polarity" = light ]; then
+        scheme="prefer-light"
+        gtktheme="Adwaita"
+        for p in /usr/share/themes ~/.themes; do
+            [ -d "$p/adw-gtk3" ] && gtktheme="adw-gtk3"
+        done
+        icons="Adwaita"; [ -d /usr/share/icons/Papirus-Light ] && icons="Papirus-Light"
+    else
+        scheme="prefer-dark"
+        gtktheme="Adwaita-dark"
+        for p in /usr/share/themes ~/.themes; do
+            [ -d "$p/adw-gtk3-dark" ] && gtktheme="adw-gtk3-dark"
+        done
+        icons="Adwaita"; [ -d /usr/share/icons/Papirus-Dark ] && icons="Papirus-Dark"
+    fi
     cursor="default"; [ -d /usr/share/icons/capitaine-cursors ] && cursor="capitaine-cursors"
 
     if command -v gsettings >/dev/null 2>&1; then
         gs() { gsettings set org.gnome.desktop.interface "$1" "$2" 2>/dev/null || true; }
-        gs color-scheme 'prefer-dark'
+        gs color-scheme "$scheme"
         gs gtk-theme    "$gtktheme"
         gs icon-theme   "$icons"
         gs cursor-theme "$cursor"

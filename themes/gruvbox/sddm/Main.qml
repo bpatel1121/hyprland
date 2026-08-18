@@ -24,7 +24,7 @@ Rectangle {
 
     // Cybrcolors, same names as waybar/style.css
     readonly property color cOrange: "#fe8019"  // frame
-    readonly property color cAqua:   "#8ec07c"  // content
+    readonly property color cBlue:   "#83a598"  // readouts — muted sky blue
     readonly property color cRed:   "#fb4934"   // re0 — failure only
     readonly property color cGray:  "#928374"   // wh0 — dormant
     readonly property color cFg:    "#ebdbb2"   // text
@@ -53,8 +53,6 @@ Rectangle {
             font.family: root.mono
             font.pixelSize: 96
             font.bold: true
-            style: Text.Raised
-            styleColor: "#80D65D0E"   // ember at ~50% — the budget glow
             text: Qt.formatTime(new Date(), "HH:mm")
         }
         Text {
@@ -84,7 +82,7 @@ Rectangle {
 
         // username — prefilled with the last user; small and quiet
         Rectangle {
-            width: 320; height: 34; radius: 10
+            width: 320; height: 34; radius: 4
             color: root.cInner
             border.width: 1
             border.color: userInput.activeFocus ? root.cOrange : "#3c3836"
@@ -106,7 +104,7 @@ Rectangle {
         // password — 320x52, radius 12, 2px pink border: hyprlock's numbers
         Rectangle {
             id: passBox
-            width: 320; height: 52; radius: 12
+            width: 320; height: 52; radius: 4
             color: root.cInner
             border.width: 2
             border.color: failText.visible ? root.cRed : root.cOrange
@@ -162,7 +160,7 @@ Rectangle {
         font.pixelSize: 12
 
         background: Rectangle {
-            color: root.cInner; radius: 10
+            color: root.cInner; radius: 4
             border.width: 1; border.color: "#3c3836"
         }
         contentItem: Text {
@@ -184,14 +182,14 @@ Rectangle {
         Text {
             visible: sddm.canSuspend
             text: "⏾"          // fallback-safe glyph; nerd font shows it fine
-            color: powerSuspend.containsMouse ? root.cAqua : root.cGray
+            color: powerSuspend.containsMouse ? root.cBlue : root.cGray
             font.family: root.mono; font.pixelSize: 20
             MouseArea { id: powerSuspend; anchors.fill: parent; hoverEnabled: true; onClicked: sddm.suspend() }
         }
         Text {
             visible: sddm.canReboot
             text: "↻"
-            color: powerReboot.containsMouse ? root.cAqua : root.cGray
+            color: powerReboot.containsMouse ? root.cBlue : root.cGray
             font.family: root.mono; font.pixelSize: 20
             MouseArea { id: powerReboot; anchors.fill: parent; hoverEnabled: true; onClicked: sddm.reboot() }
         }

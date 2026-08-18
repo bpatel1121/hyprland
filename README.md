@@ -21,6 +21,7 @@ scripts/
 ├── sddm-apply.sh               install the theme's SDDM greeter (sudo, see below)
 themes/
 ├── current -> cyberpunk        relative symlink — the single source of truth
+├── gruvbox/                    dark · pixel alley (see "The gruvbox theme")
 └── cyberpunk/
     ├── theme.lua               borders, gaps, blur, shadow (read by hyprland.lua)
     ├── wallpaper.webp
@@ -118,6 +119,19 @@ Copy `themes/cyberpunk` to `themes/<name>`, swap the palette and wallpaper,
 and it appears in the picker automatically. Only `theme.lua` is required —
 every other file degrades gracefully if absent.
 
+Themes are **dark by default**. A light theme declares itself with one line in
+`theme.lua`:
+
+```
+polarity = "light",
+```
+
+theme-apply.sh reads that and flips the whole desktop's polarity in one go:
+`prefer-light`, `adw-gtk3` instead of `-dark`, `Papirus-Light` — and because
+Firefox and most websites honor `prefers-color-scheme`, the browser follows
+without being told. (No light theme ships right now — the machinery is here
+for whenever one does.)
+
 ## The cyberpunk theme
 
 [Cybrcolors](https://github.com/cybrcore/cybrcolors) palette — neon noir on
@@ -159,13 +173,17 @@ all in `extra` — note upstream renamed `adw-gtk3` to
 [Gruvbox dark](https://github.com/morhetz/gruvbox) over a pixel-art alley at
 dusk — the same design language as cyberpunk with the temperament flipped from
 neon to matte. The role assignments carry over one-to-one: **orange** is the
-frame (islands' hairline, window border, mako's edge, btop's boxes), **aqua**
+frame (islands' hairline, window border, mako's edge, btop's boxes), **muted sky blue** (`#83a598`, the alley's twilight)
 is every readout, and state colors keep their meanings — yellow for pending
 repo updates (Pac-Man stays yellow in every theme), green for AUR/charging,
-red for alerts, purple reserved for wofi. What changes is the light: glow is
-almost entirely absent (the alert pulse is the only text-shadow in the bar),
-shadows are a low ember instead of a bloom, and the lock/login clock is cream
-with a warm undertone — lamplight, not neon. The two themes deliberately share
+red for alerts, purple reserved for wofi. What changes is the identity:
+where cyberpunk is rounded neon glass, gruvbox is a **CRT terminal** —
+near-sharp 4px corners everywhere (waybar panels, popovers, the lock input),
+chunky 2px orange borders like TUI boxes, faint **scanlines** across the bar's
+islands (a repeating background-image, so it's halo-safe), and the active
+workspace drawn as a solid orange **block cursor**. No glow anywhere; the red
+alert pulse is the only text-shadow in the theme. Cyberpunk glows; gruvbox
+scans. The two themes deliberately share
 their waybar `config.jsonc` and wlogout `layout` verbatim: behavior identical,
 skin swapped, which is the whole thesis of this repo.
 

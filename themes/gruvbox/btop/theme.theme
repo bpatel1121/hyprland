@@ -10,13 +10,13 @@
 theme[main_bg]="#1d2021"
 theme[main_fg]="#ebdbb2"
 theme[title]="#fe8019"
-theme[hi_fg]="#8ec07c"
+theme[hi_fg]="#83a598"
 theme[selected_bg]="#282828"
 theme[selected_fg]="#fe8019"
 theme[inactive_fg]="#665c54"
 theme[graph_text]="#928374"
 theme[meter_bg]="#3c3836"
-theme[proc_misc]="#b8bb26"
+theme[proc_misc]="#98971a"
 
 # Box outlines — orange is the frame color everywhere in this desktop.
 theme[cpu_box]="#fe8019"
@@ -26,22 +26,22 @@ theme[proc_box]="#fe8019"
 theme[div_line]="#3c3836"
 
 # Temperature: cool aqua -> yellow -> red at the top.
-theme[temp_start]="#8ec07c"
+theme[temp_start]="#83a598"
 theme[temp_mid]="#fabd2f"
 theme[temp_end]="#fb4934"
 
 # CPU load.
-theme[cpu_start]="#8ec07c"
-theme[cpu_mid]="#b8bb26"
+theme[cpu_start]="#83a598"
+theme[cpu_mid]="#98971a"
 theme[cpu_end]="#fb4934"
 
 # Free / cached / available / used memory.
 theme[free_start]="#3c3836"
-theme[free_mid]="#b8bb26"
-theme[free_end]="#b8bb26"
+theme[free_mid]="#98971a"
+theme[free_end]="#98971a"
 theme[cached_start]="#3c3836"
-theme[cached_mid]="#8ec07c"
-theme[cached_end]="#8ec07c"
+theme[cached_mid]="#83a598"
+theme[cached_end]="#83a598"
 theme[available_start]="#3c3836"
 theme[available_mid]="#fabd2f"
 theme[available_end]="#fabd2f"
@@ -51,13 +51,13 @@ theme[used_end]="#fb4934"
 
 # Disk io.
 theme[download_start]="#3c3836"
-theme[download_mid]="#8ec07c"
-theme[download_end]="#8ec07c"
+theme[download_mid]="#83a598"
+theme[download_end]="#83a598"
 theme[upload_start]="#3c3836"
 theme[upload_mid]="#fe8019"
 theme[upload_end]="#fe8019"
 
 # Process box gradient.
-theme[process_start]="#8ec07c"
+theme[process_start]="#83a598"
 theme[process_mid]="#fabd2f"
 theme[process_end]="#fb4934"
