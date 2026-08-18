@@ -2,11 +2,11 @@
 #
 # theme-apply.sh symlinks this to ~/.config/starship.toml.
 #
-# Minimal: one line, no powerline chips, no backgrounds. Three distinct colors
-# so nothing blurs together —
+# Minimal: one line, no powerline chips, no backgrounds. Distinct colors so
+# nothing blurs together —
 #   path    bright fg  #C8D0E0   where you are
-#   branch  cyan       #29BECC   what you're on
-#   arrow   pink       #F230B2   where you type  (red when the last cmd failed)
+#   branch  pink       #F230B2   what you're on
+#   arrow   cyan       #29BECC   where you type  (red when the last cmd failed)
 #
 # Git state is the one place color carries meaning rather than identity:
 #   ✓  green   clean AND in sync with upstream — nothing to do
@@ -38,7 +38,7 @@ read_only_style = "fg:#F24848"
 
 [git_branch]
 symbol = "󰘬 "
-style = "fg:#29BECC"
+style = "fg:#F230B2"
 format = "  [$symbol$branch]($style)"
 
 # Off in favour of the single dot below. This module gives per-category counts
@@ -70,8 +70,13 @@ command = "printf ●"
 style = "fg:#F2D230"
 format = " [$output]($style)"
 
+# Cyan rather than pink on success, specifically so failure reads at a glance.
+# Cyan is red's direct complement — the largest hue separation there is — where
+# pink and red are near neighbours and easy to miss in peripheral vision. Cyan
+# over bl0 blue for the same job: blue only manages 4:1 contrast on this
+# background, cyan is roughly twice that, so the resting state stays legible.
 [character]
-success_symbol = "[❯](fg:#F230B2)"
+success_symbol = "[❯](fg:#29BECC)"
 error_symbol = "[❯](fg:#F24848)"
 vimcmd_symbol = "[❮](fg:#898D99)"
 
