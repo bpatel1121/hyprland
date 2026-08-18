@@ -1,0 +1,65 @@
+# Cyberpunk · Cybrcolors — btop
+#
+# theme-apply.sh symlinks this to ~/.config/btop/themes/current.theme, and
+# btop.conf is set to color_theme = "current" once. The indirection means a new
+# theme only has to drop a btop/theme.theme in its own directory — btop.conf
+# never needs touching again.
+#
+# Palette roles follow the rest of the desktop: pink frames the boxes, cyan is
+# the live readout, and the gradients climb cyan -> green -> amber -> red so a
+# hot CPU reads the same way a loud cava bar or a critical waybar module does.
+
+theme[main_bg]="#030408"
+theme[main_fg]="#C8D0E0"
+theme[title]="#F230B2"
+theme[hi_fg]="#29BECC"
+theme[selected_bg]="#0A0E1A"
+theme[selected_fg]="#F230B2"
+theme[inactive_fg]="#4D5A80"
+theme[graph_text]="#898D99"
+theme[meter_bg]="#212638"
+theme[proc_misc]="#30F291"
+
+# Box outlines — pink is the frame color everywhere in this desktop.
+theme[cpu_box]="#F230B2"
+theme[mem_box]="#F230B2"
+theme[net_box]="#F230B2"
+theme[proc_box]="#F230B2"
+theme[div_line]="#212638"
+
+# Temperature: cool cyan -> amber -> red at the top.
+theme[temp_start]="#29BECC"
+theme[temp_mid]="#F2D230"
+theme[temp_end]="#F24848"
+
+# CPU load.
+theme[cpu_start]="#29BECC"
+theme[cpu_mid]="#30F291"
+theme[cpu_end]="#F24848"
+
+# Free / cached / available / used memory.
+theme[free_start]="#212638"
+theme[free_mid]="#30F291"
+theme[free_end]="#30F291"
+theme[cached_start]="#212638"
+theme[cached_mid]="#29BECC"
+theme[cached_end]="#29BECC"
+theme[available_start]="#212638"
+theme[available_mid]="#F2D230"
+theme[available_end]="#F2D230"
+theme[used_start]="#212638"
+theme[used_mid]="#F230B2"
+theme[used_end]="#F24848"
+
+# Disk io.
+theme[download_start]="#212638"
+theme[download_mid]="#29BECC"
+theme[download_end]="#29BECC"
+theme[upload_start]="#212638"
+theme[upload_mid]="#F230B2"
+theme[upload_end]="#F230B2"
+
+# Process box gradient.
+theme[process_start]="#29BECC"
+theme[process_mid]="#F2D230"
+theme[process_end]="#F24848"

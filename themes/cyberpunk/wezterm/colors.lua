@@ -2,10 +2,10 @@
 return {
     foreground    = "#C8D0E0",
     background    = "#030408",           -- no0
-    cursor_bg     = "#F230B2",           -- pi0
-    cursor_border = "#F230B2",
+    cursor_bg     = "#F2D230",           -- ye0
+    cursor_border = "#F2D230",
     cursor_fg     = "#030408",
-    selection_bg  = "#A130F2",           -- vi0
+    selection_bg  = "#29BECC",           -- cy0
     selection_fg  = "#030408",
     ansi = {
         "#0A0E1A", -- black   (no2)

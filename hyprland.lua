@@ -32,8 +32,20 @@ local menu        = "wofi --show drun --style " .. os.getenv("HOME") .. "/.confi
 -------------------
 -- https://wiki.hypr.land/Configuring/Basics/Autostart/
 hl.on("hyprland.start", function()
-    hl.exec_cmd("hyprpaper")                                   -- wallpaper daemon
+    -- Wallpaper daemon. swww/awww cross-fades on theme switch; hyprpaper is the
+    -- fallback when it isn't installed. Only ONE may run — they fight over the
+    -- background — so theme-apply.sh picks whichever it finds and this starts
+    -- the same one. (Upstream renamed swww -> awww; both names are handled.)
+    hl.exec_cmd("sh -c 'command -v swww-daemon >/dev/null && exec swww-daemon; "
+             .. "command -v awww-daemon >/dev/null && exec awww-daemon; "
+             .. "exec hyprpaper'")
     hl.exec_cmd("mako")                                        -- notifications
+    hl.exec_cmd("hypridle")                                    -- dim -> lock -> dpms off
+    -- Polkit agent. Without one running, anything that asks for privilege
+    -- escalation through polkit (GUI installers, disk mounts, some settings
+    -- panels) fails silently with no prompt at all. The package was installed
+    -- but never started, so this had been quietly broken.
+    hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
     hl.exec_cmd(home .. "/.config/hypr/scripts/theme-apply.sh")-- themed waybar + wallpaper
     hl.exec_cmd("firefox")
     -- hl.exec_cmd(terminal)  -- you had this: opens a terminal on every login. Uncomment if wanted.
@@ -45,8 +57,21 @@ end)
 -------------------------------
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
--- You're on Intel graphics, so no NVIDIA env block is needed. If you ever move
--- rendering to the NVIDIA card, see https://wiki.hypr.land/Configuring/Nvidia/
+hl.env("XCURSOR_THEME", "capitaine-cursors")
+-- Qt apps have no platform theme of their own on a bare Wayland session, so
+-- they'd render in default Fusion light. qt6ct (with Kvantum available as the
+-- engine) is what lets them follow the dark palette like GTK apps do.
+hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
+hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
+-- GPU: this box has BOTH an Intel UHD 630 (00:02.0) and an NVIDIA RTX 2070
+-- (02:00.0), with nvidia-open-dkms installed and hyprland linked against
+-- nvidia-utils. An older comment here claimed "Intel graphics only, no NVIDIA
+-- env block needed" — that was wrong, so don't trust it if it resurfaces.
+--
+-- No NVIDIA env block is set all the same, because nothing currently misbehaves
+-- and the modern driver needs far less coaxing than it used to. If you hit
+-- flickering, black textures in XWayland, or cursor glitches, that's the first
+-- thing to revisit: https://wiki.hypr.land/Configuring/Nvidia/
 
 
 -----------------------
@@ -190,6 +215,20 @@ hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "1" }))
 -- Theme switcher
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/theme-menu.sh"))
 
+-- Session. Lock is on SUPER+CTRL+L, not SUPER+L — that one is already `focus
+-- right` in the vim-direction block below. Both surfaces are themed and follow
+-- themes/current/.
+hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + ESCAPE",   hl.dsp.exec_cmd("wlogout -p layer-shell"))
+
+-- Workspace overview (hyprexpo plugin). Routed through `hyprctl dispatch`
+-- rather than bound to the dispatcher directly on purpose: the plugin is
+-- optional and built out-of-tree, so this way the bind is simply inert when
+-- hyprexpo isn't loaded instead of being a config error at startup.
+-- Enable with: hyprpm update && hyprpm add https://github.com/hyprwm/hyprland-plugins
+--              hyprpm enable hyprexpo
+hl.bind(mainMod .. " + TAB", hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo toggle"))
+
 -- Screenshots (grim + slurp + wl-clipboard — all installed)
 hl.bind("Print",         hl.dsp.exec_cmd("grim - | wl-copy"))               -- whole screen -> clipboard
 hl.bind("SUPER + Print", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy')) -- region select -> clipboard
@@ -248,6 +287,42 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 ---- WINDOWS AND WORKSPACES ----
 --------------------------------
 -- https://wiki.hypr.land/Configuring/Basics/Window-Rules/
+
+-- Frost the waybar islands. The bar surface itself is fully transparent and the
+-- islands are ~0.72 alpha, so `ignore_alpha` keeps the gaps between islands
+-- perfectly clear and blurs only the islands themselves. Without this the
+-- translucent islands show raw wallpaper and read as flat dark boxes.
+hl.layer_rule({
+    name  = "waybar-blur",
+    match = { namespace = "^waybar$" },
+    blur  = true,
+    ignore_alpha = 0.35,
+})
+
+-- The other three layer surfaces get the same treatment, or they sit flat and
+-- opaque next to a frosted bar. Lower ignore_alpha than waybar's because these
+-- are solid panels rather than islands floating on a transparent sheet.
+-- Namespaces: mako calls itself "notifications" and wlogout "logout_dialog"
+-- (both confirmed in their binaries); wofi's could not be confirmed the same
+-- way, so verify with `hyprctl layers` while it's open if the blur looks absent.
+hl.layer_rule({
+    name  = "wofi-blur",
+    match = { namespace = "^wofi$" },
+    blur  = true,
+    ignore_alpha = 0.2,
+})
+hl.layer_rule({
+    name  = "mako-blur",
+    match = { namespace = "^notifications$" },
+    blur  = true,
+    ignore_alpha = 0.2,
+})
+hl.layer_rule({
+    name  = "wlogout-blur",
+    match = { namespace = "^(wlogout|logout_dialog)$" },
+    blur  = true,
+    ignore_alpha = 0.2,
+})
 
 hl.window_rule({
     name  = "suppress-maximize-events",

@@ -1,0 +1,64 @@
+/* Cyberpunk · Cybrcolors — GTK
+ *
+ * Symlinked by theme-apply.sh to BOTH ~/.config/gtk-3.0/gtk.css and
+ * ~/.config/gtk-4.0/gtk.css. One file covers both because the two toolkits use
+ * different color names and each simply ignores the other's — GTK3/adw-gtk3
+ * reads the @theme_ names, GTK4/libadwaita reads the accent_ and window_ ones.
+ * (Careful writing these: a literal star-slash inside a comment would close it.)
+ *
+ * The point of this file is that GTK apps pick up the *palette*, not just a
+ * generic dark theme: pink is the accent, matching the waybar frame and the
+ * window bloom, so a file dialog looks like it belongs to this desktop.
+ *
+ * Palette: no0 #030408 · no2 #0A0E1A · me1 #212638 · me0 #4D5A80
+ *          pi0 #F230B2 · cy0 #29BECC · gr0 #30F291 · ye0 #F2D230
+ *          re0 #F24848 · wh0 #898D99 · fg #C8D0E0
+ */
+
+/* ---- GTK4 / libadwaita ----------------------------------------------------- */
+@define-color accent_color        #F230B2;
+@define-color accent_bg_color     #F230B2;
+@define-color accent_fg_color     #030408;
+
+@define-color window_bg_color     #030408;
+@define-color window_fg_color     #C8D0E0;
+@define-color view_bg_color       #0A0E1A;
+@define-color view_fg_color       #C8D0E0;
+@define-color headerbar_bg_color  #0A0E1A;
+@define-color headerbar_fg_color  #C8D0E0;
+@define-color sidebar_bg_color    #0A0E1A;
+@define-color sidebar_fg_color    #C8D0E0;
+@define-color card_bg_color       #0A0E1A;
+@define-color card_fg_color       #C8D0E0;
+@define-color popover_bg_color    #0A0E1A;
+@define-color popover_fg_color    #C8D0E0;
+@define-color dialog_bg_color     #030408;
+@define-color dialog_fg_color     #C8D0E0;
+
+@define-color destructive_color    #F24848;
+@define-color destructive_bg_color #F24848;
+@define-color destructive_fg_color #030408;
+@define-color success_color        #30F291;
+@define-color success_bg_color     #30F291;
+@define-color warning_color        #F2D230;
+@define-color warning_bg_color     #F2D230;
+@define-color error_color          #F24848;
+@define-color error_bg_color       #F24848;
+
+/* ---- GTK3 / adw-gtk3 ------------------------------------------------------- */
+@define-color theme_bg_color            #030408;
+@define-color theme_fg_color            #C8D0E0;
+@define-color theme_base_color          #0A0E1A;
+@define-color theme_text_color          #C8D0E0;
+@define-color theme_selected_bg_color   #F230B2;
+@define-color theme_selected_fg_color   #030408;
+@define-color insensitive_bg_color      #0A0E1A;
+@define-color insensitive_fg_color      #4D5A80;
+@define-color borders                   #212638;
+@define-color unfocused_borders         #212638;
+@define-color warning_color_gtk3        #F2D230;
+
+/* Rounded corners on GTK popovers/menus, to sit with Hyprland's rounding = 12. */
+popover, menu, .context-menu {
+    border-radius: 10px;
+}

@@ -1,0 +1,92 @@
+# Cyberpunk · Cybrcolors — starship
+#
+# theme-apply.sh symlinks this to ~/.config/starship.toml.
+#
+# Minimal: one line, no powerline chips, no backgrounds. Three distinct colors
+# so nothing blurs together —
+#   path    bright fg  #C8D0E0   where you are
+#   branch  cyan       #29BECC   what you're on
+#   arrow   pink       #F230B2   where you type  (red when the last cmd failed)
+#
+# Git state is the one place color carries meaning rather than identity:
+#   ✓  green   clean AND in sync with upstream — nothing to do
+#   ●N amber   N files modified but not staged  — you have changes to commit
+#   +N green   N staged and ready
+#   ?N gray    N untracked
+#   ×N red     N deleted        !N red  conflicts        ≡ violet  stashed
+#   ↑N ↓N cyan ahead / behind upstream — commit exists, needs push/pull
+#   ↕a/b  red  diverged
+#
+# Every glyph here was checked against JetBrainsMono Nerd Font. The usual
+# starship defaults ⇡ ⇣ ✘ are NOT in this font and render as fallback junk —
+# ↑ ↓ × are, so those are used instead. Don't "fix" them back.
+
+# The literal space before $character is load-bearing: every git segment is
+# conditional, so without it the arrow butts straight against the directory
+# outside a repo ("/tmp❯") and against the status counts inside one ("●1❯").
+format = "$directory$git_branch$git_status$custom $character"
+add_newline = true
+
+[directory]
+style = "fg:#C8D0E0 bold"
+format = "[$path]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = true
+read_only = " ro"
+read_only_style = "fg:#F24848"
+
+[git_branch]
+symbol = "󰘬 "
+style = "fg:#29BECC"
+format = "  [$symbol$branch]($style)"
+
+# Off in favour of the single dot below. This module gives per-category counts
+# (●3 +1 ?2 …), which is more detail than the prompt wants — btop-for-git when
+# `git status` is one keystroke away.
+[git_status]
+disabled = true
+
+# One amber dot when the working tree has anything uncommitted, and nothing at
+# all when it's clean — so a tidy repo looks exactly like no repo, and the dot
+# only ever means "you have work to commit".
+#
+# `git status --porcelain` prints one line per change (modified, staged,
+# deleted, untracked) and nothing when clean, so a plain emptiness test covers
+# every case in a single call. Outside a repo it errors, output is empty, and
+# the module stays hidden — no separate "am I in a repo" check needed.
+#
+# Untracked files count as dirty. If a repo with lots of build junk keeps the
+# dot permanently lit, add `--untracked-files=no` here.
+#
+# Do NOT add a `shell = [...]` key. Starship pipes the command to the shell on
+# stdin, so `sh -c` receives nothing and the module silently never renders —
+# verified by testing all three variants. Omitting `shell` works. `when` is
+# also required: a custom module with no condition never shows at all.
+[custom.git_dirty]
+description = "one dot when there are uncommitted changes"
+when = 'test -n "$(git status --porcelain 2>/dev/null)"'
+command = "printf ●"
+style = "fg:#F2D230"
+format = " [$output]($style)"
+
+[character]
+success_symbol = "[❯](fg:#F230B2)"
+error_symbol = "[❯](fg:#F24848)"
+vimcmd_symbol = "[❮](fg:#898D99)"
+
+# Everything else off — this is the "minimal" part.
+[cmd_duration]
+disabled = true
+[package]
+disabled = true
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[docker_context]
+disabled = true

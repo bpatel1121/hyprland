@@ -1,0 +1,7 @@
+# This repo's root IS ~/.config/hypr, so anything generated into the config dir
+# lands in the working tree. Ignore the generated artifacts.
+
+# Rendered by scripts/theme-apply.sh from themes/current/hyprlock.conf, with the
+# wallpaper path substituted in. The template is tracked; this copy is not,
+# because it contains an absolute path to the user's home.
+/hyprlock.conf

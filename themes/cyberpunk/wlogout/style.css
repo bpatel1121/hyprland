@@ -1,0 +1,55 @@
+/* Cyberpunk · Cybrcolors — wlogout
+ *
+ * Two rules carried over from the waybar stylesheet, for the same reasons:
+ *
+ *   1. wlogout is a GTK3 layer-shell surface, so NO non-inset `box-shadow` and
+ *      never the `transparent` keyword — GTK composites both as black halos
+ *      against the transparent surface. Glow comes from text-shadow and insets.
+ *   2. Color is semantic: PINK frames, CYAN is the live/hovered state, RED is
+ *      reserved for the two destructive actions.
+ *
+ * The buttons carry Nerd Font glyphs as *text* (set in `layout`) rather than
+ * wlogout's shipped SVG icons: those are white background-images and GTK3 has
+ * no `filter`, so they cannot be tinted to the palette.
+ */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 18px;
+    background-image: none;
+    box-shadow: none;
+    text-shadow: none;
+    border: none;
+    outline: none;
+}
+
+window {
+    background-color: rgba(3, 4, 8, 0.85);
+}
+
+button {
+    color: #C8D0E0;
+    background-color: rgba(10, 14, 26, 0.92);
+    background-image: none;
+    border: 1px solid rgba(242, 48, 178, 0.35);   /* pi0 — the frame */
+    border-radius: 16px;
+    margin: 12px;
+    transition: color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+/* Hover/focus lights the tile cyan — same "cyan = live" rule as the bar. */
+button:hover,
+button:focus {
+    color: #29BECC;
+    background-color: #0A0E1A;
+    border: 1px solid #29BECC;
+    text-shadow: 0 0 10px rgba(41, 190, 204, 0.55);
+}
+
+/* The two that can't be undone go red on hover instead. */
+#reboot:hover,   #reboot:focus,
+#shutdown:hover, #shutdown:focus {
+    color: #F24848;
+    border: 1px solid #F24848;
+    text-shadow: 0 0 10px rgba(242, 72, 72, 0.6);
+}

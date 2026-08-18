@@ -1,16 +1,61 @@
-/* Cyberpunk · Cybrcolors — floating islands, selective glow
+/* Cyberpunk · Cybrcolors — two-tone HUD, frosted islands, selective glow
  *
- * Design rules (keep these when editing):
+ * DESIGN RULES (keep these when editing):
+ *
  *   1. The bar window is TRANSPARENT; the three module groups are detached
  *      "islands" floating under the top edge — Night City HUD, not a strip.
- *   2. Glow is SELECTIVE: reserved for the active workspace, the clock pill,
- *      and alert states (critical temp/battery, urgent workspace). Everything
- *      else stays flat and dark so the glow means something.
- *   3. Palette is Cybrcolors only:
- *      no0 #030408 base · no2 #0A0E1A raised · me1 #212638 line · me0 #4D5A80 dim
- *      pi0 #F230B2 pink · cy0 #29BECC cyan · vi0 #A130F2 violet · bl0 #3061F2
- *      gr0 #30F291 · ye0 #F2D230 · re0 #F24848 · wh0 #898D99 · fg  #C8D0E0
+ *      Hyprland blurs them via the `waybar-blur` layer rule in hyprland.lua,
+ *      so they read as frosted glass rather than flat dark boxes.
+ *
+ *   2. NEVER use a non-inset `box-shadow`, and NEVER the `transparent`
+ *      keyword. Both are how the black halos got here twice:
+ *        - GTK3 composites an outer box-shadow that spills past the island's
+ *          rounded edge against the fully transparent layer-shell surface,
+ *          and paints it as a dark rectangle.
+ *        - Some GTK/waybar combos paint the `transparent` keyword as black on
+ *          layer-shell surfaces.
+ *      Always `background-color: rgba(0,0,0,0); background-image: none;`.
+ *
+ *   3. Glow is real but SAFE. text-shadow renders inside the widget and can
+ *      never halo — that is where the glow comes from. `box-shadow: inset`
+ *      composites against the widget's own background, also safe. Emissive
+ *      fills come from linear-gradient() plus a lighter inset rim.
+ *
+ *   4. Glow is SELECTIVE: the active workspace, the clock, and alert states.
+ *      Everything else stays flat so the glow means something.
+ *
+ *   5. The bar is TWO-TONE at rest — a cyan instrument panel in a pink frame:
+ *        pink   the frame and the light — island hairline + edge, continuing
+ *               into Hyprland's window bloom just beneath the bar
+ *        cyan   every readout — active workspace, clock, volume, network,
+ *               bluetooth, battery
+ *      Every other color is STATE, not decoration, and appears only when
+ *      something is actually true:
+ *        amber  repo updates pending — reserved exclusively for Pac-Man
+ *        green  AUR updates pending · battery charging
+ *        red    battery low (steady) · critical temp / battery (pulsing)
+ *        gray   dormant / muted / disconnected / nothing to update
+ *      Because both update counters gray out at zero, the resting bar really
+ *      is just those two colors. Pink and cyan are kept apart by the island
+ *      edge and never blended into one gradient — that blend is what read as
+ *      cotton candy. Violet vi0 appears nowhere in the bar; it belongs to the
+ *      wofi launcher, which is the one surface that covers the bar.
+ *
+ * Palette is Cybrcolors only (github.com/cybrcore/cybrcolors, GPL-3.0).
+ * GTK3 note: @define-color works, CSS var() does NOT.
  */
+
+@define-color no0    #030408;   /* ground        */
+@define-color no2    #0A0E1A;   /* raised        */
+@define-color me1    #212638;   /* hairline      */
+@define-color me0    #4D5A80;   /* dim           */
+@define-color pink   #F230B2;   /* pi0 — frame    */
+@define-color amber  #F2D230;   /* ye0 — warning  */
+@define-color cyan   #29BECC;   /* cy0 — readouts */
+@define-color green  #30F291;   /* gr0 — good    */
+@define-color red    #F24848;   /* re0 — alert   */
+@define-color gray   #898D99;   /* wh0 — dormant */
+@define-color fg     #C8D0E0;   /* text          */
 
 * {
     font-family: "JetBrainsMono Nerd Font", monospace;
@@ -20,129 +65,175 @@
     min-height: 0;
 }
 
-/* Explicit rgba(0,0,0,0), not `transparent` — some GTK/waybar combos paint
- * the keyword as black on layer-shell surfaces. */
+/* Explicit rgba(0,0,0,0), not `transparent` — see rule 2. */
 window#waybar {
     background-color: rgba(0, 0, 0, 0);
-    color: #C8D0E0;
+    color: @fg;
 }
 
-/* ---- The three islands ---------------------------------------------------- */
+/* ---- The three islands ----------------------------------------------------
+ * One unified amber accent across all three, not a per-island color flow: the
+ * bar reads as a single deliberate HUD, and color is then free to mean state
+ * rather than location. The fill is translucent on purpose — the Hyprland
+ * layer rule frosts it. If you ever drop that rule, raise the alpha to ~0.95. */
 .modules-left,
 .modules-center,
 .modules-right {
-    background: rgba(3, 4, 8, 0.88);              /* no0 */
-    border: 1px solid #212638;                     /* me1 */
+    background-color: rgba(6, 8, 14, 0.72);
+    border: 1px solid rgba(242, 48, 178, 0.16);          /* lit edge */
     border-radius: 14px;
     padding: 2px 8px;
+    box-shadow: inset 0 2px 0 rgba(242, 48, 178, 0.85);  /* the accent hairline */
 }
-/* THE FLOW: a 2px neon line along the top edge of each island. Reading
- * left→right across the bar it sweeps cyan → violet → pink — one gradient
- * story told in three segments.
- *
- * INSET shadows only. NO outer glows on the islands: GTK composites outer
- * box-shadows against the transparent bar surface as dark/black halos on
- * many setups — that's the "black around the islands" bug. Inset renders
- * against the island's own opaque background, which is always safe. */
-.modules-left   { box-shadow: inset 0 2px 0 #29BECC; }  /* cy0 */
-.modules-center { box-shadow: inset 0 2px 0 #A130F2; }  /* vi0 */
-.modules-right  { box-shadow: inset 0 2px 0 #F230B2; }  /* pi0 */
 
-/* ---- Workspaces ----------------------------------------------------------- */
-/* Dormant workspaces are NEUTRAL GRAY, not blue — the old me0 slate read as
- * odd neon-blue digits. Occupied-but-inactive is brighter than empty, so the
- * eye can still tell where windows live. */
+/* ---- Workspaces ------------------------------------------------------------
+ * Dormant workspaces are neutral gray. Occupied-but-inactive is brighter than
+ * empty, so the eye can still tell where windows live. */
+#workspaces {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    padding: 0;
+    margin: 0;
+}
 #workspaces button {
     padding: 0 9px;
     margin: 3px 1px;
-    color: rgba(137, 141, 153, 0.85);              /* wh0 — has windows */
-    background: transparent;
+    color: rgba(137, 141, 153, 0.85);                    /* wh0 — has windows */
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
     border-radius: 9px;
     transition: color 0.2s ease-in-out;
 }
 #workspaces button.empty {
-    color: rgba(137, 141, 153, 0.35);              /* wh0 faded — nothing there */
+    color: rgba(137, 141, 153, 0.35);                    /* nothing there */
 }
+/* The one loud element. Emissive lozenge: vertical gradient reads as lit, the
+ * inset rim is the "glow" an outer box-shadow is not allowed to provide. */
 #workspaces button.active {
-    color: #030408;
-    background: linear-gradient(90deg, #F230B2, #29BECC);
-    text-shadow: 0 0 6px rgba(3, 4, 8, 0.6);
-    box-shadow: 0 0 10px rgba(242, 48, 178, 0.45); /* the one loud glow */
+    color: @no0;
+    background-image: linear-gradient(180deg, #5FD8E4, #29BECC);
+    box-shadow: inset 0 0 0 1px rgba(214, 248, 252, 0.9);
+    text-shadow: 0 0 4px rgba(3, 4, 8, 0.45);
     font-weight: bold;
 }
+/* gray → cyan text → cyan fill: dormant, hovered, active. */
 #workspaces button:hover {
-    color: #29BECC;
-    background: #0A0E1A;
+    color: @cyan;
+    background-color: @no2;
+    background-image: none;
     box-shadow: none;
 }
 #workspaces button.urgent {
-    color: #030408;
-    background: #F24848;
+    color: @no0;
+    background-color: @red;
+    background-image: none;
     animation: pulse-red 1s ease-in-out infinite alternate;
 }
 
-/* ---- Left island: now playing --------------------------------------------- */
+/* ---- Left island: now playing ---------------------------------------------
+ * Playing vs paused is carried by THREE cues, not just a shade of gray: the
+ * glyph swaps (play/spotify -> pause, set in config.jsonc), the color lights
+ * up, and a glow switches on. Glow already means "live" everywhere else in
+ * this bar, so music inherits that vocabulary for free.
+ *
+ * Spotify gets its brand green rather than the default cyan — the same
+ * exception mako already makes for Spotify notifications. */
 #mpris {
-    color: #30F291;                                /* gr0 */
+    color: @cyan;
+    background-color: rgba(41, 190, 204, 0.07);   /* faint chip, not a pill */
+    background-image: none;
+    text-shadow: 0 0 8px rgba(41, 190, 204, 0.45);
     padding: 0 12px;
     margin: 3px 2px;
     border-radius: 9px;
 }
-#mpris.paused { color: #4D5A80; }
+#mpris.spotify {
+    color: @green;
+    background-color: rgba(48, 242, 145, 0.07);
+    text-shadow: 0 0 8px rgba(48, 242, 145, 0.45);
+}
+/* Paused kills the chip and the glow outright — the module visibly powers
+ * down rather than just dimming. Listed after .spotify so it wins for both. */
+#mpris.paused,
+#mpris.spotify.paused {
+    color: rgba(137, 141, 153, 0.55);
+    background-color: rgba(0, 0, 0, 0);
+    text-shadow: none;
+}
+#mpris.stopped { color: rgba(137, 141, 153, 0.35); background-color: rgba(0, 0, 0, 0); text-shadow: none; }
 
-/* ---- Center island: the clock pill ---------------------------------------- */
+/* ---- Center island: the clock ----------------------------------------------
+ * No fill, just a lit cyan tube — text-shadow is the one glow primitive that
+ * cannot halo, and glyph and bloom share a hue so nothing fringes at 13px. */
 #clock {
-    color: #030408;
-    background: linear-gradient(90deg, #A130F2, #F230B2);
+    color: @cyan;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    text-shadow: 0 0 12px rgba(41, 190, 204, 0.8);
     padding: 0 16px;
     margin: 3px 2px;
     border-radius: 9px;
     font-weight: bold;
-    box-shadow: 0 0 10px rgba(161, 48, 242, 0.35);
 }
 
 /* ---- Right island: lean instrument set -------------------------------------
  * updates · (temp watchdog) · volume · net ↑↓ · bt icon · battery · tray
  * CPU/mem/idle-inhibitor cut deliberately — btop answers those better when you
  * actually care, and fewer readouts lets the ones left actually get read. */
-#custom-updates, #temperature, #network, #pulseaudio,
+#custom-updates, #custom-aur, #temperature, #network, #pulseaudio,
 #bluetooth, #battery, #tray {
     padding: 0 10px;
     margin: 3px 1px;
-    background: transparent;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
     border-radius: 9px;
 }
-/* separator hairlines between instruments, HUD-style */
-#network, #battery {
-    border-left: 1px solid rgba(33, 38, 56, 0.9);  /* me1 */
+#tray > .passive { background-color: rgba(0, 0, 0, 0); background-image: none; }
+#tray > .needs-attention { background-color: rgba(0, 0, 0, 0); background-image: none; }
+
+/* separator hairlines between instruments, HUD-style. #pulseaudio starts the
+ * telemetry group, so the two update counters read as their own cluster. */
+#pulseaudio, #network, #battery {
+    border-left: 1px solid rgba(200, 208, 224, 0.10);
 }
 
-#custom-updates {
-    color: #29BECC;                                /* cy0 — something pending */
-    font-weight: bold;
-}
+/* ---- Update counters -------------------------------------------------------
+ * Pac-Man for the repos, a party popper for the AUR — pacman/Pac-Man and
+ * yay/celebration, and Pac-Man is canonically yellow anyway. Both stay on
+ * screen at zero and gray out there, so the resting bar stays one color and
+ * these two only light up when there is genuinely something to do.
+ * The .pending/.zero class comes from scripts/waybar-updates.sh (return-type
+ * json — a plain-text custom module cannot carry a class). */
+#custom-updates, #custom-aur { font-weight: bold; }
+#custom-updates.pending { color: @amber; }   /* Pac-Man yellow, and nothing else */
+#custom-aur.pending     { color: @green; }   /* yay */
+#custom-updates.zero,
+#custom-aur.zero        { color: rgba(137, 141, 153, 0.45); }
 
 /* invisible until hot — then it announces itself */
 #temperature          { padding: 0; margin: 3px 0; }
 #temperature.critical {
     padding: 0 10px;
     margin: 3px 1px;
-    color: #F24848;                                /* re0 */
+    color: @red;
     animation: pulse-red 1s ease-in-out infinite alternate;
 }
 
-#pulseaudio { color: #F230B2; }                    /* pi0 */
-#pulseaudio.muted { color: rgba(137, 141, 153, 0.5); }
-#network    { color: #29BECC; }                    /* cy0 */
+/* Cyan = every readout. Anything NOT cyan below is a state, not a color choice. */
+#pulseaudio { color: @cyan; }
+#pulseaudio.muted     { color: rgba(137, 141, 153, 0.5); }
+#network    { color: @cyan; }
 #network.disconnected { color: rgba(137, 141, 153, 0.5); }
-#bluetooth  { color: #3061F2; }                    /* bl0 */
-#bluetooth.disabled { color: rgba(137, 141, 153, 0.5); }
+#bluetooth  { color: @cyan; }
+#bluetooth.disabled   { color: rgba(137, 141, 153, 0.5); }
 
-#battery    { color: #A130F2; }                    /* vi0 */
-#battery.charging { color: #30F291; }
-#battery.warning  { color: #F2D230; }
+#battery    { color: @cyan; }
+#battery.charging { color: @green; }
+/* Warning and critical share red and differ by motion, not hue: amber belongs
+ * to Pac-Man alone now, so <30% goes steady red and <15% starts pulsing. */
+#battery.warning  { color: @red; }
 #battery.critical:not(.charging) {
-    color: #F24848;
+    color: @red;
     animation: pulse-red 1s ease-in-out infinite alternate;
 }
 
@@ -154,8 +245,8 @@ window#waybar {
 
 /* ---- Tooltips -------------------------------------------------------------- */
 tooltip {
-    background: rgba(3, 4, 8, 0.95);
-    border: 1px solid #212638;
+    background-color: rgba(3, 4, 8, 0.95);
+    border: 1px solid rgba(242, 48, 178, 0.30);   /* pink, matching the frame */
     border-radius: 10px;
 }
-tooltip label { color: #C8D0E0; }
+tooltip label { color: @fg; }

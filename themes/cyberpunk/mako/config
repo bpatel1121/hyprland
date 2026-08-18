@@ -1,11 +1,13 @@
 # Cyberpunk · Cybrcolors
 font=JetBrainsMono Nerd Font 11
-background-color=#0A0E1A
+# Translucent so the `mako-blur` layer rule in hyprland.lua has something to
+# frost — at full opacity the blur is invisible.
+background-color=#0A0E1ACC
 text-color=#C8D0E0
-border-color=#F230B2
+border-color=#F2D230
 border-size=2
 border-radius=14
-progress-color=over #A130F2
+progress-color=over #29BECC
 padding=12,16
 margin=12
 default-timeout=4000
