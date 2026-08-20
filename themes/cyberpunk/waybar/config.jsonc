@@ -37,8 +37,10 @@
         "on-click": "activate",
         // Always show 1-5: dormant workspaces render dim (the .empty CSS
         // class), so the bar reads as a row of stations instead of one
-        // lonely number. 6+ still appear on demand.
-        "persistent-workspaces": { "*": 5 }
+        // lonely number. 6+ still appear on demand. Explicit ids, NOT the
+        // `"*": 5` shorthand — a waybar update started reading that as
+        // "all ten" after the monitor change.
+        "persistent-workspaces": { "1": [], "2": [], "3": [], "4": [], "5": [] }
     },
 
     // The icons here used to be EMPTY strings, so {player_icon}/{status_icon}
@@ -98,25 +100,29 @@
     // Repo updates — Pac-Man glyph, Pac-Man yellow. Stays on screen at 0 and
     // grays out there; the .pending/.zero class comes from the script, which is
     // why this is return-type json. Needs `checkupdates` from pacman-contrib.
-    // signal 8: refresh instantly after an update with: pkill -SIGRTMIN+8 waybar
+    // signal 8: refresh instantly after an update with: pkill -RTMIN+8 waybar
     "custom/updates": {
         "exec": "$HOME/.config/hypr/scripts/waybar-updates.sh pacman",
         "return-type": "json",
-        "interval": 900,
+        // 120s, not 900s: checkupdates is a local diff against an already
+        // synced temp DB, so polling is cheap, and the counter clears on its
+        // own shortly after any update no matter how it was invoked. The
+        // signal below is the instant path when it works.
+        "interval": 120,
         "signal": 8,
-        "on-click": "wezterm start -- sh -c 'sudo pacman -Syu; pkill -SIGRTMIN+8 waybar; read -p done'"
+        "on-click": "wezterm start -- sh -c 'sudo pacman -Syu; pkill -RTMIN+8 waybar; read -p done'"
     },
 
     // AUR updates via yay — party popper, because "yay". Longer interval than
     // the repo check: it goes over the network to the AUR RPC (the script caps
     // that with a timeout so a dead link can't wedge the bar).
-    // signal 9: pkill -SIGRTMIN+9 waybar
+    // signal 9: pkill -RTMIN+9 waybar
     "custom/aur": {
         "exec": "$HOME/.config/hypr/scripts/waybar-updates.sh aur",
         "return-type": "json",
         "interval": 3600,
         "signal": 9,
-        "on-click": "wezterm start -- sh -c 'yay -Sua; pkill -SIGRTMIN+9 waybar; read -p done'"
+        "on-click": "wezterm start -- sh -c 'yay -Sua; pkill -RTMIN+9 waybar; read -p done'"
     },
 
     // Silent watchdog: renders NOTHING below 80° (empty format hides it),

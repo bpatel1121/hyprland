@@ -1,6 +1,10 @@
 # hyprland
+<<<<<<< HEAD
 ![demo](hypr-demo.gif)  
 
+=======
+![demo](hypr-demo.gif)
+>>>>>>> b915110 (update counters: cap checkupdates, fix the refresh signal spelling)
 ![ci](https://github.com/bpatel1121/hyprland/actions/workflows/ci.yml/badge.svg)
 
 My Hyprland desktop as a theme system. This repo's root **is** `~/.config/hypr` —
@@ -247,7 +251,15 @@ the AUR (`yay` → yay). Both stay on screen at zero and gray out there, so the
 resting bar really is one color. They need `checkupdates` (`pacman-contrib`)
 and `yay` respectively; icons want a Nerd Font (`ttf-jetbrains-mono-nerd`) —
 all provisioned by linux-setup. Refresh either instantly with
-`pkill -SIGRTMIN+8 waybar` (repos) or `-SIGRTMIN+9` (AUR).
+`pkill -RTMIN+8 waybar` (repos) or `-RTMIN+9` (AUR). Note `RTMIN`, not
+`SIGRTMIN`: procps rejects the `SIG` prefix on real-time signals, so the
+longer spelling is a silent no-op. Refreshing by hand is rarely needed
+anyway, since linux-setup installs a pacman hook that signals both counters
+after every transaction, so they clear whether you update from the bar, a
+shell, or `yay`. Both checks are wrapped in `timeout` for the same reason:
+an uncapped network call inside a waybar module leaves it running, and
+waybar will not spawn a second copy of a module still in flight, so every
+refresh signal is dropped until it returns.
 
 The session and screenshot pieces need `hyprlock hypridle fastfetch cava` from
 `extra` and `wlogout` from the AUR. The desktop-wide theming adds

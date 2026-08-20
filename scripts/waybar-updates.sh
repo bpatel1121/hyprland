@@ -15,11 +15,17 @@ case "${1:-}" in
         # run can fire before the network is up, and treating that error as
         # empty rendered "up to date" for a whole interval — the counter that
         # "never updated". Retry for up to a minute, then say "?" honestly.
+        # checkupdates syncs a temp DB over the network, so it MUST be capped:
+        # uncapped, a slow mirror left this script running for minutes, and
+        # waybar refuses to spawn a second copy of a module still in flight —
+        # so every refresh signal was silently dropped and the counter stayed
+        # lit after an update. The AUR branch had a timeout from day one,
+        # which is exactly why that one always cleared and this one did not.
         list=""; rc=1
-        for _ in 1 2 3 4 5 6; do
-            list=$(checkupdates 2>/dev/null); rc=$?
+        for _ in 1 2 3; do
+            list=$(timeout 20 checkupdates 2>/dev/null); rc=$?
             { [ "$rc" -eq 0 ] || [ "$rc" -eq 2 ]; } && break
-            sleep 10
+            sleep 5
         done
         if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then
             printf '{"text":"%s ?","class":"zero","tooltip":"update check failed (network?)"}\n' "$icon"
