@@ -31,6 +31,47 @@ if [ -n "$motion" ]; then
     disown 2>/dev/null || true
 fi
 
+# --- Cursor -------------------------------------------------------------------
+# FIRST, deliberately. This used to live down in the GTK block at the bottom of
+# the script, which put it behind the swww daemon wait (up to 1.8s), the
+# wallpaper transition, `sleep 0.9`, and the waybar/swaync/swayosd restarts —
+# so the pointer visibly changed several seconds after the rest of the theme.
+# Nothing below depends on it, so it goes first and lands instantly.
+#
+# The theme may declare `cursor = "Name"` in theme.lua. Fallback chain:
+# declared theme -> capitaine -> default, checking what's actually installed.
+want_cursor=$(sed -n 's/^[[:space:]]*cursor[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' \
+    "$CUR/theme.lua" 2>/dev/null | head -n1)
+cursor="default"
+[ -d /usr/share/icons/capitaine-cursors ] && cursor="capitaine-cursors"
+[ -n "$want_cursor" ] && { [ -d "/usr/share/icons/$want_cursor" ] \
+    || [ -d "$HOME/.icons/$want_cursor" ] \
+    || [ -d "$HOME/.local/share/icons/$want_cursor" ]; } && cursor="$want_cursor"
+# Loud rather than silent: a theme asking for a cursor that isn't installed used
+# to fall back to capitaine with no trace, which reads exactly like "the cursor
+# never switches". Say so instead.
+if [ -n "$want_cursor" ] && [ "$cursor" != "$want_cursor" ]; then
+    command -v notify-send >/dev/null 2>&1 \
+        && notify-send -u critical "Cursor theme missing" "$want_cursor is not installed — using $cursor" || true
+fi
+
+# Three consumers, three mechanisms — all needed:
+#   1. hyprctl setcursor  — Hyprland's own pointer + every client using
+#      cursor-shape-v1 (GTK4, modern GTK3, Firefox, Electron). Switches live.
+#   2. env                — XCursor-loading clients (XWayland, wezterm, Qt
+#      without cursor-shape) read this ONCE at process start. Setting it here
+#      means apps launched after the switch are correct; already-running ones
+#      keep the old pointer until relaunched. That is an XCursor limitation,
+#      not something this script can fix.
+#   3. ~/.icons/default   — how XWayland and legacy X11 clients resolve the
+#      "default" theme name. Without it they ignore both of the above.
+hyprctl setcursor "$cursor" 24 >/dev/null 2>&1 || true
+hyprctl keyword env XCURSOR_THEME,"$cursor" >/dev/null 2>&1 || true
+hyprctl keyword env HYPRCURSOR_THEME,"$cursor" >/dev/null 2>&1 || true
+mkdir -p "$HOME/.icons/default"
+printf '[Icon Theme]\nName=default\nComment=managed by hypr/scripts/theme-apply.sh\nInherits=%s\n' \
+    "$cursor" > "$HOME/.icons/default/index.theme"
+
 # --- Choreography: the bar dips out first, the wallpaper washes over, and
 # the bar returns last, dressed in the new theme (layersIn fades it back).
 pkill -x waybar 2>/dev/null || true
@@ -183,15 +224,8 @@ if [ -d "$CUR/gtk" ]; then
         done
         icons="Adwaita"; [ -d /usr/share/icons/Papirus-Dark ] && icons="Papirus-Dark"
     fi
-    # Cursor: the theme may declare `cursor = "Name"` in theme.lua. Fallback
-    # chain: declared theme -> capitaine -> default, checking what's installed.
-    want_cursor=$(sed -n 's/^[[:space:]]*cursor[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' \
-        "$CUR/theme.lua" 2>/dev/null | head -n1)
-    cursor="default"
-    [ -d /usr/share/icons/capitaine-cursors ] && cursor="capitaine-cursors"
-    [ -n "$want_cursor" ] && { [ -d "/usr/share/icons/$want_cursor" ] || [ -d "$HOME/.icons/$want_cursor" ]; } \
-        && cursor="$want_cursor"
-
+    # $cursor was resolved at the top of the script and applied there; the
+    # gsettings write below is just the GTK-side echo of it.
     if command -v gsettings >/dev/null 2>&1; then
         gs() { gsettings set org.gnome.desktop.interface "$1" "$2" 2>/dev/null || true; }
         gs color-scheme "$scheme"
@@ -201,8 +235,6 @@ if [ -d "$CUR/gtk" ]; then
         gs cursor-size  24
         gs font-name    'JetBrainsMono Nerd Font 11'
     fi
-    # Hyprland's own cursor, so the pointer matches over the desktop too.
-    hyprctl setcursor "$cursor" 24 >/dev/null 2>&1 || true
 fi
 
 # --- hyprlock (RENDERED, not symlinked) ---
