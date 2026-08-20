@@ -1,10 +1,6 @@
 # hyprland
-<<<<<<< HEAD
-![demo](hypr-demo.gif)  
-
-=======
 ![demo](hypr-demo.gif)
->>>>>>> b915110 (update counters: cap checkupdates, fix the refresh signal spelling)
+
 ![ci](https://github.com/bpatel1121/hyprland/actions/workflows/ci.yml/badge.svg)
 
 My Hyprland desktop as a theme system. This repo's root **is** `~/.config/hypr` —
