@@ -120,7 +120,11 @@
     "custom/aur": {
         "exec": "$HOME/.config/hypr/scripts/waybar-updates.sh aur",
         "return-type": "json",
-        "interval": 3600,
+        // 300s, not 3600s: close enough to the repo counter's cadence that the
+        // popper clears on its own shortly after a yay run. Not matched to
+        // pacman's 120s on purpose, since every check here is a live query to
+        // the AUR's public RPC rather than a local diff.
+        "interval": 300,
         "signal": 9,
         "on-click": "wezterm start -- sh -c 'yay -Sua; pkill -RTMIN+9 waybar; read -p done'"
     },
