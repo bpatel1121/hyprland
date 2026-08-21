@@ -194,7 +194,7 @@ fi
 if [ -d "$CUR/wlogout" ] || [ -f "$HYPR/wlogout/layout" ]; then
     mkdir -p "$HOME/.config/wlogout"
     layout="$HYPR/wlogout/layout"
-    [ -f "$CUR/wlogout/layout" ] && layout="$CUR/wlogout/layout"
+    [ -f "$CUR/wlogout/layout" ] && layout="$CUR/wlogout/layout"  # optional-override
     [ -f "$layout" ]                && ln -sfn "$layout"                "$HOME/.config/wlogout/layout"
     [ -f "$CUR/wlogout/style.css" ] && ln -sfn "$CUR/wlogout/style.css" "$HOME/.config/wlogout/style.css"
 fi

@@ -237,3 +237,26 @@ jobs:
                   print(f'FAIL {f}: `transparent` keyword'); bad = True
           sys.exit(1 if bad else 0)
           PY
+
+      # theme-apply.sh only ever touches a theme file behind an `if [ -f ... ]`
+      # guard — that is what lets a theme omit one, and also what makes a
+      # reference to a file NO theme ships anymore completely silent. It never
+      # errors, never runs, and reads as live code forever. This turns that rot
+      # into a build failure.
+      #
+      # `# optional-override` marks the deliberate case: a path expected to be
+      # absent, because the shared default at the repo root is the norm and the
+      # per-theme copy is opt-in (wlogout/layout is the current example).
+      - name: theme-apply.sh references no dead theme paths
+        run: |
+          grep -o '\$CUR/[A-Za-z0-9_./-]*' \
+            <(grep -v 'optional-override' scripts/theme-apply.sh) \
+            | sed 's|^\$CUR/||' | sort -u \
+          | while read -r p; do
+              if ls themes/*/"$p" >/dev/null 2>&1; then
+                echo "OK    $p"
+              else
+                echo "STALE $p — referenced by theme-apply.sh, shipped by no theme"
+                exit 1
+              fi
+            done
