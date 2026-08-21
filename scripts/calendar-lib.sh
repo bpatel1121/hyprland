@@ -31,7 +31,8 @@ cal_upcoming() {
     local when time title lead epoch
     khal list --format "{start-date} {start-time}|{title}" --day-format "" \
         now 14d 2>/dev/null | while IFS='|' read -r when title; do
-        [ -n "$when" ] && [ -n "$title" ] || continue
+        [ -n "$when" ] || continue
+        [ -n "$title" ] || continue
         time=$(echo "$when" | awk '{print $2}')
         if [ -z "$time" ]; then
             when="$(echo "$when" | awk '{print $1}') 08:00"
@@ -42,7 +43,8 @@ cal_upcoming() {
         lead=$DEFAULT_LEAD
         if [[ "$title" =~ \[([0-9]+)m?\][[:space:]]*$ ]]; then
             lead="${BASH_REMATCH[1]}"
-            title=$(echo "${title%\[*}" | sed 's/[[:space:]]*$//')
+            title=${title%\[*}                       # drop the [Nm] tag
+            title=${title%"${title##*[![:space:]]}"}  # and its leading space
         fi
         printf '%s|%s|%s\n' "$epoch" "$lead" "$title"
     done | sort -n

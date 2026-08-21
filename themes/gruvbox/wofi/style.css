@@ -9,7 +9,7 @@
  * frost — at full opacity the blur is invisible. */
 window {
     background-color: rgba(29, 32, 33, 0.82);   /* bg0_h */
-    border: 2px solid #d3869b;   /* sharp — CRT identity, matches the bar */                  /* purple */
+    border: 2px solid #d3869b;   /* purple — wofi is the one surface that covers the bar */
     border-radius: 4px;
 }
 #input {

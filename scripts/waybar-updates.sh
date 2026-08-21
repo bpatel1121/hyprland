@@ -6,7 +6,12 @@
 # instead of vanishing — color keeps meaning "act on me" rather than burning
 # permanently.  Styling lives in the theme's waybar/style.css:
 #   .pending -> amber (repos) / green (AUR)      .zero -> dim gray
+#
+# The JSON escaping this script got right from day one now lives in
+# waybar-lib.sh, shared with the agenda and todo chips, which did not.
 set -uo pipefail
+# shellcheck source=scripts/waybar-lib.sh
+. "$(dirname -- "${BASH_SOURCE[0]}")/waybar-lib.sh"
 
 case "${1:-}" in
     pacman)
@@ -28,7 +33,7 @@ case "${1:-}" in
             sleep 5
         done
         if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then
-            printf '{"text":"%s ?","class":"zero","tooltip":"update check failed (network?)"}\n' "$icon"
+            wb_emit "$icon ?" zero "update check failed (network?)"
             exit 0
         fi
         ;;
@@ -39,7 +44,7 @@ case "${1:-}" in
         list=$(timeout 25 yay -Qua 2>/dev/null || true)
         ;;
     *)
-        printf '{"text":"?","class":"zero","tooltip":"usage: waybar-updates.sh pacman|aur"}\n'
+        wb_emit "?" zero "usage: waybar-updates.sh pacman|aur"
         exit 0
         ;;
 esac
@@ -51,13 +56,10 @@ count=${count:-0}
 
 if [ "$count" -gt 0 ]; then
     class="pending"
-    # JSON-escape the package list for the tooltip; real newlines become \n.
-    tooltip=$(printf '%s' "$list" \
-        | sed 's/\\/\\\\/g; s/"/\\"/g' \
-        | awk 'BEGIN{ORS=""} {print (NR>1 ? "\\n" : "") $0}')
+    tooltip="$list"   # wb_emit escapes it and folds the newlines
 else
     class="zero"
     tooltip="up to date"
 fi
 
-printf '{"text":"%s %s","class":"%s","tooltip":"%s"}\n' "$icon" "$count" "$class" "$tooltip"
+wb_emit "$icon $count" "$class" "$tooltip"

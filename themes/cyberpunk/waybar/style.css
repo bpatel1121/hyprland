@@ -27,7 +27,7 @@
  *   5. The bar is TWO-TONE at rest — a cyan instrument panel in a pink frame:
  *        pink   the frame and the light — island hairline + edge, continuing
  *               into Hyprland's window bloom just beneath the bar
- *        cyan   every readout — active workspace, clock, volume, network,
+ *        cyan   every readout — active workspace, clock, volume,
  *               bluetooth, battery
  *      Every other color is STATE, not decoration, and appears only when
  *      something is actually true:
@@ -160,7 +160,7 @@ window#waybar {
  * this bar, so music inherits that vocabulary for free.
  *
  * Spotify gets its brand green rather than the default cyan — the same
- * exception mako already makes for Spotify notifications. */
+ * exception swaync already makes for Spotify notifications. */
 #mpris {
     color: @cyan;
     background-color: rgba(41, 190, 204, 0.07);   /* faint chip, not a pill */

@@ -2,10 +2,11 @@
 # Open-task chip for the bar — count of todos due within 24h (todoman, which
 # stores VTODOs in the same khal vdir the calendar uses). Hidden at zero so
 # the resting bar stays quiet; goes red the moment anything is overdue.
-# Emits waybar JSON (class carries the styling).
+# Emits waybar JSON (class carries the styling) via waybar-lib.sh.
 set -uo pipefail
+. "$(dirname -- "${BASH_SOURCE[0]}")/waybar-lib.sh"
 
-command -v todo >/dev/null 2>&1 || { printf '{"text":"","class":"zero"}\n'; exit 0; }
+command -v todo >/dev/null 2>&1 || { wb_emit "" zero; exit 0; }
 
 now=$(date +%s)
 count=0
@@ -21,15 +22,11 @@ while IFS= read -r line; do
     fi
 done <<< "$lines"
 
-if [ "$count" -eq 0 ]; then
-    printf '{"text":"","class":"zero"}\n'; exit 0
-fi
+[ "$count" -gt 0 ] || { wb_emit "" zero; exit 0; }
 
 class="pending"
 [ "$overdue" -gt 0 ] && class="overdue"
 
-tooltip=$(printf '%s' "$lines" | head -n 8 | sed 's/"/\\"/g' \
-    | awk '{ printf "%s\\n", $0 }')
-
-printf '{"text":"󰄲 %s","class":"%s","tooltip":"%s"}\n' \
-    "$count" "$class" "${tooltip%\\n}"
+# Raw lines — wb_emit escapes them and folds the newlines. Task summaries are
+# user-authored, so quotes and backslashes are expected, not exceptional.
+wb_emit "󰄲 $count" "$class" "$(printf '%s' "$lines" | head -n 8)"

@@ -5,45 +5,202 @@ on:
     branches: [main]
   pull_request:
 
+# Nothing here can launch Hyprland, so CI's job is to catch the failures that
+# are otherwise only visible as "the bar module silently vanished" or "the
+# cursor quietly stopped switching" on a live desktop.
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      # A self-managed interpreter, so PEP 668's externally-managed-environment
+      # can never apply. Pinned >=3.11 for tomllib, which the TOML step imports.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Install validators
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q shellcheck lua5.4
-          pip install --quiet json5 tinycss2
+          python -m pip install --quiet json5 tinycss2
 
+      # -x follows sourced libraries; -P scripts is what lets it resolve the
+      # computed `. "$(dirname -- "${BASH_SOURCE[0]}")/x-lib.sh"` form.
+      # Default severity, deliberately: -S warning used to hide the SC2012
+      # `ls | head` findings that this repo actually had.
       - name: Shellcheck all scripts
-        run: shellcheck -S warning scripts/*.sh
+        run: shellcheck -x -P scripts scripts/*.sh
+
+      # `scripts/*-lib.sh` is sourced-only and ships 644; everything else is an
+      # entry point and ships 755. Read from the INDEX, not the filesystem —
+      # the index mode is what actually travels in a clone.
+      - name: Script hygiene (shebang + the *-lib.sh convention)
+        run: |
+          bad=0
+          for f in scripts/*.sh; do
+            head -n1 "$f" | grep -qx '#!/usr/bin/env bash' \
+              || { echo "FAIL $f: line 1 is not '#!/usr/bin/env bash'"; bad=1; }
+            mode=$(git ls-files -s "$f" | cut -d' ' -f1)
+            case "$f" in
+              *-lib.sh) want=100644 ;;
+              *)        want=100755 ;;
+            esac
+            [ "$mode" = "$want" ] || { echo "FAIL $f: git mode $mode, want $want"; bad=1; }
+          done
+          exit $bad
 
       - name: Lua syntax (hyprland.lua + every theme.lua / colors.lua)
         run: |
-          luac5.4 -p hyprland.lua
+          luac5.4 -p hyprland.lua && echo "OK hyprland.lua"
           for f in themes/*/theme.lua themes/*/wezterm/colors.lua; do
-            [ -f "$f" ] && luac5.4 -p "$f" && echo "OK $f"
+            # An explicit `if`, not `[ -f "$f" ] && ... && ...`: this loop is the
+            # last command in the block, so under `bash -e` a final iteration
+            # whose test simply failed made the whole STEP exit 1 — turning a
+            # theme that legitimately omits colors.lua into a CI failure.
+            if [ -f "$f" ]; then
+              luac5.4 -p "$f" && echo "OK $f"
+            fi
           done
 
-      - name: Themes return tables with required keys
+      # Pinned release rather than a third-party action: no supply-chain surface
+      # and reproducible. Honors .stylua.toml and .styluaignore — the theme
+      # palette files are hand-aligned and deliberately excluded there; this
+      # gate exists to keep hyprland.lua, which IS code, from drifting.
+      - name: Lua formatting (stylua --check)
+        run: |
+          ver=2.0.2
+          curl -sSfL -o /tmp/stylua.zip \
+            "https://github.com/JohnnyMorganz/StyLua/releases/download/v$ver/stylua-linux-x86_64.zip"
+          unzip -qo /tmp/stylua.zip -d /tmp
+          chmod +x /tmp/stylua
+          /tmp/stylua --check .
+
+      - name: Themes declare a valid, complete table
         run: |
           for f in themes/*/theme.lua; do
-            lua5.4 -e "local t=dofile('$f'); assert(type(t)=='table' and t.active_border, '$f')" \
-              && echo "OK $f"
+            THEME_FILE="$f" lua5.4 -e '
+              local f = os.getenv("THEME_FILE")
+              local t = dofile(f)
+              local function fail(m) io.stderr:write(f..": "..m.."\n"); os.exit(1) end
+              if type(t) ~= "table" then fail("did not return a table") end
+              for _, k in ipairs{"gaps_in","gaps_out","border_size","rounding",
+                                 "active_border","inactive_border"} do
+                if t[k] == nil then fail("missing required key: "..k) end
+              end
+              local ab = t.active_border
+              if type(ab) ~= "table" or type(ab.colors) ~= "table" or #ab.colors < 1 then
+                fail("active_border must be { colors = {...}, angle = n }")
+              end
+              -- border-motion.sh re-dofiles this and mutates ab.angle, so the
+              -- gradient SHAPE has to hold, not just the key being present.
+              for _, c in ipairs(ab.colors) do
+                if not tostring(c):match("^rgba%(%x%x%x%x%x%x%x%x%)$") then
+                  fail("active_border color not rgba(RRGGBBAA): "..tostring(c))
+                end
+              end
+              if not tostring(t.inactive_border):match("^rgba%(%x%x%x%x%x%x%x%x%)$") then
+                fail("inactive_border not rgba(RRGGBBAA)")
+              end
+              -- border_motion is divided into 7200 by border-motion.sh
+              if t.border_motion ~= nil and (type(t.border_motion) ~= "number" or t.border_motion < 1) then
+                fail("border_motion must be a positive number (deciseconds/revolution)")
+              end
+              if t.polarity ~= nil and t.polarity ~= "light" and t.polarity ~= "dark" then
+                fail("polarity must be \"light\" or \"dark\"")
+              end
+              if t.cursor ~= nil and type(t.cursor) ~= "string" then fail("cursor must be a string") end
+              if t.dim_strength ~= nil and (type(t.dim_strength) ~= "number"
+                 or t.dim_strength < 0 or t.dim_strength > 1) then
+                fail("dim_strength must be a number in 0..1")
+              end
+              print("OK "..f)
+            '
           done
+
+      # theme-lib.sh reads theme.lua with sed, so the keys it needs must sit at
+      # the start of their own line. A purely cosmetic edit — folding
+      # `cursor = "..."` onto a shared line the way gaps_in/gaps_out already
+      # share one — would silently make theme-apply stop seeing the key, and
+      # present as "the cursor randomly stopped switching". Round-trip the sed
+      # against real Lua values so the format's real constraint is executable.
+      - name: theme.lua keys stay sed-extractable (guards theme-apply.sh)
+        run: |
+          bad=0
+          for f in themes/*/theme.lua; do
+            for k in cursor border_motion polarity; do
+              lua=$(THEME_FILE="$f" KEY="$k" lua5.4 -e 'local t = dofile(os.getenv("THEME_FILE"))
+                       local v = t[os.getenv("KEY")]
+                       io.write(v ~= nil and tostring(v) or "")')
+              sedv=$(sed -n "s/^[[:space:]]*$k[[:space:]]*=[[:space:]]*\"\{0,1\}\([^\",]*\)\"\{0,1\}.*/\1/p" "$f" | head -n1)
+              if [ "$lua" = "$sedv" ]; then
+                echo "OK $f: $k=[$lua]"
+              else
+                echo "FAIL $f: $k — lua='$lua' but theme-apply's sed sees '$sedv'"; bad=1
+              fi
+            done
+          done
+          exit $bad
+
+      # A renamed script would otherwise silently kill a bar module or a bind,
+      # with CI still green: nothing verifies these paths today.
+      - name: Every referenced script exists
+        run: |
+          python3 - <<'PY'
+          import glob, os, re, sys
+          bad = False
+          srcs = [p for p in (['hyprland.lua', 'waybar/config.jsonc']
+                              + glob.glob('themes/*/waybar/config.jsonc')
+                              + glob.glob('scripts/*.sh')) if os.path.isfile(p)]
+          pats = [re.compile(r'/\.config/hypr/scripts/([A-Za-z0-9._-]+\.sh)'),
+                  re.compile(r'\$(?:HYPR|REPO|\{HYPR\})/scripts/([A-Za-z0-9._-]+\.sh)'),
+                  re.compile(r'BASH_SOURCE\[0\]\}"\)/([A-Za-z0-9._-]+\.sh)'),
+                  re.compile(r'scripts \.\. "([A-Za-z0-9._-]+\.sh)"')]
+          seen = 0
+          for s in srcs:
+              text = open(s).read()
+              for pat in pats:
+                  for name in sorted(set(pat.findall(text))):
+                      seen += 1
+                      if not os.path.isfile(os.path.join('scripts', name)):
+                          print(f'FAIL {s}: references missing scripts/{name}'); bad = True
+          print(f'checked {seen} script references across {len(srcs)} files')
+          sys.exit(1 if bad else 0)
+          PY
 
       - name: JSONC / JSON / TOML parse
         run: |
           python3 - <<'PY'
           import glob, json, json5, tomllib
-          for f in glob.glob('themes/*/waybar/config.jsonc') + glob.glob('themes/*/fastfetch/config.jsonc'):
+          for f in (['waybar/config.jsonc'] + glob.glob('themes/*/waybar/config.jsonc')
+                    + glob.glob('themes/*/fastfetch/config.jsonc')):
               json5.load(open(f)); print('OK', f)
           for f in glob.glob('swaync/config.json'):
               json.load(open(f)); print('OK', f)
           for f in glob.glob('themes/*/starship.toml'):
               tomllib.load(open(f, 'rb')); print('OK', f)
+          PY
+
+      # wlogout's layout is a STREAM of objects, not a JSON array — parse it
+      # one object at a time or it fails for the wrong reason.
+      - name: wlogout layout is well-formed
+        run: |
+          python3 - <<'PY'
+          import glob, json, sys
+          bad = False
+          for f in ['wlogout/layout'] + glob.glob('themes/*/wlogout/layout'):
+              try:
+                  dec, text, i, n = json.JSONDecoder(), open(f).read(), 0, 0
+                  while (i := text.find('{', i)) != -1:
+                      obj, i = dec.raw_decode(text, i)
+                      for k in ('label', 'action', 'text', 'keybind'):
+                          assert k in obj, f'button missing "{k}": {obj}'
+                      n += 1
+                  print(f'OK {f} ({n} buttons)')
+              except Exception as e:
+                  print(f'FAIL {f}: {e}'); bad = True
+          sys.exit(1 if bad else 0)
           PY
 
       - name: CSS parse (waybar / wofi / wlogout / gtk / swaync / swayosd)

@@ -1,205 +1,36 @@
+// Cyberpunk · Cybrcolors — waybar overlay
+//
+// Bar BEHAVIOR — the module list, exec paths, intervals, signals, on-click
+// commands — lives once at the repo root in waybar/config.jsonc. That is the
+// same split swaync already uses (shared config.json, per-theme style.css),
+// and it exists because both themes' bar configs had drifted into being
+// byte-identical 205-line copies of each other.
+//
+// This file is the theme's seam into that shared base. waybar merges an
+// include with the INCLUDING file winning — "in case of duplicate options,
+// the first defined value takes precedence" (waybar(5)) — so anything
+// restated here overrides the shared default.
+//
+// The merge is per TOP-LEVEL KEY, not deep: to change a single workspace
+// glyph you must restate the whole "hyprland/workspaces" object, not just
+// its format-icons. The commented block below is a working starting point.
+//
+// Skin (colors, radii, glow, scanlines) is NOT here — it lives in style.css.
 {
-    "layer": "top",
-    "position": "top",
-    "height": 36,
-    "spacing": 0,
-    "margin-top": 8,
-    "margin-left": 14,
-    "margin-right": 14,
-    "modules-left": ["custom/launcher", "hyprland/workspaces", "mpris", "custom/cava-wave"],
-    // Center island: the clock, alone — nothing variable-width shares the
-    // island, so it sits at TRUE screen center, always. Music lives in the
-    // left island; the agenda/todo glance chips lead the right island.
-    "modules-center": ["clock"],
-    "modules-right": ["custom/agenda", "custom/todos", "custom/updates", "custom/aur", "temperature", "pulseaudio", "network", "bluetooth", "battery", "tray", "custom/dnd", "custom/power"],
+    "include": ["$HOME/.config/hypr/waybar/config.jsonc"]
 
-    // Bar bookends: Arch chip opens the launcher, power chip opens wlogout.
-    "custom/launcher": {
-        "format": "\udb80\udcc3",
-        "tooltip": false,
-        "on-click": "wofi --show drun --allow-images --columns 2 --width 640 --height 480 --style $HOME/.config/hypr/themes/current/wofi/style.css"
-    },
-
-    "hyprland/workspaces": {
-        // {icon} with digit mappings = numbers as before, PLUS a ghost for
-        // the scratchpad. show-special + special-visible-only makes the ghost
-        // exist only while the scratchpad is actually on screen — it IS the
-        // "you are in the scratchpad" indicator.
-        "format": "{icon}",
-        "format-icons": {
-            "1": "1", "2": "2", "3": "3", "4": "4", "5": "5",
-            "6": "6", "7": "7", "8": "8", "9": "9", "10": "10",
-            "magic": "\udb80\udea0", "special:magic": "\udb80\udea0",
-            "default": "•"
-        },
-        "show-special": true,
-        "special-visible-only": true,
-        "on-click": "activate",
-        // Always show 1-5: dormant workspaces render dim (the .empty CSS
-        // class), so the bar reads as a row of stations instead of one
-        // lonely number. 6+ still appear on demand. Explicit ids, NOT the
-        // `"*": 5` shorthand — a waybar update started reading that as
-        // "all ten" after the monitor change.
-        "persistent-workspaces": { "1": [], "2": [], "3": [], "4": [], "5": [] }
-    },
-
-    // The icons here used to be EMPTY strings, so {player_icon}/{status_icon}
-    // rendered nothing and play-vs-pause was signalled only by the text going
-    // one shade darker. Real glyphs now carry that difference, and the CSS adds
-    // a glow on top: md-spotify / md-play when live, md-pause when not.
-    //
-    // position/length moved to the tooltip. At max-length 40 they were eating
-    // the budget and truncating the artist away before ever showing.
-    "mpris": {
-        "interval": 5,
-        "format": "{player_icon}  {title} · {artist}",
-        "format-paused": "{status_icon}  {title} · {artist}",
-        "player-icons": { "default": "󰐊", "spotify": "󰓇" },
-        "status-icons": { "paused": "󰏤" },
-        "max-length": 45,
-        "on-click": "playerctl play-pause",
-        "on-scroll-up": "playerctl next",
-        "on-scroll-down": "playerctl previous",
-        "tooltip-format": "{title} — {artist} ({album})  {position}/{length}"
-    },
-
-    // The soundwave fused onto the mpris chip. Streams from
-    // scripts/waybar-cava.sh (cava in raw mode -> block glyphs), so it works
-    // on any waybar build. Empty text in silence = the wave only exists
-    // while sound does.
-    "custom/cava-wave": {
-        "exec": "$HOME/.config/hypr/scripts/waybar-cava.sh",
-        "return-type": "json",
-        "tooltip": false
-    },
-
-    // Next calendar event — renders only when something is within 8h
-    // (waybar-agenda.sh emits empty text otherwise). Click opens the agenda.
-    "custom/agenda": {
-        "exec": "$HOME/.config/hypr/scripts/waybar-agenda.sh",
-        "return-type": "json",
-        "interval": 60,
-        "on-click": "$HOME/.config/hypr/scripts/calendar-menu.sh"
-    },
-
-    // Open todos due within 24h (todoman, same vdir as khal). Hidden at
-    // zero; red class when anything is overdue. Click opens the list.
-    "custom/todos": {
-        "exec": "$HOME/.config/hypr/scripts/waybar-todos.sh",
-        "return-type": "json",
-        "interval": 60,
-        "on-click": "$HOME/.config/hypr/scripts/todo-menu.sh"
-    },
-
-    "clock": {
-        "format": "  {:%H:%M} ",
-        "format-alt": "  {:%a %d %b} ",
-        "tooltip-format": "<tt>{calendar}</tt>"
-    },
-
-    // Repo updates — Pac-Man glyph, Pac-Man yellow. Stays on screen at 0 and
-    // grays out there; the .pending/.zero class comes from the script, which is
-    // why this is return-type json. Needs `checkupdates` from pacman-contrib.
-    // signal 8: refresh instantly after an update with: pkill -RTMIN+8 waybar
-    "custom/updates": {
-        "exec": "$HOME/.config/hypr/scripts/waybar-updates.sh pacman",
-        "return-type": "json",
-        // 120s, not 900s: checkupdates is a local diff against an already
-        // synced temp DB, so polling is cheap, and the counter clears on its
-        // own shortly after any update no matter how it was invoked. The
-        // signal below is the instant path when it works.
-        "interval": 120,
-        "signal": 8,
-        "on-click": "wezterm start -- sh -c 'sudo pacman -Syu; pkill -RTMIN+8 waybar; read -p done'"
-    },
-
-    // AUR updates via yay — party popper, because "yay". Longer interval than
-    // the repo check: it goes over the network to the AUR RPC (the script caps
-    // that with a timeout so a dead link can't wedge the bar).
-    // signal 9: pkill -RTMIN+9 waybar
-    "custom/aur": {
-        "exec": "$HOME/.config/hypr/scripts/waybar-updates.sh aur",
-        "return-type": "json",
-        // 300s, not 3600s: close enough to the repo counter's cadence that the
-        // popper clears on its own shortly after a yay run. Not matched to
-        // pacman's 120s on purpose, since every check here is a live query to
-        // the AUR's public RPC rather than a local diff.
-        "interval": 300,
-        "signal": 9,
-        "on-click": "wezterm start -- sh -c 'yay -Sua; pkill -RTMIN+9 waybar; read -p done'"
-    },
-
-    // Silent watchdog: renders NOTHING below 80° (empty format hides it),
-    // appears pulsing red only when the machine is actually hot.
-    "temperature": {
-        "critical-threshold": 80,
-        "format": "",
-        "format-critical": " {temperatureC}°"
-    },
-
-    "pulseaudio": {
-        "format": "{icon} {volume}%",
-        "format-muted": "󰝟 muted",
-        "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] },
-        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
-        "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
-        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-    },
-
-    // Live throughput readout — the HUD part. Wifi details move to the tooltip.
-    "network": {
-        "interval": 2,
-        "format-wifi": "  {bandwidthDownBytes}  {bandwidthUpBytes}",
-        "format-ethernet": "  {bandwidthDownBytes}  {bandwidthUpBytes}",
-        "format-disconnected": " off",
-        "tooltip-format-wifi": "{essid} ({signalStrength}%)  {ipaddr}",
-        "tooltip-format-ethernet": "{ifname}  {ipaddr}",
-        "on-click": "wezterm start -- nmtui"
-    },
-
-    // Icon-only: connected = lit icon (device name in tooltip), off = hidden.
-    "bluetooth": {
-        "format": "",
-        "format-connected": "",
-        "format-off": "",
-        "format-disabled": "",
-        "tooltip-format-connected": "{device_alias}",
-        "on-click": "wezterm start -- bluetoothctl"
-    },
-
-    // Only renders on machines that HAVE a battery (the laptop); a desktop
-    // shows nothing here and that is correct, not a bug.
-    "battery": {
-        "format": "{icon} {capacity}%",
-        "format-charging": "󰂄 {capacity}%",
-        "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"],
-        "states": { "warning": 30, "critical": 15 }
-    },
-
-    "tray": { "spacing": 8 },
-
-    // DND indicator — swaync streams state (-swb: subscribe, waybar mode), so
-    // this updates instantly, no polling. Renders ONLY while DND is on: the
-    // muted bell appearing IS the signal. Click opens the center, right-click
-    // toggles DND back off.
-    "custom/dnd": {
-        "exec": "swaync-client -swb",
-        "return-type": "json",
-        "format": "{icon}",
-        "format-icons": {
-            "none": "", "notification": "",
-            "dnd-none": "󰂛", "dnd-notification": "󰂛",
-            "inhibited-none": "", "inhibited-notification": "",
-            "dnd-inhibited-none": "󰂛", "dnd-inhibited-notification": "󰂛"
-        },
-        "tooltip": false,
-        "on-click": "swaync-client -t -sw",
-        "on-click-right": "swaync-client -d -sw"
-    },
-
-    "custom/power": {
-        "format": "\u23fb",
-        "tooltip": false,
-        "on-click": "wlogout -p layer-shell"
-    }
+    // Example: neon dots instead of digits.
+    // ,"hyprland/workspaces": {
+    //     "format": "{icon}",
+    //     "format-icons": {
+    //         "1": "•", "2": "•", "3": "•", "4": "•", "5": "•",
+    //         "6": "•", "7": "•", "8": "•", "9": "•", "10": "•",
+    //         "magic": "󰊠", "special:magic": "󰊠",
+    //         "default": "•"
+    //     },
+    //     "show-special": true,
+    //     "special-visible-only": true,
+    //     "on-click": "activate",
+    //     "persistent-workspaces": { "1": [], "2": [], "3": [], "4": [], "5": [] }
+    // }
 }

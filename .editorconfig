@@ -1,0 +1,20 @@
+# Holds the conventions this tree already follows, so an editor that respects
+# EditorConfig doesn't quietly undo them. stylua (.stylua.toml) remains the
+# authority for Lua; these settings agree with it rather than competing.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# swaync ships its schema with 2-space indentation; match it rather than
+# reflowing a file whose upstream examples are all 2-space.
+[swaync/config.json]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false   # two trailing spaces is a hard line break

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # wofi picker -> theme-switch.sh
 set -uo pipefail
-HYPR="$HOME/.config/hypr"
-style="$HYPR/themes/current/wofi/style.css"
+# shellcheck source=scripts/theme-lib.sh
+. "$(dirname -- "${BASH_SOURCE[0]}")/theme-lib.sh"
+style="$CUR/wofi/style.css"
 names=$(for d in "$HYPR/themes"/*/; do
     d=${d%/}; d=${d##*/}
     [ "$d" = current ] || printf '%s\n' "$d"

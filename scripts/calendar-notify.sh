@@ -12,12 +12,13 @@ FIRED="$CAL_DIR/.fired"
 cal_ensure_file
 touch "$FIRED"
 
-# single instance
-if pgrep -f "hypr/scripts/calendar-notify.sh" | grep -qv "^$$\$"; then
-    for p in $(pgrep -f "hypr/scripts/calendar-notify.sh"); do
-        [ "$p" != "$$" ] && exit 0
-    done
-fi
+# Single instance via flock rather than pgrep. The old guard tested the same
+# condition twice (an `if pgrep | grep -qv` wrapping a loop that re-tested it),
+# and `pgrep -f` matches the whole command line — so an editor with this file
+# open counted as a running daemon. flock is atomic, and the kernel releases it
+# when the process dies, crashes included. fd 9 stays open for the lifetime.
+exec 9>"$CAL_DIR/.lock"
+flock -n 9 || exit 0
 
 fails=0
 while :; do

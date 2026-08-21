@@ -1,17 +1,20 @@
 // Gruvbox · dark — SDDM greeter
 //
 // The login half of the theme system: same wallpaper, same palette discipline
-// as hyprlock (themes/cyberpunk/hyprlock.conf) — PINK is the frame, CYAN is
-// the content, red appears only on failure. Colors are copied verbatim from
-// the hyprlock input-field so boot -> login -> lock reads as one design.
+// as hyprlock (themes/gruvbox/hyprlock.conf) — ORANGE is the frame, CREAM is
+// the content, muted sky blue is the readout, red appears only on failure.
+// Colors are copied verbatim from the hyprlock input-field so boot -> login
+// -> lock reads as one design.
 //
 // Deliberately plain Qt Quick: no Qt5Compat.GraphicalEffects (blur/glow),
 // which would add a package dependency and a Qt-version headache for one
-// visual flourish. The "glow" here is a raised pink text style — cheap, safe.
+// visual flourish. Nothing here needs it: gruvbox is matte by design, so the
+// greeter has no glow at all — the cyberpunk greeter's raised text style is
+// deliberately absent, exactly as the theme drops it everywhere else.
 //
 // Installed system-wide by scripts/sddm-apply.sh (SDDM runs as its own user
 // and cannot read ~/.config). Preview without logging out:
-//   sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/hypr-cyberpunk
+//   sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/hypr-gruvbox
 
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -20,15 +23,15 @@ Rectangle {
     id: root
     width: 1920
     height: 1080          // greeter resizes the root item to the real screen
-    color: "#1d2021"      // no0 — ground, in case the wallpaper fails to load
+    color: "#1d2021"      // bg0_h — ground, in case the wallpaper fails to load
 
-    // Cybrcolors, same names as waybar/style.css
-    readonly property color cOrange: "#fe8019"  // frame
-    readonly property color cBlue:   "#83a598"  // readouts — muted sky blue
-    readonly property color cRed:   "#fb4934"   // re0 — failure only
-    readonly property color cGray:  "#928374"   // wh0 — dormant
-    readonly property color cFg:    "#ebdbb2"   // text
-    readonly property color cInner: "#282828"   // no2 — raised surfaces
+    // Gruvbox dark, same names as waybar/style.css
+    readonly property color cOrange: "#fe8019"  // orange — frame
+    readonly property color cBlue:   "#83a598"  // blue — readouts, muted sky
+    readonly property color cRed:    "#fb4934"  // red — failure only
+    readonly property color cGray:   "#928374"  // gray — dormant
+    readonly property color cFg:     "#ebdbb2"  // fg — text
+    readonly property color cInner:  "#282828"  // bg0 — raised surfaces
     readonly property string mono:  "JetBrainsMono Nerd Font"
 
     // --- wallpaper, dimmed like hyprlock (brightness 0.55) ------------------
@@ -37,9 +40,9 @@ Rectangle {
         source: config.background
         fillMode: Image.PreserveAspectCrop
     }
-    Rectangle { anchors.fill: parent; color: "#1d2021"; opacity: 0.45 }
+    Rectangle { anchors.fill: parent; color: "#1d2021"; opacity: 0.45 }  // bg0_h scrim
 
-    // --- clock — cyan glyphs, pink undertone, same as the lock screen -------
+    // --- clock — cream glyphs, no glow, same as the lock screen ------------
     Column {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -101,7 +104,7 @@ Rectangle {
             }
         }
 
-        // password — 320x52, radius 12, 2px pink border: hyprlock's numbers
+        // password — 320x52, radius 4, 2px orange border: hyprlock's numbers
         Rectangle {
             id: passBox
             width: 320; height: 52; radius: 4

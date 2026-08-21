@@ -6,6 +6,33 @@
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 
 local home = os.getenv("HOME")
+local scripts = home .. "/.config/hypr/scripts/"
+
+-- Every optional dependency gets asked the same question: run it if it is on
+-- PATH, else fall through to the next candidate. `command -v` inside `sh -c`
+-- is how you ask that without assuming which shell answers.
+--
+-- The command lands inside SINGLE quotes, so a ' in one would end the string
+-- early. No call site has one today; the escape is here so the next one does
+-- not have to remember. The fallback is exec'd like the candidates, which
+-- saves a lingering `sh` when it is the branch that runs.
+local function shq(s)
+    return (s:gsub("'", "'\\''"))
+end
+
+-- first_of({ "cmd --with args", ... }, fallback) -> a shell command string.
+-- The first installed candidate wins; `fallback` runs when none are. Omit it
+-- and nothing runs at all when none are installed.
+local function first_of(candidates, fallback)
+    local parts = {}
+    for _, cmd in ipairs(candidates) do
+        parts[#parts + 1] = "command -v " .. cmd:match("^%S+") .. " >/dev/null && exec " .. shq(cmd)
+    end
+    if fallback then
+        parts[#parts + 1] = "exec " .. shq(fallback)
+    end
+    return "sh -c '" .. table.concat(parts, "; ") .. "'"
+end
 
 ------------------
 ---- MONITORS ----
@@ -27,7 +54,7 @@ local fileManager = "wezterm start -- yazi"
 -- launcher; the theme css sizes it. Width/height here rather than css because
 -- wofi treats geometry as config, not style.
 local menu = "wofi --show drun --allow-images --columns 2 --width 640 --height 480 --style "
-    .. os.getenv("HOME")
+    .. home
     .. "/.config/hypr/themes/current/wofi/style.css"
 
 -------------------
@@ -39,30 +66,25 @@ hl.on("hyprland.start", function()
     -- fallback when it isn't installed. Only ONE may run — they fight over the
     -- background — so theme-apply.sh picks whichever it finds and this starts
     -- the same one. (Upstream renamed swww -> awww; both names are handled.)
-    hl.exec_cmd(
-        "sh -c 'command -v swww-daemon >/dev/null && exec swww-daemon; "
-            .. "command -v awww-daemon >/dev/null && exec awww-daemon; "
-            .. "exec hyprpaper'"
-    )
+    hl.exec_cmd(first_of({ "swww-daemon", "awww-daemon" }, "hyprpaper"))
     -- Notification daemon: swaync (notification center + toggles panel).
     hl.exec_cmd("swaync")
     -- Volume/brightness OSD server (clients fire from the binds below).
-    hl.exec_cmd("sh -c 'command -v swayosd-server >/dev/null && exec swayosd-server'")
+    hl.exec_cmd(first_of({ "swayosd-server" }))
     hl.exec_cmd("hypridle") -- dim -> lock -> dpms off
     -- Battery/charger events through the themed notifications (laptops; a
     -- desktop simply never triggers them). -s skips the startup replay.
-    hl.exec_cmd("sh -c 'command -v poweralertd >/dev/null && exec poweralertd -s'")
+    hl.exec_cmd(first_of({ "poweralertd -s" }))
     -- Calendar alert daemon: themed "in N minutes" / "now" notifications from
     -- the plain-text events file (see scripts/calendar-lib.sh).
-    hl.exec_cmd(home .. "/.config/hypr/scripts/calendar-notify.sh")
+    hl.exec_cmd(scripts .. "calendar-notify.sh")
     -- Polkit agent. Without one running, anything that asks for privilege
     -- escalation through polkit (GUI installers, disk mounts, some settings
     -- panels) fails silently with no prompt at all. The package was installed
     -- but never started, so this had been quietly broken.
     hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
-    hl.exec_cmd(home .. "/.config/hypr/scripts/theme-apply.sh") -- themed waybar + wallpaper
+    hl.exec_cmd(scripts .. "theme-apply.sh") -- themed waybar + wallpaper
     hl.exec_cmd("firefox")
-    -- hl.exec_cmd(terminal)  -- you had this: opens a terminal on every login. Uncomment if wanted.
 end)
 
 -------------------------------
@@ -77,13 +99,10 @@ hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 -- GPU: this box has BOTH an Intel UHD 630 (00:02.0) and an NVIDIA RTX 2070
 -- (02:00.0), with nvidia-open-dkms installed and hyprland linked against
--- nvidia-utils. An older comment here claimed "Intel graphics only, no NVIDIA
--- env block needed" — that was wrong, so don't trust it if it resurfaces.
---
--- No NVIDIA env block is set all the same, because nothing currently misbehaves
--- and the modern driver needs far less coaxing than it used to. If you hit
--- flickering, black textures in XWayland, or cursor glitches, that's the first
--- thing to revisit: https://wiki.hypr.land/Configuring/Nvidia/
+-- nvidia-utils. No NVIDIA env block is set all the same: nothing currently
+-- misbehaves, and the modern driver needs far less coaxing than it used to.
+-- If you hit flickering, black textures in XWayland, or cursor glitches, this
+-- is the first thing to revisit: https://wiki.hypr.land/Configuring/Nvidia/
 
 -----------------------
 ---- LOOK AND FEEL ----
@@ -180,10 +199,15 @@ hl.animation({ leaf = "workspacesOut", enabled = true, speed = 2.8, bezier = "ea
 hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 1.8, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "zoomFactor", enabled = true, speed = 7, bezier = "quick" })
 
--- Border motion (borderangle loop) is NOT set here: the Lua animation binding
--- doesn't expose borderangle, so theme-apply.sh applies it via
--- `hyprctl keyword` from the theme's `border_motion` key instead. Reload wipes
--- keywords, but theme-switch reloads before theme-apply, so the order holds.
+-- Border motion is NOT set here: the Lua animation binding doesn't expose
+-- borderangle, and upstream's own borderangle loop is broken (registers, never
+-- ticks). scripts/border-motion.sh drives the gradient angle itself instead,
+-- spawned by theme-apply.sh when the theme declares `border_motion`.
+--
+-- The ordering that makes it work: border-motion.sh applies the angle through
+-- `hyprctl eval`, and `hyprctl reload` wipes that as surely as it wipes
+-- keywords — which is exactly why theme-switch.sh reloads BEFORE calling
+-- theme-apply, never after.
 
 -- Layouts
 hl.config({ dwindle = { preserve_split = true } })
@@ -224,9 +248,6 @@ hl.gesture({
     action = "workspace",
 })
 
--- Example per-device config (commented; matches nothing on your system):
--- hl.device({ name = "epic-mouse-v1", sensitivity = -0.5 })
-
 ---------------------
 ---- KEYBINDINGS ----
 ---------------------
@@ -238,23 +259,22 @@ hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
 hl.bind(mainMod .. " + X", hl.dsp.window.kill())
-hl.bind(mainMod .. " + 0", hl.dsp.exit())
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + N", hl.dsp.layout("togglesplit")) -- dwindle only
 -- Move focused window out of the scratchpad into the current workspace
 hl.bind(mainMod .. " + SHIFT + M", hl.dsp.window.move({ workspace = "e+0" }))
-hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "1" }))
+hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "1" }))
 
 -- Theme switcher
-hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/theme-menu.sh"))
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(scripts .. "theme-menu.sh"))
 
--- Agenda: upcoming events in a themed wofi window; top row edits the file.
-hl.bind(mainMod .. " + A", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/calendar-menu.sh"))
+-- Calendar: ikhal's month grid in a floating themed terminal (float rule below).
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd(scripts .. "calendar-menu.sh"))
 
 -- Todos: todoman's list in the same floating-terminal shape (todo new / todo
 -- done from the shell it leaves open). Same vdir as the calendar.
-hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/todo-menu.sh"))
+hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(scripts .. "todo-menu.sh"))
 
 -- Session. Lock is on SUPER+CTRL+L, not SUPER+L — that one is already `focus
 -- right` in the vim-direction block below. Both surfaces are themed and follow
@@ -270,7 +290,7 @@ hl.bind(
     hl.dsp.exec_cmd("grim - | wl-copy && notify-send -t 2500 'Screenshot' 'full screen copied to clipboard'")
 )
 hl.bind(
-    "SUPER + Print",
+    mainMod .. " + Print",
     hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy && notify-send -t 2500 "Screenshot" "region copied to clipboard"')
 )
 
@@ -310,46 +330,40 @@ hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Volume / brightness on SUPER + F-keys, through swayosd so an on-screen
--- pill answers every press; falls back to bare wpctl/brightnessctl when
--- swayosd isn't installed — same action, just silent.
+-- pill answers every press; first_of() falls back to bare wpctl/brightnessctl
+-- when swayosd isn't installed — same action, just silent.
 hl.bind(
-    "SUPER + F1",
+    mainMod .. " + F1",
     hl.dsp.exec_cmd(
-        "sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume mute-toggle; wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle'"
+        first_of({ "swayosd-client --output-volume mute-toggle" }, "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
     ),
     { repeating = true }
 )
 hl.bind(
-    "SUPER + F2",
+    mainMod .. " + F2",
+    hl.dsp.exec_cmd(first_of({ "swayosd-client --output-volume lower" }, "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")),
+    { repeating = true }
+)
+hl.bind(
+    mainMod .. " + F3",
     hl.dsp.exec_cmd(
-        "sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume lower; wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-'"
+        first_of({ "swayosd-client --output-volume raise" }, "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+")
     ),
     { repeating = true }
 )
 hl.bind(
-    "SUPER + F3",
-    hl.dsp.exec_cmd(
-        "sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --output-volume raise; wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+'"
-    ),
+    mainMod .. " + F5",
+    hl.dsp.exec_cmd(first_of({ "swayosd-client --brightness lower" }, "brightnessctl set 5%-")),
     { repeating = true }
 )
 hl.bind(
-    "SUPER + F5",
-    hl.dsp.exec_cmd(
-        "sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --brightness lower; brightnessctl set 5%-'"
-    ),
-    { repeating = true }
-)
-hl.bind(
-    "SUPER + F6",
-    hl.dsp.exec_cmd(
-        "sh -c 'command -v swayosd-client >/dev/null && exec swayosd-client --brightness raise; brightnessctl set 5%+'"
-    ),
+    mainMod .. " + F6",
+    hl.dsp.exec_cmd(first_of({ "swayosd-client --brightness raise" }, "brightnessctl set 5%+")),
     { repeating = true }
 )
 
 -- Notification center (swaync): history, DND toggle, sliders.
-hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd("swaync-client -t"))
+hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("swaync-client -t"))
 
 -- Media keys (playerctl — in linux-setup's packages/pacman.txt)
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })

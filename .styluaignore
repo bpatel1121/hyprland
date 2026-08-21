@@ -1,0 +1,11 @@
+# The theme data files are hand-aligned on purpose: a palette reads as columns,
+# and one `= "#rrggbb", -- name` per aligned row is the whole point. stylua
+# collapses that alignment (it has no concept of it), so formatting them would
+# be a readability regression, not a cleanup.
+#
+# hyprland.lua is CODE and is deliberately NOT ignored — it stays stylua-clean
+# and CI enforces that. This split is why .stylua.toml exists at all: to keep
+# an editor's format-on-save from retabbing the files it does touch.
+themes/*/theme.lua
+themes/*/nvim.lua
+themes/*/wezterm/colors.lua

@@ -4,10 +4,10 @@
 # Hyprland's own `borderangle ... loop` animation is the right tool for this,
 # but it's broken upstream (rotates once then freezes — the #9251/#9313
 # regression lineage, still frozen on 0.56.2 even though `hyprctl animations`
-# shows the loop registered). So this daemon does it manually: 10 ticks/sec,
-# each tick advancing the gradient angle via `hyprctl eval`. The `border`
-# animation leaf (speed 5.39 in hyprland.lua) eases every step, which is what
-# turns discrete jumps into a smooth sweep.
+# shows the loop registered). So this daemon does it manually: one step every
+# TICK seconds, each advancing the gradient angle via `hyprctl eval`. The
+# `border` animation leaf (speed 5.39 in hyprland.lua) eases every step, which
+# is what turns discrete jumps into a smooth sweep.
 #
 # Managed by theme-apply.sh: killed and (re)started on every theme switch,
 # only started when the active theme declares `border_motion` in theme.lua.

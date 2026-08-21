@@ -2,8 +2,9 @@
 # Sync external apps (wallpaper, waybar, swaync, ...) to the ACTIVE theme.
 # Does NOT reload Hyprland — hyprland.lua reads the theme itself via dofile.
 set -uo pipefail
-HYPR="$HOME/.config/hypr"
-CUR="$HYPR/themes/current"
+# HYPR, CUR, theme_key() and theme_wallpaper() all come from here.
+# shellcheck source=scripts/theme-lib.sh
+. "$(dirname -- "${BASH_SOURCE[0]}")/theme-lib.sh"
 
 # The `current` symlink is gitignored machine state — a fresh clone doesn't
 # have it. Create it on first run so the repo works out of the box.
@@ -11,10 +12,8 @@ CUR="$HYPR/themes/current"
 
 # --- Polarity (dark|light) ---------------------------------------------------
 # Themes may declare `polarity = "light"` in theme.lua; anything else (or
-# nothing) means dark. Extracted with sed rather than a lua interpreter so the
-# script keeps zero dependencies — the key just has to sit on its own line.
-polarity=$(sed -n 's/^[[:space:]]*polarity[[:space:]]*=[[:space:]]*"\(light\|dark\)".*/\1/p' \
-    "$CUR/theme.lua" 2>/dev/null | head -n1)
+# nothing) means dark. See theme_key() for why this is sed and not Lua.
+polarity=$(theme_key polarity '"\(light\|dark\)"')
 [ "$polarity" = light ] || polarity=dark
 
 # --- Border motion ------------------------------------------------------------
@@ -24,8 +23,7 @@ polarity=$(sed -n 's/^[[:space:]]*polarity[[:space:]]*=[[:space:]]*"\(light\|dar
 # gradient angle itself. One instance max: kill any old cycler, start a new
 # one only if the incoming theme asks for motion.
 pkill -f "hypr/scripts/border-motion.sh" 2>/dev/null || true
-motion=$(sed -n 's/^[[:space:]]*border_motion[[:space:]]*=[[:space:]]*\([0-9]\+\).*/\1/p' \
-    "$CUR/theme.lua" 2>/dev/null | head -n1)
+motion=$(theme_key border_motion '\([0-9]\+\)')
 if [ -n "$motion" ]; then
     "$HYPR/scripts/border-motion.sh" "$motion" >/dev/null 2>&1 &
     disown 2>/dev/null || true
@@ -40,8 +38,7 @@ fi
 #
 # The theme may declare `cursor = "Name"` in theme.lua. Fallback chain:
 # declared theme -> capitaine -> default, checking what's actually installed.
-want_cursor=$(sed -n 's/^[[:space:]]*cursor[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' \
-    "$CUR/theme.lua" 2>/dev/null | head -n1)
+want_cursor=$(theme_key cursor)
 cursor="default"
 [ -d /usr/share/icons/capitaine-cursors ] && cursor="capitaine-cursors"
 [ -n "$want_cursor" ] && { [ -d "/usr/share/icons/$want_cursor" ] \
@@ -51,8 +48,10 @@ cursor="default"
 # to fall back to capitaine with no trace, which reads exactly like "the cursor
 # never switches". Say so instead.
 if [ -n "$want_cursor" ] && [ "$cursor" != "$want_cursor" ]; then
-    command -v notify-send >/dev/null 2>&1 \
-        && notify-send -u critical "Cursor theme missing" "$want_cursor is not installed — using $cursor" || true
+    if command -v notify-send >/dev/null 2>&1; then
+        notify-send -u critical "Cursor theme missing" \
+            "$want_cursor is not installed — using $cursor" 2>/dev/null || true
+    fi
 fi
 
 # Three consumers, three mechanisms — all needed:
@@ -76,6 +75,29 @@ printf '[Icon Theme]\nName=default\nComment=managed by hypr/scripts/theme-apply.
 # the bar returns last, dressed in the new theme (layersIn fades it back).
 pkill -x waybar 2>/dev/null || true
 
+# The bar's `exec` children do NOT die with it: -x matches the exact name only,
+# and waybar-cava.sh stops writing to stdout in silence (its dedup rule), so it
+# never takes the SIGPIPE that would otherwise reap it. Every switch used to
+# strand one more cava holding a live PulseAudio capture.
+#
+# WAIT for waybar to actually be gone before reaping them. It respawns any
+# `exec` module that exits, so killing the streamer while the bar is still up
+# just gets a fresh one a moment later — which is the leak, one per switch.
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+    pgrep -x waybar >/dev/null 2>&1 || break
+    sleep 0.1
+done
+# By SCRIPT PATH — never `pkill -x cava`, which would also kill the standalone
+# visualizer the themes ship a config for.
+pkill -f "hypr/scripts/waybar-cava.sh" 2>/dev/null || true
+# Belt and braces: sweep any cava still holding one of OUR generated configs.
+# The script traps the signals that normally reap it, but a stranded streamer
+# still turned up now and then, and one live PulseAudio capture per switch is
+# not something to leave to a race. Matching on the waybar-cava.* config path
+# is what keeps this from ever touching a cava the user started themselves —
+# that one reads ~/.config/cava/config.
+pkill -f "cava -p .*/waybar-cava\." 2>/dev/null || true
+
 # --- Wallpaper -------------------------------------------------------------
 # Prefer swww/awww: it cross-fades between wallpapers, which is what makes a
 # theme switch look like a transition rather than a snap. Falls back to
@@ -85,7 +107,7 @@ pkill -x waybar 2>/dev/null || true
 # The upstream project renamed itself from `swww` to `awww` (github -> codeberg;
 # the Arch package `awww` carries `Replaces: swww`), so detect whichever binary
 # is actually present rather than hardcoding one name.
-wall=$(ls "$CUR"/wallpaper.* 2>/dev/null | head -n1 || true)
+wall=$(theme_wallpaper "$CUR")
 if [ -n "${wall:-}" ]; then
     SWWW=""
     for c in swww awww; do command -v "$c" >/dev/null 2>&1 && { SWWW="$c"; break; }; done
@@ -111,10 +133,19 @@ fi
 # Killed above, before the wallpaper transition; the pause lets the wave land
 # before the bar fades back in with the new skin.
 sleep 0.9
-if [ -f "$CUR/waybar/config.jsonc" ] && [ -f "$CUR/waybar/style.css" ]; then
-    waybar -c "$CUR/waybar/config.jsonc" -s "$CUR/waybar/style.css" >/dev/null 2>&1 &
+# Behavior lives once at the repo root; the theme ships a thin overlay that
+# `include`s it and overrides only what it wants to look different. A theme
+# that ships no overlay at all still gets the shared bar — that middle branch
+# is what keeps "only theme.lua is required" true for the bar too.
+bar_cfg="$HYPR/waybar/config.jsonc"
+[ -f "$CUR/waybar/config.jsonc" ] && bar_cfg="$CUR/waybar/config.jsonc"
+
+if [ -f "$bar_cfg" ] && [ -f "$CUR/waybar/style.css" ]; then
+    waybar -c "$bar_cfg" -s "$CUR/waybar/style.css" >/dev/null 2>&1 &
+elif [ -f "$bar_cfg" ]; then
+    waybar -c "$bar_cfg" >/dev/null 2>&1 &   # modules, but waybar's own css
 else
-    waybar >/dev/null 2>&1 &   # falls back to default waybar until you add theme styles
+    waybar >/dev/null 2>&1 &                 # nothing here at all: pure defaults
 fi
 disown 2>/dev/null || true
 
@@ -154,10 +185,18 @@ fi
 # --- wlogout / cava / fastfetch (plain symlinks) ---
 # Each is guarded: a theme that doesn't ship one just keeps whatever is there,
 # per the README's promise that everything but theme.lua degrades gracefully.
-if [ -d "$CUR/wlogout" ]; then
+#
+# wlogout follows the same split as waybar and swaync: the layout is behavior
+# (which buttons, which actions, which keybinds) and was byte-identical across
+# themes, so it moved to the repo root; style.css stays identity. A theme's own
+# layout still wins, and the guard fires on either half so a theme with no
+# wlogout/ dir still gets the shared one.
+if [ -d "$CUR/wlogout" ] || [ -f "$HYPR/wlogout/layout" ]; then
     mkdir -p "$HOME/.config/wlogout"
-    ln -sfn "$CUR/wlogout/layout"    "$HOME/.config/wlogout/layout"
-    ln -sfn "$CUR/wlogout/style.css" "$HOME/.config/wlogout/style.css"
+    layout="$HYPR/wlogout/layout"
+    [ -f "$CUR/wlogout/layout" ] && layout="$CUR/wlogout/layout"
+    [ -f "$layout" ]                && ln -sfn "$layout"                "$HOME/.config/wlogout/layout"
+    [ -f "$CUR/wlogout/style.css" ] && ln -sfn "$CUR/wlogout/style.css" "$HOME/.config/wlogout/style.css"
 fi
 
 if [ -f "$CUR/cava/config" ]; then
@@ -242,6 +281,11 @@ fi
 # rather than linked because hyprlang can't be relied on to expand $HOME, and
 # tracked files in this repo must not contain absolute user paths. The output
 # is gitignored. `|` as the sed delimiter since the path contains slashes.
+#
+# Anchored to the `path =` line, not global: unanchored, the substitution also
+# rewrote @WALLPAPER@ where the template's own header comment names it, leaving
+# an absolute path in the rendered file's prose.
 if [ -f "$CUR/hyprlock.conf" ]; then
-    sed "s|@WALLPAPER@|${wall:-}|g" "$CUR/hyprlock.conf" > "$HOME/.config/hypr/hyprlock.conf"
+    sed "/^[[:space:]]*path[[:space:]]*=/ s|@WALLPAPER@|${wall:-}|g" \
+        "$CUR/hyprlock.conf" > "$HYPR/hyprlock.conf"
 fi

@@ -4,3 +4,6 @@ indent_type = "Spaces"
 indent_width = 4
 column_width = 120
 quote_style = "AutoPreferDouble"
+
+# The theme palette files are hand-aligned and excluded via .styluaignore;
+# hyprland.lua is code and CI runs `stylua --check` on it. See that file.

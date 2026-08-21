@@ -15,12 +15,17 @@ Hyprland, waybar, wofi, swaync, wezterm, and the wallpaper together.
 
 ```
 hyprland.lua                    behavior + binds; dofiles the active theme
+waybar/config.jsonc             bar behavior: modules, execs, intervals (shared)
+wlogout/layout                  power-menu buttons + keybinds (shared)
 swaync/config.json              notification-center layout (shared; styles are per-theme)
 hypridle.conf                   dim 5m -> lock 10m -> screen off 15m
 scripts/
 ├── theme-switch.sh <name>      repoint themes/current → <name>, reload, apply
 ├── theme-apply.sh              sync wallpaper/waybar/swaync/wezterm to current
 ├── theme-menu.sh               wofi picker (bound to SUPER+T)
+├── theme-lib.sh                repo root + theme.lua key lookup (sourced)
+├── waybar-lib.sh               waybar JSON emit + escaping (sourced)
+├── calendar-lib.sh             khal wrapper shared by the calendar scripts (sourced)
 ├── waybar-updates.sh pacman|aur   update counters, as waybar JSON
 ├── waybar-cava.sh              streaming soundwave for the now-playing chip
 ├── border-motion.sh            rotates the border gradient (see "Motion")
@@ -38,12 +43,12 @@ themes/
 └── cyberpunk/
     ├── theme.lua               borders, gaps, blur, shadow (read by hyprland.lua)
     ├── wallpaper.webp
-    ├── waybar/                 config.jsonc + style.css (floating islands)
+    ├── waybar/                 style.css (skin) + a thin config.jsonc overlay
     ├── wofi/style.css
     ├── swaync/style.css        notifications + control center (SUPER+SHIFT+N)
     ├── swayosd/style.css       volume/brightness overlay pill
     ├── hyprlock.conf           TEMPLATE — rendered, not symlinked (see below)
-    ├── wlogout/                layout + style.css (power menu)
+    ├── wlogout/style.css       power-menu skin (layout is shared, at the root)
     ├── cava/config             visualizer, VU-meter gradient
     ├── fastfetch/config.jsonc  pink keys, cyan values
     ├── gtk/                    gtk.css + settings.ini -> GTK3 *and* GTK4
@@ -55,6 +60,13 @@ themes/
     └── wezterm/colors.lua      read by wezterm.lua from linux-setup
 ```
 
+Behavior is shared, identity is per-theme. The bar's module list, the power
+menu's buttons, and the notification center's layout are the same no matter
+which skin is on, so they live once at the repo root (`waybar/config.jsonc`,
+`wlogout/layout`, `swaync/config.json`) rather than being copied into every
+theme. A theme still overrides any of them by shipping its own copy; waybar
+does it natively, via an `include` whose *including* file wins.
+
 Everything above is symlinked into place by `theme-apply.sh` — except
 `hyprlock.conf`, which is **rendered** with `sed`, substituting the active
 wallpaper path for `@WALLPAPER@`. hyprlang can't be relied on to expand `$HOME`,
@@ -63,7 +75,8 @@ at `~/.config/hypr/hyprlock.conf` and is gitignored.
 
 Theming reaches outside Hyprland too. `theme-apply.sh` links the theme's
 `gtk/` into both `~/.config/gtk-3.0` and `~/.config/gtk-4.0` and then drives
-`gsettings` (dark scheme, adw-gtk3-dark, Papirus-Dark, capitaine-cursors). The
+`gsettings` (dark scheme, adw-gtk3-dark, Papirus-Dark, and whichever cursor
+the theme declares — `capitaine-cursors` is only the fallback). The
 css and the ini are deliberately redundant: GTK3 apps started outside a
 portal/dconf session read the ini and never consult gsettings. Both theme
 names degrade — a machine without `adw-gtk-theme` or Papirus falls back to
@@ -106,13 +119,17 @@ which triggers WezTerm's config reload.
 ## The bar, and motion
 
 Waybar is three frosted islands. Left: an Arch chip that opens the launcher,
-then workspaces 1–5 (always visible; dormant ones dim). Center: the media
-island — now-playing chip with a live **soundwave fused to its edge**
-(`scripts/waybar-cava.sh` streams cava frames as block glyphs, so it needs no
-waybar build flags and vanishes in silence), and the clock. Right: instrument
-chips — update counters, volume, network, bluetooth, battery — and a power
-glyph that only goes red when you hover it. `SUPER+R` (or the Arch chip)
-opens wofi as a two-column icon grid.
+workspaces 1–5 (always visible; dormant ones dim), then the media chip with a
+live **soundwave fused to its edge** (`scripts/waybar-cava.sh` streams cava
+frames as block glyphs, so it needs no waybar build flags and vanishes in
+silence). Center: the clock, **alone**, so it sits at true screen center and
+nothing variable-width can shift it. Right: the glance chips (next event, due
+todos) leading the instrument panel — update counters, volume, bluetooth,
+battery, tray — plus three watchdogs that render nothing at all until they
+have something to say: temperature above 80°, the network when it drops, and
+a DND bell while do-not-disturb is on. A power glyph closes the row and only
+goes red when you hover it. `SUPER+R` (or the Arch chip) opens wofi as a
+two-column icon grid.
 
 Border motion is a daemon, not an animation: Hyprland's `borderangle` loop
 is broken upstream (registers, never ticks — the #9251/#9313 regression
@@ -143,8 +160,8 @@ SUPER+A                                        # ikhal: the month grid, floating
 `calendar-notify.sh` (autostarted) reads khal through `calendar-lib.sh` and
 fires two themed notifications per event — "in N minutes" at the lead (10 by
 default, `[Nm]` in the title overrides) and "now" at start — deduped across
-restarts. The bar's center island grows a next-event chip only when
-something is within 8 hours; click it for the calendar. Recurrence, end
+restarts. The right island grows a next-event chip only when something is
+within 8 hours; click it for the calendar. Recurrence, end
 dates ("until finals"), durations, and multi-day events are all khal-native
 — real RRULEs, not a homegrown format.
 
@@ -199,7 +216,14 @@ missing). A theme without an `sddm/` dir simply leaves the login screen alone.
 
 Copy `themes/cyberpunk` to `themes/<name>`, swap the palette and wallpaper,
 and it appears in the picker automatically. Only `theme.lua` is required —
-every other file degrades gracefully if absent.
+every other file degrades gracefully if absent. A new theme inherits the shared
+bar behavior, power-menu layout, and notification layout for free, so in
+practice it needs a palette, a wallpaper, and a `waybar/style.css`.
+
+To change bar *behavior* for one theme only, restate the key in that theme's
+`waybar/config.jsonc`. The merge is per top-level key rather than deep, so
+overriding one workspace glyph means restating the whole `hyprland/workspaces`
+object — each theme's overlay ships that as a commented-out example.
 
 Beyond the visual table, `theme.lua` takes optional identity keys:
 `border_motion = <deciseconds/revolution>` runs the border gradient in motion
@@ -278,9 +302,11 @@ chunky 2px orange borders like TUI boxes, faint **scanlines** across the bar's
 islands (a repeating background-image, so it's halo-safe), and the active
 workspace drawn as a solid orange **block cursor**. No glow anywhere; the red
 alert pulse is the only text-shadow in the theme. Cyberpunk glows; gruvbox
-scans. The two themes share their waybar structure and wlogout `layout`; the
-waybar configs diverge only in glyphs (neon dots vs indicator squares for
-workspaces) — behavior identical, skin swapped, which is the repo's thesis.
+scans. The two themes don't merely share their bar structure and power-menu
+layout — they share the *files*: both configs had drifted into byte-identical
+copies, so the behavior moved to the repo root and each theme kept only a
+`style.css` and a thin overlay. Behavior identical, skin swapped, which is the
+repo's thesis, now enforced by the file layout instead of by discipline.
 
 ## Notifications, control center, OSD
 
