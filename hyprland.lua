@@ -262,8 +262,6 @@ hl.bind(mainMod .. " + X", hl.dsp.window.kill())
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + N", hl.dsp.layout("togglesplit")) -- dwindle only
--- Move focused window out of the scratchpad into the current workspace
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.window.move({ workspace = "e+0" }))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "1" }))
 
 -- Theme switcher
