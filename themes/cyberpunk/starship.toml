@@ -7,6 +7,7 @@
 #   path    bright fg  #C8D0E0   where you are
 #   branch  pink       #F230B2   what you're on
 #   arrow   cyan       #29BECC   where you type  (red when the last cmd failed)
+#   venv 󰌠  cyan       #29BECC   a virtualenv is active (glyph only, no name)
 #
 # Git state is the one place color carries meaning rather than identity:
 #   ✓  green   clean AND in sync with upstream — nothing to do
@@ -24,7 +25,7 @@
 # The literal space before $character is load-bearing: every git segment is
 # conditional, so without it the arrow butts straight against the directory
 # outside a repo ("/tmp❯") and against the status counts inside one ("●1❯").
-format = "$directory$git_branch$git_status$custom $character"
+format = "${custom.venv}$directory$git_branch${custom.git_dirty} $character"
 add_newline = true
 
 [directory]
@@ -69,6 +70,32 @@ when = 'test -n "$(git status --porcelain 2>/dev/null)"'
 command = "printf ●"
 style = "fg:#F2D230"
 format = " [$output]($style)"
+
+# Leading chip when a virtualenv is active, nothing at all when one isn't — so
+# the prompt only ever grows when there is something true to say. It sits ahead
+# of $directory rather than after it because prompts start at a fixed column:
+# one glance down the left edge tells you which shells are in an env, without
+# reading a single path or losing a character of it.
+#
+# Symbol only, no venv name. Which env it is is nearly always the repo you are
+# standing in, and that is already on the line; `echo $VIRTUAL_ENV` covers the
+# rare case where it isn't.
+#
+# cy0 cyan is this theme's readout color (see theme.lua) — the same role the
+# arrow plays. Frame colors identify, readout colors report; "an env is live"
+# is a report, so it takes cyan and leaves pink to the branch.
+#
+# Same rules as custom.git_dirty: no `shell` key, and `when` is required.
+#
+# 󰌠 is nf-md-language_python (U+F0320) — same Material Design block as the
+# 󰘬 branch glyph above, so if that renders, this does. If it ever boxes,
+# ● in cyan reads fine as "env live" too.
+[custom.venv]
+description = "one glyph when a python virtualenv is active"
+when = 'test -n "$VIRTUAL_ENV"'
+command = "printf 󰌠"
+style = "fg:#29BECC"
+format = "[$output]($style) "
 
 # Cyan rather than pink on success, specifically so failure reads at a glance.
 # Cyan is red's direct complement — the largest hue separation there is — where
