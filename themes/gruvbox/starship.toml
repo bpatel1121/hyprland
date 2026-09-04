@@ -7,12 +7,13 @@
 #   branch  orange  #fe8019   what you're on (the frame color)
 #   arrow   blue    #83a598   where you type  (red when the last cmd failed)
 #   dirty ● yellow  #fabd2f   uncommitted work exists
+#   venv 󰌠  blue    #83a598   a virtualenv is active (glyph only, no name)
 #
 # Glyph choices (󰘬 ● ❯ ❮ ↑ ↓ ×) are the JetBrainsMono-Nerd-Font-verified set
 # from the cyberpunk config — see its comments before "fixing" any of them.
 
 # The literal space before $character is load-bearing (see cyberpunk config).
-format = "$directory$git_branch$git_status$custom $character"
+format = "${custom.venv}$directory$git_branch${custom.git_dirty} $character"
 add_newline = true
 
 [directory]
@@ -42,6 +43,21 @@ when = 'test -n "$(git status --porcelain 2>/dev/null)"'
 command = "printf ●"
 style = "fg:#fabd2f"
 format = " [$output]($style)"
+
+# Leading chip when a virtualenv is active, nothing when one isn't. Ahead of
+# $directory so a glance down the left edge says which shells are in an env,
+# without costing the path a character. Symbol only, no venv name. Takes the
+# readout color (the arrow's), not the frame color — "an env is live" is state
+# being reported, and orange stays the branch's. See the cyberpunk config for
+# the full reasoning and the note on why there is no `shell` key.
+#
+# 󰌠 is nf-md-language_python (U+F0320) — same Material Design block as 󰘬.
+[custom.venv]
+description = "one glyph when a python virtualenv is active"
+when = 'test -n "$VIRTUAL_ENV"'
+command = "printf 󰌠"
+style = "fg:#83a598"
+format = "[$output]($style) "
 
 # Muted sky blue on success — cool against the warm frame, far from red so
 # failure reads at a glance; it is the readout color everywhere in this theme.
