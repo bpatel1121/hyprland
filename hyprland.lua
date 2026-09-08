@@ -349,6 +349,14 @@ hl.bind(
     ),
     { repeating = true }
 )
+
+hl.bind(
+    mainMod .. " + F4",
+    hl.dsp.exec_cmd(
+        [[bash -c 'd=asus::kbd_backlight; m=$(brightnessctl -d $d m); c=$(brightnessctl -d $d g); brightnessctl -d $d s $(( (c + 1) % (m + 1) ))']]
+    )
+)
+
 hl.bind(
     mainMod .. " + F5",
     hl.dsp.exec_cmd(first_of({ "swayosd-client --brightness lower" }, "brightnessctl set 5%-")),
