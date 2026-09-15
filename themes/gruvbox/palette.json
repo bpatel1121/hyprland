@@ -1,0 +1,76 @@
+{
+    "$schema": "../../schema/palette.schema.json",
+
+    "//": "Gruvbox dark (github.com/morhetz/gruvbox) over a pixel-art alley at dusk.",
+    "//1": "CANONICAL COLOR SOURCE for the QML shell (quickshell/). Every value here",
+    "//2": "is transcribed from the @define-color block at the top of waybar/style.css",
+    "//3": "and from wofi/style.css — not invented. `tokens` keeps the gruvbox names",
+    "//4": "so the lineage survives; `roles` is what QML actually reads.",
+    "//5": "theme.lua still owns WINDOW chrome (gaps, border, blur, shadow) and is",
+    "//6": "unchanged. CI cross-checks its border/shadow colors against `roles` here.",
+
+    "name": "gruvbox",
+    "polarity": "dark",
+
+    "roles": {
+        "ground":   "#1d2021",
+        "surface":  "#282828",
+        "hairline": "#3c3836",
+        "dim":      "#665c54",
+        "frame":    "#fe8019",
+        "readout":  "#83a598",
+        "warn":     "#fabd2f",
+        "ok":       "#98971a",
+        "urgent":   "#fb4934",
+        "dormant":  "#928374",
+        "text":     "#ebdbb2",
+        "launcher": "#d3869b",
+
+        "surfaceAlt": "#504945"
+    },
+
+    "//tokens": "gruvbox name -> role, so a palette bump stays traceable.",
+    "tokens": {
+        "bg0_h":  "ground",
+        "bg0":    "surface",
+        "bg1":    "hairline",
+        "bg2":    "surfaceAlt",
+        "bg3":    "dim",
+        "orange": "frame",
+        "blue":   "readout",
+        "yellow": "warn",
+        "green":  "ok",
+        "red":    "urgent",
+        "gray":   "dormant",
+        "fg":     "text",
+        "purple": "launcher"
+    },
+
+    "font": {
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 13,
+        "sizeAccent": 16
+    },
+
+    "//bar": "Bar identity. CRT terminal: near-sharp 4px corners, chunky 2px frame.",
+    "bar": {
+        "island": {
+            "color":         "#1d2021",
+            "opacity":       0.80,
+            "radius":        4,
+            "borderWidth":   2,
+            "borderOpacity": 0.55
+        },
+        "chip": {
+            "radius":  4,
+            "opacity": 0.10
+        }
+    },
+
+    "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim).",
+    "wallpaper": {
+        "brightness": 0.55,
+        "contrast":   1.05,
+        "blurSize":   8
+    }
+}

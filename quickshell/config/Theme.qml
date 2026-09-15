@@ -1,0 +1,166 @@
+pragma Singleton
+
+import QtQuick
+import Quickshell
+import Quickshell.Io
+
+// The active theme's colors, read from themes/current/palette.json.
+//
+// NAMED `Theme`, NOT `Palette`, on purpose: QtQuick exports its own `Palette`
+// type (QQuickPalette) from 6.0 onward, and any file that imports QtQuick
+// resolves the bare name to THAT instead of to this singleton. The symptom is
+// not an import error — it is every color silently reading as undefined, with
+// "Property 'withAlpha' of object QtQuick/Palette is not a function" as the only
+// clue. Do not rename this back.
+//
+// That file is the CANONICAL color source for this shell. It is hand-written
+// per theme and validated in CI; nothing generates it. The twelve role names
+// come from the @define-color block already at the top of every theme's
+// waybar/style.css, so this is the same vocabulary the CSS has always used.
+//
+// Every role has a fallback below. hyprland.lua guards its own theme load with
+// pcall for the same reason: a missing or malformed theme must degrade to
+// something readable, never to an unusable surface.
+Singleton {
+    id: root
+
+    // Parsed palette.json, or {} before the first successful load.
+    //
+    // Every derived property below goes through a helper that tolerates this
+    // being empty. Bindings are evaluated once at construction, BEFORE FileView
+    // has read anything, and a helper that indexes into an undefined sub-object
+    // throws there — which QML reports as "Unable to assign [undefined]" and
+    // leaves the island with no color at all.
+    property var data: ({})
+
+    readonly property string themeName: root.num_or(root.data, "name", "unknown")
+    readonly property bool isDark: root.num_or(root.data, "polarity", "dark") !== "light"
+
+    // --- roles ---------------------------------------------------------------
+    // Fallbacks are the Nord-ish set hyprland.lua falls back to, so a broken
+    // palette looks deliberate rather than broken.
+    readonly property var roles: root.obj(root.data, "roles")
+
+    readonly property color ground:   root.role("ground",   "#2e3440")
+    readonly property color surface:  root.role("surface",  "#3b4252")
+    readonly property color hairline: root.role("hairline", "#434c5e")
+    readonly property color dim:      root.role("dim",      "#4c566a")
+    readonly property color frame:    root.role("frame",    "#88c0d0")
+    readonly property color readout:  root.role("readout",  "#88c0d0")
+    readonly property color warn:     root.role("warn",     "#ebcb8b")
+    readonly property color ok:       root.role("ok",       "#a3be8c")
+    readonly property color urgent:   root.role("urgent",   "#bf616a")
+    readonly property color dormant:  root.role("dormant",  "#616e88")
+    readonly property color text:     root.role("text",     "#eceff4")
+    readonly property color launcher: root.role("launcher", "#b48ead")
+
+    // Optional roles fall back to their required neighbour rather than to a
+    // literal, so a theme that omits them stays internally consistent.
+    readonly property color readoutBright: root.role("readoutBright", root.readout)
+    readonly property color surfaceAlt:    root.role("surfaceAlt",    root.surface)
+
+    // --- font ----------------------------------------------------------------
+    readonly property var fontData: root.obj(root.data, "font")
+    readonly property string fontFamily: root.num_or(root.fontData, "mono", "monospace")
+    readonly property int fontSize: root.num_or(root.fontData, "size", 13)
+    readonly property int fontSizeAccent: root.num_or(root.fontData, "sizeAccent", 16)
+
+    // --- bar identity --------------------------------------------------------
+    // Geometry that differs BY THEME (cyberpunk's rounded glass vs. gruvbox's
+    // sharp CRT). Geometry that is the same for every theme lives in
+    // quickshell/settings.json instead.
+    readonly property var barData: root.obj(root.data, "bar")
+    readonly property var islandData: root.obj(root.barData, "island")
+    readonly property var chipData: root.obj(root.barData, "chip")
+
+    readonly property color islandColor: root.num_or(root.islandData, "color", root.ground)
+    readonly property real islandOpacity: root.num_or(root.islandData, "opacity", 0.75)
+    readonly property real islandRadius: root.num_or(root.islandData, "radius", 12)
+    readonly property real islandBorderWidth: root.num_or(root.islandData, "borderWidth", 1)
+    readonly property real islandBorderOpacity: root.num_or(root.islandData, "borderOpacity", 0.2)
+
+    readonly property real chipRadius: root.num_or(root.chipData, "radius", 8)
+    readonly property real chipOpacity: root.num_or(root.chipData, "opacity", 0.08)
+
+    // The island fill, alpha already applied.
+    readonly property color islandFill: root.withAlpha(root.islandColor, root.islandOpacity)
+    // The island hairline: `frame` at the theme's declared edge alpha.
+    readonly property color islandBorder: root.withAlpha(root.frame, root.islandBorderOpacity)
+
+    // --- helpers -------------------------------------------------------------
+
+    // A nested object, or {} when any link in the chain is missing. Never throws.
+    function obj(parent, key) {
+        if (parent === undefined || parent === null)
+            return {};
+        const v = parent[key];
+        return (v !== undefined && v !== null && typeof v === "object") ? v : {};
+    }
+
+    // One value out of an object, or `fallback`. Never throws.
+    function num_or(parent, key, fallback) {
+        if (parent === undefined || parent === null)
+            return fallback;
+        const v = parent[key];
+        return v === undefined || v === null ? fallback : v;
+    }
+
+    // One role, or `fallback` when the palette omits it.
+    function role(name, fallback) {
+        const v = root.num_or(root.roles, name, "");
+        return (typeof v === "string" && v.length > 0) ? v : fallback;
+    }
+
+    // Qt.alpha() is not available across every Qt 6 minor, so rebuild the color
+    // explicitly. Colors in palette.json are deliberately opaque — alpha is the
+    // consumer's decision, not the palette's.
+    //
+    // There is no Qt.color(): every caller passes one of the `color` properties
+    // above, which already exposes r/g/b as reals in 0..1.
+    function withAlpha(c, a) {
+        return Qt.rgba(c.r, c.g, c.b, a);
+    }
+
+    // Map a waybar-style state class onto a role. The backing scripts in
+    // scripts/waybar-*.sh already emit these names in their `class` field, so
+    // this is the whole translation layer between them and this shell.
+    function classColor(cls) {
+        switch (cls) {
+        // Classes below are the exact set the scripts emit today:
+        //   waybar-agenda.sh   idle | upcoming
+        //   waybar-todos.sh    zero | pending | overdue
+        //   waybar-updates.sh  zero | pending
+        //   waybar-cava.sh     quiet | live
+        case "pending":  return root.warn;
+        case "overdue":
+        case "critical":
+        case "urgent":   return root.urgent;
+        case "ok":
+        case "charging": return root.ok;
+        case "zero":
+        case "idle":
+        case "empty":    return root.dormant;
+        case "quiet":    return root.dim;
+        case "upcoming":
+        case "live":     return root.readout;
+        default:         return root.readout;
+        }
+    }
+
+    FileView {
+        path: Paths.currentTheme + "/palette.json"
+        watchChanges: true
+        onFileChanged: this.reload()
+        onLoaded: {
+            try {
+                root.data = JSON.parse(this.text());
+            } catch (e) {
+                console.warn("Palette: themes/current/palette.json is not valid JSON:", e);
+            }
+        }
+        onLoadFailed: function (error) {
+            console.warn("Palette: could not read themes/current/palette.json:", error,
+                         "— falling back to built-in defaults.");
+        }
+    }
+}

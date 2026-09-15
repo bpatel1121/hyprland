@@ -1,0 +1,120 @@
+{
+    "$schema": "../schema/shell-settings.schema.json",
+
+    "//": "BEHAVIOR for the QML shell. The counterpart to palette.json, which owns",
+    "//1": "IDENTITY — same behavior-vs-identity split the rest of this repo uses",
+    "//2": "(see docs/architecture.md). Shared across themes; lives at the repo root",
+    "//3": "of the shell, not inside themes/.",
+    "//4": "",
+    "//5": "Every value below is transcribed from waybar/config.jsonc and the",
+    "//6": "scripts/ constants, so the QML bar starts out behaving identically to the",
+    "//7": "waybar it will eventually replace. Nothing here feeds waybar — waybar",
+    "//8": "still reads its own config.jsonc. That duplication is deliberate and",
+    "//9": "temporary; CI asserts the two cannot silently diverge.",
+
+    "bar": {
+        "position": "top",
+        "height": 36,
+        "spacing": 0,
+        "margins": { "top": 8, "left": 14, "right": 14 },
+
+        "//islands": "Three detached islands. The clock sits ALONE in center so that nothing variable-width can shift it off true screen center — see docs/bar.md.",
+        "islands": {
+            "left":   ["launcher", "workspaces", "media", "cava"],
+            "center": ["clock"],
+            "right":  ["agenda", "todos", "updates", "aur", "temperature",
+                                  "volume", "network", "bluetooth", "battery", "tray",
+                                  "dnd", "power"]
+        }
+    },
+
+    "modules": {
+        "launcher": {
+            "enabled": true,
+            "glyph": "󰃃"
+        },
+
+        "workspaces": {
+            "enabled": true,
+            "//": "1-5 always render; dormant ones draw in the `dormant` role rather than vanishing, so the bar reads as a row of stations. 6+ appear on demand.",
+            "persistent": 5,
+            "showSpecial": true,
+            "specialGlyph": "󰊠"
+        },
+
+        "media": {
+            "enabled": true,
+            "maxChars": 45
+        },
+
+        "cava": {
+            "//": "The soundwave fused to the media chip. Streams block glyphs from scripts/waybar-cava.sh, which emits nothing in silence — so the wave exists only while sound does.",
+            "enabled": true
+        },
+
+        "clock": {
+            "enabled": true,
+            "format": "HH:mm",
+            "altFormat": "ddd dd MMM"
+        },
+
+        "agenda": {
+            "//": "Next calendar event. Renders only when something is inside the horizon.",
+            "enabled": true,
+            "intervalSec": 60,
+            "horizonHours": 8,
+            "maxTitleChars": 20
+        },
+
+        "todos": {
+            "enabled": true,
+            "intervalSec": 60,
+            "windowHours": 24
+        },
+
+        "updates": {
+            "//": "Repo updates via checkupdates (pacman-contrib). Cheap local diff, so polled often.",
+            "enabled": true,
+            "intervalSec": 120
+        },
+
+        "aur": {
+            "//": "AUR updates via yay. Longer interval than `updates`: every check is a live query to the AUR's public RPC rather than a local diff.",
+            "enabled": true,
+            "intervalSec": 300
+        },
+
+        "temperature": {
+            "//": "Silent watchdog: renders NOTHING below criticalC. Appearing IS the signal.",
+            "//1": "Resolved by hwmon NAME, never by index — /sys/class/hwmon numbering is not stable across boots. k10temp on AMD, coretemp on Intel; this box reports k10temp.",
+            "enabled": true,
+            "criticalC": 80,
+            "hwmonName": "k10temp"
+        },
+
+        "volume": { "enabled": true, "stepPercent": 5 },
+
+        "network": {
+            "//": "Silent watchdog, like temperature. Renders nothing while the link is up.",
+            "enabled": true
+        },
+
+        "bluetooth": { "enabled": true },
+
+        "battery": {
+            "//": "Only renders on machines that HAVE a battery. A desktop showing nothing here is correct.",
+            "enabled": true,
+            "warnPercent": 30,
+            "criticalPercent": 15
+        },
+
+        "tray": { "enabled": true, "spacing": 8 },
+
+        "dnd": {
+            "//": "Renders ONLY while do-not-disturb is on: the muted bell appearing IS the signal.",
+            "enabled": true
+        },
+
+        "power": { "enabled": true, "glyph": "⏻" }
+    }
+}

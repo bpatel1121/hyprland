@@ -1,0 +1,7 @@
+# Explicit, not synthesized — see config/qmldir.
+#
+# These are plain components rather than singletons. Without this file the
+# synthesized qmldir registered nothing here and every module failed with
+# "Chip is not a type".
+Chip 1.0 Chip.qml
+ScriptChip 1.0 ScriptChip.qml

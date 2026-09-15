@@ -1,0 +1,127 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/bpatel1121/hyprland/schema/palette.schema.json",
+    "title": "hypr theme palette",
+    "description": "Canonical color + bar-identity contract for a theme, read by the QML shell in quickshell/. Window chrome (gaps, borders, blur, shadow) stays in the same theme's theme.lua; this file never duplicates it.",
+    "type": "object",
+    "required": ["name", "polarity", "roles", "font", "bar"],
+
+    "$defs": {
+        "hex": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$",
+            "description": "Opaque 6-digit hex. Alpha belongs to the consumer, not the palette."
+        },
+        "unit": { "type": "number", "minimum": 0, "maximum": 1 }
+    },
+
+    "properties": {
+        "$schema": { "type": "string" },
+
+        "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "description": "Theme directory name. Must match the containing themes/<name>/ folder."
+        },
+
+        "polarity": {
+            "enum": ["dark", "light"],
+            "description": "Matches theme.lua's polarity key. Dark is the default everywhere in this repo."
+        },
+
+        "roles": {
+            "type": "object",
+            "description": "The twelve semantic slots every shell surface draws from. Names come from the @define-color comments already at the top of each theme's waybar/style.css.",
+            "required": [
+                "ground", "surface", "hairline", "dim", "frame", "readout",
+                "warn", "ok", "urgent", "dormant", "text", "launcher"
+            ],
+            "properties": {
+                "ground":   { "$ref": "#/$defs/hex", "description": "Deepest background. The desktop floor." },
+                "surface":  { "$ref": "#/$defs/hex", "description": "Raised panels, popovers, input fields." },
+                "hairline": { "$ref": "#/$defs/hex", "description": "Separators and unfocused window borders." },
+                "dim":      { "$ref": "#/$defs/hex", "description": "De-emphasised text and inactive glyphs." },
+                "frame":    { "$ref": "#/$defs/hex", "description": "THE identity color. Island edge, window border, notification edge." },
+                "readout":  { "$ref": "#/$defs/hex", "description": "Every telemetry value on the bar. Kept visually apart from frame." },
+                "warn":     { "$ref": "#/$defs/hex", "description": "Pending repo updates. Pac-Man stays yellow in every theme." },
+                "ok":       { "$ref": "#/$defs/hex", "description": "AUR updates pending, battery charging." },
+                "urgent":   { "$ref": "#/$defs/hex", "description": "Low battery, overdue todos, offline network, auth failure." },
+                "dormant":  { "$ref": "#/$defs/hex", "description": "Empty workspaces and zeroed counters — present but quiet." },
+                "text":     { "$ref": "#/$defs/hex", "description": "Default foreground." },
+                "launcher": { "$ref": "#/$defs/hex", "description": "The launcher's own hue — the one surface that covers the bar gets the one color the bar never uses." },
+
+                "readoutBright": { "$ref": "#/$defs/hex", "description": "Optional. Hover/active lift on readout." },
+                "surfaceAlt":    { "$ref": "#/$defs/hex", "description": "Optional. A second raised shade for nested panels." }
+            },
+            "additionalProperties": false
+        },
+
+        "tokens": {
+            "type": "object",
+            "description": "Upstream palette name -> role name. Documentation only; nothing reads it at runtime. Keeps a palette bump traceable back to its source project.",
+            "additionalProperties": {
+                "type": "string",
+                "description": "A key of `roles`."
+            }
+        },
+
+        "font": {
+            "type": "object",
+            "required": ["mono", "size"],
+            "properties": {
+                "mono":       { "type": "string", "description": "Family name. Wants a Nerd Font for the bar glyphs." },
+                "size":       { "type": "integer", "minimum": 6, "maximum": 32, "description": "Body size, in px." },
+                "sizeAccent": { "type": "integer", "minimum": 6, "maximum": 48, "description": "Clock and launcher glyph size, in px." }
+            },
+            "additionalProperties": false
+        },
+
+        "bar": {
+            "type": "object",
+            "description": "Bar identity — the geometry that separates one theme's bar from another's (rounded glass vs. sharp CRT). Behavior lives in quickshell/settings.json instead.",
+            "required": ["island", "chip"],
+            "properties": {
+                "island": {
+                    "type": "object",
+                    "required": ["color", "opacity", "radius"],
+                    "properties": {
+                        "color":         { "$ref": "#/$defs/hex", "description": "Island fill. Often but not always `ground`." },
+                        "opacity":       { "$ref": "#/$defs/unit", "description": "Island alpha. The Hyprland layer rule frosts whatever shows through." },
+                        "radius":        { "type": "number", "minimum": 0, "maximum": 40 },
+                        "borderWidth":   { "type": "number", "minimum": 0, "maximum": 8, "description": "Hairline weight, in px. Drawn in `frame`." },
+                        "borderOpacity": { "$ref": "#/$defs/unit", "description": "Alpha applied to `frame` for the island edge." }
+                    },
+                    "additionalProperties": false
+                },
+                "chip": {
+                    "type": "object",
+                    "required": ["radius"],
+                    "properties": {
+                        "radius":  { "type": "number", "minimum": 0, "maximum": 40 },
+                        "opacity": { "$ref": "#/$defs/unit", "description": "Alpha for a chip's own tinted backplate." }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+
+        "wallpaper": {
+            "type": "object",
+            "description": "How the lock screen and the SDDM greeter treat this theme's wallpaper, so boot -> login -> lock read as one design.",
+            "properties": {
+                "brightness": { "$ref": "#/$defs/unit", "description": "hyprlock's brightness. The greeter uses (1 - brightness) as a scrim opacity." },
+                "contrast":   { "type": "number", "minimum": 0, "maximum": 2 },
+                "blurSize":   { "type": "integer", "minimum": 0, "maximum": 64 }
+            },
+            "additionalProperties": false
+        }
+    },
+
+    "patternProperties": {
+        "^//": {
+            "description": "Prose comment. JSON has none, and these files carry rationale like every other file in this repo."
+        }
+    },
+    "additionalProperties": false
+}

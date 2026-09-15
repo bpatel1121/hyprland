@@ -24,7 +24,8 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q shellcheck lua5.4
-          python -m pip install --quiet json5 tinycss2
+          python -m pip install --quiet json5 tinycss2 jsonschema
+          sudo apt-get install -y -q qt6-declarative-dev-tools
 
       # -x follows sourced libraries; -P scripts is what lets it resolve the
       # computed `. "$(dirname -- "${BASH_SOURCE[0]}")/x-lib.sh"` form.
@@ -260,3 +261,178 @@ jobs:
                 exit 1
               fi
             done
+
+      # ---- QML shell (quickshell/) --------------------------------------------
+      # Everything below guards the QML scaffold and the palette contract it
+      # depends on. None of it can affect a running desktop; it exists so the
+      # additions are held to the same standard as the rest of the tree.
+
+      - name: Palette schema + every role present
+        run: |
+          python3 - <<'PY'
+          import glob, json, os, sys, jsonschema
+          schema = json.load(open('schema/palette.schema.json'))
+          jsonschema.Draft202012Validator.check_schema(schema)
+          # islink: themes/current is a symlink to the active theme and is
+          # gitignored machine state. It does not exist in a fresh clone, but it
+          # does locally, where it would fail the name-matches-directory check.
+          files = sorted(f for f in glob.glob('themes/*/palette.json')
+                         if not os.path.islink(f.rsplit('/', 1)[0]))
+          if not files:
+              print('FAIL: no themes/*/palette.json'); sys.exit(1)
+          bad = False
+          for f in files:
+              d = json.load(open(f))
+              try:
+                  jsonschema.validate(d, schema)
+              except jsonschema.ValidationError as e:
+                  print(f'FAIL {f}: {e.message} at {list(e.absolute_path)}'); bad = True; continue
+              # the directory name is the identity; a mismatch makes the wrong
+              # palette load silently through the `current` symlink
+              want = f.split('/')[1]
+              if d['name'] != want:
+                  print(f'FAIL {f}: name is {d["name"]!r} but lives in themes/{want}/'); bad = True
+              # tokens are documentation, but a token pointing at a role that
+              # does not exist means the lineage comment is lying
+              for tok, role in d.get('tokens', {}).items():
+                  if role not in d['roles']:
+                      print(f'FAIL {f}: token {tok!r} -> unknown role {role!r}'); bad = True
+              print('OK', f, f'({len(d["roles"])} roles)')
+          sys.exit(1 if bad else 0)
+          PY
+
+      # palette.json is CANONICAL for color, but theme.lua keeps its own literals
+      # (it is read by Hyprland directly, and by theme-lib.sh's sed). Nothing
+      # stops the two drifting except this: every color theme.lua names must be a
+      # color the palette declares. Without it, "canonical" is aspirational.
+      - name: theme.lua colors are drawn from palette.json
+        run: |
+          python3 - <<'PY'
+          import glob, json, os, re, sys
+          bad = False
+          # A shadow with no hue is a design choice, not palette drift: gruvbox
+          # declares 0x59000000 precisely because it has no glow ("no color
+          # cast"), where cyberpunk's shadow IS its pink bloom. Pure neutrals are
+          # therefore always allowed; any other color must name a role.
+          NEUTRAL = {'000000', 'ffffff'}
+          for pal in sorted(glob.glob('themes/*/palette.json')):
+              theme_dir = pal.rsplit('/', 1)[0]
+              if os.path.islink(theme_dir):
+                  continue
+              lua = f'{theme_dir}/theme.lua'
+              known = {v.lower().lstrip('#') for v in json.load(open(pal))['roles'].values()}
+              src = open(lua).read()
+              # active_border colors, inactive_border: rgba(RRGGBBAA)
+              used = [(m.group(1), 'rgba') for m in re.finditer(r'rgba\(([0-9a-fA-F]{6})[0-9a-fA-F]{2}\)', src)]
+              # shadow color: 0xAARRGGBB
+              used += [(m.group(1), 'shadow') for m in re.finditer(r'0x[0-9a-fA-F]{2}([0-9a-fA-F]{6})', src)]
+              for hexv, kind in used:
+                  if hexv.lower() in known or hexv.lower() in NEUTRAL:
+                      print(f'OK    {lua}: #{hexv} ({kind})')
+                  else:
+                      print(f'FAIL  {lua}: #{hexv} ({kind}) is in no role of {pal}')
+                      bad = True
+          sys.exit(1 if bad else 0)
+          PY
+
+      - name: Shell settings schema, and every module placed
+        run: |
+          python3 - <<'PY'
+          import json, sys, jsonschema
+          schema = json.load(open('schema/shell-settings.schema.json'))
+          jsonschema.Draft202012Validator.check_schema(schema)
+          cfg = json.load(open('quickshell/settings.json'))
+          jsonschema.validate(cfg, schema)
+          defined = set(cfg['modules'])
+          placed = {m for side in cfg['bar']['islands'].values() for m in side}
+          bad = False
+          # A module placed but undefined gets no settings; one defined but never
+          # placed is dead config. Both are silent today.
+          for m in sorted(placed - defined):
+              print(f'FAIL: {m!r} is on the bar but has no entry in "modules"'); bad = True
+          for m in sorted(defined - placed):
+              print(f'FAIL: {m!r} is configured but on no island'); bad = True
+          # and each one needs a file
+          import os
+          for m in sorted(placed):
+              qml = f'quickshell/modules/{m[0].upper()}{m[1:]}.qml'
+              if not os.path.isfile(qml):
+                  print(f'FAIL: {m!r} has no {qml}'); bad = True
+          print(f'checked {len(placed)} modules')
+          sys.exit(1 if bad else 0)
+          PY
+
+      # The QML bar and waybar read SEPARATE config files and will until the
+      # switch (see docs/qml-migration.md). That duplication is deliberate, but
+      # it must not drift: a tuned interval in one and not the other is exactly
+      # the kind of difference nobody notices until the bars disagree.
+      - name: QML settings match waybar's intervals and thresholds
+        run: |
+          python3 - <<'PY'
+          import json, json5, sys
+          wb = json5.load(open('waybar/config.jsonc'))
+          qs = json.load(open('quickshell/settings.json'))['modules']
+          checks = [
+              ('updates',     'intervalSec', wb['custom/updates']['interval']),
+              ('aur',         'intervalSec', wb['custom/aur']['interval']),
+              ('agenda',      'intervalSec', wb['custom/agenda']['interval']),
+              ('todos',       'intervalSec', wb['custom/todos']['interval']),
+              ('temperature', 'criticalC',   wb['temperature']['critical-threshold']),
+              ('battery',     'warnPercent', wb['battery']['states']['warning']),
+              ('battery',     'criticalPercent', wb['battery']['states']['critical']),
+              ('tray',        'spacing',     wb['tray']['spacing']),
+          ]
+          bad = False
+          for mod, key, want in checks:
+              got = qs.get(mod, {}).get(key)
+              if got == want:
+                  print(f'OK    {mod}.{key} = {got}')
+              else:
+                  print(f'FAIL  {mod}.{key} is {got} but waybar says {want}'); bad = True
+          sys.exit(1 if bad else 0)
+          PY
+
+      # Every script the QML shell shells out to must exist — the same rot the
+      # "Every referenced script exists" step above catches for waybar.
+      - name: QML shell references no missing scripts
+        run: |
+          bad=0
+          for name in $(grep -rhoP 'script: "\K[A-Za-z0-9._-]+\.sh' quickshell/ | sort -u); do
+            if [ -f "scripts/$name" ]; then
+              echo "OK    scripts/$name"
+            else
+              echo "FAIL  quickshell/ references missing scripts/$name"; bad=1
+            fi
+          done
+          exit $bad
+
+      # qmllint over the shell AND the two SDDM greeters, which nothing linted
+      # before. The two disabled categories are Quickshell's C++-declared types,
+      # which static analysis cannot see through (PanelWindow reads as
+      # uncreatable, BluetoothAdapter as unresolved) — both work at runtime. The
+      # `unqualified` category, which catches real delegate-scope bugs, stays on.
+      - name: qmllint
+        run: |
+          QMLLINT=$(command -v qmllint6 || echo /usr/lib/qt6/bin/qmllint)
+          "$QMLLINT" --uncreatable-type disable --unresolved-type disable \
+            -I quickshell \
+            quickshell/shell.qml quickshell/config/*.qml quickshell/bar/*.qml \
+            quickshell/components/*.qml quickshell/modules/*.qml
+          # The greeters' globals (config, sddm, userModel, sessionModel) are
+          # injected by SDDM at runtime and cannot be resolved statically.
+          "$QMLLINT" --unqualified disable themes/*/sddm/Main.qml
+
+      # The scaffold must stay a scaffold: nothing may start it. If this fails,
+      # the QML shell has become load-bearing and the "no effect on the running
+      # desktop" promise no longer holds.
+      - name: QML shell is not autostarted
+        run: |
+          bad=0
+          for f in hyprland.lua scripts/theme-apply.sh scripts/theme-switch.sh; do
+            if grep -nE '(^|[^[:alnum:]_])(qs|quickshell)([^[:alnum:]_]|$)' "$f"; then
+              echo "FAIL $f references the QML shell — it is meant to be launched by hand only"
+              bad=1
+            fi
+          done
+          [ $bad -eq 0 ] && echo "OK: nothing autostarts quickshell/"
+          exit $bad

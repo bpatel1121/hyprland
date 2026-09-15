@@ -1,0 +1,10 @@
+# Explicit, not synthesized.
+#
+# Quickshell generates a qmldir for a directory that has none, and logs
+# "Found qmldir file, qmldir synthesization will be disabled for directory"
+# when one exists. Declaring these by hand is what makes the singletons
+# resolvable from a plain relative directory import, and it also silences
+# qmllint's "not declared as singleton in qmldir but using pragma Singleton".
+singleton Paths 1.0 Paths.qml
+singleton Theme 1.0 Theme.qml
+singleton Config 1.0 Config.qml

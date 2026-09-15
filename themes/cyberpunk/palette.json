@@ -1,0 +1,75 @@
+{
+    "$schema": "../../schema/palette.schema.json",
+
+    "//": "Cyberpunk · Cybrcolors (github.com/cybrcore/cybrcolors, GPL-3.0).",
+    "//1": "CANONICAL COLOR SOURCE for the QML shell (quickshell/). Every value here",
+    "//2": "is transcribed from the @define-color block at the top of waybar/style.css",
+    "//3": "and from wofi/style.css — not invented. `tokens` keeps the Cybrcolors names",
+    "//4": "so the lineage survives; `roles` is what QML actually reads.",
+    "//5": "theme.lua still owns WINDOW chrome (gaps, border, blur, shadow) and is",
+    "//6": "unchanged. CI cross-checks its border/shadow colors against `roles` here.",
+
+    "name": "cyberpunk",
+    "polarity": "dark",
+
+    "roles": {
+        "ground":   "#030408",
+        "surface":  "#0A0E1A",
+        "hairline": "#212638",
+        "dim":      "#4D5A80",
+        "frame":    "#F230B2",
+        "readout":  "#29BECC",
+        "warn":     "#F2D230",
+        "ok":       "#30F291",
+        "urgent":   "#F24848",
+        "dormant":  "#898D99",
+        "text":     "#C8D0E0",
+        "launcher": "#A130F2",
+
+        "readoutBright": "#5FD8E4"
+    },
+
+    "//tokens": "Cybrcolors name -> role, so a palette bump stays traceable.",
+    "tokens": {
+        "no0": "ground",
+        "no2": "surface",
+        "me1": "hairline",
+        "me0": "dim",
+        "pi0": "frame",
+        "cy0": "readout",
+        "ye0": "warn",
+        "gr0": "ok",
+        "re0": "urgent",
+        "wh0": "dormant",
+        "fg":  "text",
+        "vi0": "launcher"
+    },
+
+    "font": {
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 13,
+        "sizeAccent": 16
+    },
+
+    "//bar": "Bar identity. Rounded neon glass: generous radius, 1px lit pink edge.",
+    "bar": {
+        "island": {
+            "color":         "#06080E",
+            "opacity":       0.72,
+            "radius":        14,
+            "borderWidth":   1,
+            "borderOpacity": 0.16
+        },
+        "chip": {
+            "radius":  9,
+            "opacity": 0.08
+        }
+    },
+
+    "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim).",
+    "wallpaper": {
+        "brightness": 0.55,
+        "contrast":   1.1,
+        "blurSize":   8
+    }
+}

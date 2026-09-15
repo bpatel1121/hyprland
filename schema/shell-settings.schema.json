@@ -1,0 +1,229 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/bpatel1121/hyprland/schema/shell-settings.schema.json",
+    "title": "hypr QML shell settings",
+    "description": "Behavior for the Quickshell bar in quickshell/. Identity (color, fonts, island geometry) lives in themes/<name>/palette.json instead.",
+    "type": "object",
+    "required": ["bar", "modules"],
+
+    "$defs": {
+        "moduleName": {
+            "enum": ["launcher", "workspaces", "media", "cava", "clock", "agenda",
+                              "todos", "updates", "aur", "temperature", "volume", "network",
+                              "bluetooth", "battery", "tray", "dnd", "power"],
+            "description": "A module with a matching file in quickshell/modules/."
+        },
+        "enabled": {
+            "type": "boolean",
+            "description": "false removes the module from the bar entirely, even if it is still listed in bar.islands."
+        },
+        "interval": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 86400,
+            "description": "Seconds between polls of the backing script."
+        },
+        "comment": { "type": "string" }
+    },
+
+    "properties": {
+        "$schema": { "type": "string" },
+
+        "bar": {
+            "type": "object",
+            "required": ["position", "height", "islands"],
+            "properties": {
+                "position": {
+                    "enum": ["top", "bottom"],
+                    "description": "Which screen edge the bar anchors to."
+                },
+                "height":  { "type": "integer", "minimum": 16, "maximum": 128, "description": "Island height in px. Does NOT reserve screen space — the scaffold runs with exclusiveZone 0." },
+                "spacing": { "type": "integer", "minimum": 0, "maximum": 32, "description": "Gap between chips inside one island, in px." },
+                "margins": {
+                    "type": "object",
+                    "description": "Gap between the islands and the screen edges, in px.",
+                    "properties": {
+                        "top":    { "type": "integer", "minimum": 0, "maximum": 64 },
+                        "bottom": { "type": "integer", "minimum": 0, "maximum": 64 },
+                        "left":   { "type": "integer", "minimum": 0, "maximum": 128 },
+                        "right":  { "type": "integer", "minimum": 0, "maximum": 128 }
+                    },
+                    "additionalProperties": false
+                },
+                "islands": {
+                    "type": "object",
+                    "description": "Which modules sit in which island, in order. Keeping the clock alone in `center` is what holds it at true screen center.",
+                    "required": ["left", "center", "right"],
+                    "properties": {
+                        "left":   { "type": "array", "items": { "$ref": "#/$defs/moduleName" } },
+                        "center": { "type": "array", "items": { "$ref": "#/$defs/moduleName" } },
+                        "right":  { "type": "array", "items": { "$ref": "#/$defs/moduleName" } }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+            "additionalProperties": false
+        },
+
+        "modules": {
+            "type": "object",
+            "required": ["workspaces", "clock"],
+            "properties": {
+                "launcher": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "$ref": "#/$defs/enabled" },
+                        "glyph":   { "type": "string", "description": "Nerd Font glyph for the launcher chip." }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "workspaces": {
+                    "type": "object",
+                    "properties": {
+                        "enabled":      { "$ref": "#/$defs/enabled" },
+                        "persistent":   { "type": "integer", "minimum": 0, "maximum": 10, "description": "Workspaces 1..N always render, dimmed when empty." },
+                        "showSpecial":  { "type": "boolean", "description": "Show a glyph for the scratchpad while it is on screen." },
+                        "specialGlyph": { "type": "string" }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "media": {
+                    "type": "object",
+                    "properties": {
+                        "enabled":  { "$ref": "#/$defs/enabled" },
+                        "maxChars": { "type": "integer", "minimum": 10, "maximum": 200, "description": "Truncation budget for 'title · artist'." }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "cava":  {
+                    "type": "object",
+                    "properties": { "enabled": { "$ref": "#/$defs/enabled" } },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "clock": {
+                    "type": "object",
+                    "properties": {
+                        "enabled":   { "$ref": "#/$defs/enabled" },
+                        "format":    { "type": "string", "description": "Qt.formatDateTime pattern for the resting clock." },
+                        "altFormat": { "type": "string", "description": "Pattern shown while clicked/held." }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "agenda": {
+                    "type": "object",
+                    "properties": {
+                        "enabled":       { "$ref": "#/$defs/enabled" },
+                        "intervalSec":   { "$ref": "#/$defs/interval" },
+                        "horizonHours":  { "type": "integer", "minimum": 1, "maximum": 168, "description": "Show nothing further out than this. Mirrors HORIZON in scripts/waybar-agenda.sh." },
+                        "maxTitleChars": { "type": "integer", "minimum": 5, "maximum": 100 }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "todos": {
+                    "type": "object",
+                    "properties": {
+                        "enabled":     { "$ref": "#/$defs/enabled" },
+                        "intervalSec": { "$ref": "#/$defs/interval" },
+                        "windowHours": { "type": "integer", "minimum": 1, "maximum": 168, "description": "Count todos due within this window. Mirrors --due in scripts/waybar-todos.sh." }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "updates": {
+                    "type": "object",
+                    "properties": {
+                        "enabled":     { "$ref": "#/$defs/enabled" },
+                        "intervalSec": { "$ref": "#/$defs/interval" }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "aur": {
+                    "type": "object",
+                    "properties": {
+                        "enabled":     { "$ref": "#/$defs/enabled" },
+                        "intervalSec": { "$ref": "#/$defs/interval" }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "temperature": {
+                    "type": "object",
+                    "properties": {
+                        "enabled":   { "$ref": "#/$defs/enabled" },
+                        "criticalC": { "type": "integer", "minimum": 30, "maximum": 110, "description": "Render nothing below this. Appearing is the signal." },
+                        "hwmonName": { "type": "string", "minLength": 1, "description": "Sensor chip name under /sys/class/hwmon/*/name. Resolved by name because hwmon indices are not stable across boots. k10temp on AMD, coretemp on Intel." }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "volume": {
+                    "type": "object",
+                    "properties": {
+                        "enabled":     { "$ref": "#/$defs/enabled" },
+                        "stepPercent": { "type": "integer", "minimum": 1, "maximum": 25, "description": "Scroll-wheel volume increment." }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "network": {
+                    "type": "object",
+                    "properties": { "enabled": { "$ref": "#/$defs/enabled" } },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "bluetooth": {
+                    "type": "object",
+                    "properties": { "enabled": { "$ref": "#/$defs/enabled" } },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "battery": {
+                    "type": "object",
+                    "properties": {
+                        "enabled":         { "$ref": "#/$defs/enabled" },
+                        "warnPercent":     { "type": "integer", "minimum": 1, "maximum": 100 },
+                        "criticalPercent": { "type": "integer", "minimum": 1, "maximum": 100 }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "tray": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "$ref": "#/$defs/enabled" },
+                        "spacing": { "type": "integer", "minimum": 0, "maximum": 32 }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "dnd": {
+                    "type": "object",
+                    "properties": { "enabled": { "$ref": "#/$defs/enabled" } },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "power": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "$ref": "#/$defs/enabled" },
+                        "glyph":   { "type": "string" }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+
+    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+    "additionalProperties": false
+}
