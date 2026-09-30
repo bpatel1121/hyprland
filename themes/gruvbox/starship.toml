@@ -13,7 +13,7 @@
 # from the cyberpunk config — see its comments before "fixing" any of them.
 
 # The literal space before $character is load-bearing (see cyberpunk config).
-format = "${custom.venv}$directory$git_branch${custom.git_dirty} $character"
+format = "$conda${custom.venv}$directory$git_branch${custom.git_dirty} $character"
 add_newline = true
 
 [directory]
@@ -81,3 +81,9 @@ disabled = true
 disabled = true
 [docker_context]
 disabled = true
+
+[conda]
+symbol = ""
+ignore_base = false
+style = "fg:#98971a"
+format = "[$symbol]($style) "

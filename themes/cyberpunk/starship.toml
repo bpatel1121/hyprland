@@ -25,7 +25,7 @@
 # The literal space before $character is load-bearing: every git segment is
 # conditional, so without it the arrow butts straight against the directory
 # outside a repo ("/tmp❯") and against the status counts inside one ("●1❯").
-format = "${custom.venv}$directory$git_branch${custom.git_dirty} $character"
+format = "$conda${custom.venv}$directory$git_branch${custom.git_dirty} $character"
 add_newline = true
 
 [directory]
@@ -122,3 +122,9 @@ disabled = true
 disabled = true
 [docker_context]
 disabled = true
+
+[conda]
+symbol = ""
+ignore_base = false
+style = "fg:#30F291"
+format = "[$symbol]($style) "
