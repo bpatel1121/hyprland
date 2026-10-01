@@ -24,8 +24,9 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q shellcheck lua5.4
-          python -m pip install --quiet json5 tinycss2 jsonschema
-          sudo apt-get install -y -q qt6-declarative-dev-tools
+          # PySide6 ships a current qmllint; Ubuntu's apt one is Qt 6.4, which
+          # rejects --uncreatable-type / --unresolved-type as unknown options.
+          python -m pip install --quiet json5 tinycss2 jsonschema PySide6-Essentials
 
       # -x follows sourced libraries; -P scripts is what lets it resolve the
       # computed `. "$(dirname -- "${BASH_SOURCE[0]}")/x-lib.sh"` form.
@@ -413,7 +414,7 @@ jobs:
       # `unqualified` category, which catches real delegate-scope bugs, stays on.
       - name: qmllint
         run: |
-          QMLLINT=$(command -v qmllint6 || echo /usr/lib/qt6/bin/qmllint)
+          QMLLINT=pyside6-qmllint
           "$QMLLINT" --uncreatable-type disable --unresolved-type disable \
             -I quickshell \
             quickshell/shell.qml quickshell/config/*.qml quickshell/bar/*.qml \
