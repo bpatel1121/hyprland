@@ -2,12 +2,12 @@
     "$schema": "../../schema/palette.schema.json",
 
     "//": "Cyberpunk · Cybrcolors (github.com/cybrcore/cybrcolors, GPL-3.0).",
-    "//1": "CANONICAL COLOR SOURCE for the QML shell (quickshell/). Every value here",
-    "//2": "is transcribed from the @define-color block at the top of waybar/style.css",
-    "//3": "and from wofi/style.css — not invented. `tokens` keeps the Cybrcolors names",
-    "//4": "so the lineage survives; `roles` is what QML actually reads.",
-    "//5": "theme.lua still owns WINDOW chrome (gaps, border, blur, shadow) and is",
-    "//6": "unchanged. CI cross-checks its border/shadow colors against `roles` here.",
+    "//1": "THE source for every shell surface (quickshell/: bar, launcher, OSD, power",
+    "//2": "menu). The roles were transcribed from the @define-color block of the old",
+    "//3": "waybar/style.css and from wofi/style.css — not invented; those stylesheets",
+    "//4": "are gone and live only in git history. `tokens` keeps the Cybrcolors names",
+    "//5": "so the lineage survives; `roles` is what QML actually reads. theme.lua",
+    "//6": "still owns WINDOW chrome (gaps, border, blur, shadow); CI cross-checks it.",
 
     "name": "cyberpunk",
     "polarity": "dark",
@@ -51,19 +51,55 @@
         "sizeAccent": 16
     },
 
-    "//bar": "Bar identity. Rounded neon glass: generous radius, 1px lit pink edge.",
+    "//effects": "Neon: text glows (the one halo-safe glow primitive), no scanlines.",
+    "effects": {
+        "glow":       true,
+        "glowRadius": 8,
+        "scanlines":  false
+    },
+
+    "//bar": "Bar identity. Rounded neon glass: generous radius, 1px lit pink edge, a 2px lit pink hairline along the top inside edge.",
     "bar": {
         "island": {
             "color":         "#06080E",
             "opacity":       0.72,
             "radius":        14,
             "borderWidth":   1,
-            "borderOpacity": 0.16
+            "borderOpacity": 0.16,
+            "accentLine":    0.85
         },
         "chip": {
             "radius":  9,
-            "opacity": 0.08
+            "opacity": 0.07
         }
+    },
+
+    "//launcher": "Launcher identity (was wofi/style.css): violet 2px frame, 12px window, 8px input + rows.",
+    "launcher": {
+        "opacity":       0.80,
+        "radius":        12,
+        "borderWidth":   2,
+        "inputRadius":   8,
+        "entryRadius":   8,
+        "fontSize":      15
+    },
+
+    "//osd": "OSD identity (was swayosd/style.css): a neon pill — pink 2px frame, cyan track.",
+    "osd": {
+        "opacity":     0.85,
+        "radius":      999,
+        "borderWidth": 2,
+        "trackRadius": 4
+    },
+
+    "//session": "Power-menu identity (was wlogout/style.css): 16px tiles, 1px pink edge at 35%.",
+    "session": {
+        "windowOpacity": 0.85,
+        "tileOpacity":   0.92,
+        "radius":        16,
+        "borderWidth":   1,
+        "borderOpacity": 0.35,
+        "fontSize":      18
     },
 
     "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim).",

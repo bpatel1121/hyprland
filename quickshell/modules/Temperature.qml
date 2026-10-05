@@ -4,7 +4,15 @@ import "../config"
 import "../components"
 
 // Silent watchdog, like Network: renders NOTHING below criticalC. The chip
-// appearing IS the signal that the machine is hot.
+// appearing IS the signal that the machine is hot. `#temperature`:
+//
+//     (rest)     padding: 0; margin: 3px 0        — nothing to see
+//     .critical  padding: 0 10px; margin: 3px 1px;
+//                color: <urgent>; animation: pulse-red
+//                background: the shared rgba(<readout>, <chip opacity>) tint
+//
+// waybar's format-critical was "<glyph> {temperatureC}°". The tint is still
+// the readout's: `.critical` recolors the text and nothing else.
 //
 // The sensor is resolved by hwmon NAME, not by hwmon index: /sys/class/hwmon
 // numbering is not stable across boots, so a hardcoded hwmon6 silently reads the
@@ -20,9 +28,17 @@ Chip {
     property int celsius: 0
     readonly property bool hot: root.celsius >= root.criticalC
 
-    glyph: root.hot ? "" : ""
+    // U+F2C7 nf-fa-thermometer_full, as an escape (BMP private-use glyphs do
+    // not survive every editor).
+    glyph: root.hot ? "\uf2c7" : ""
     label: root.hot ? root.celsius + "°" : ""
+
     accent: Theme.urgent
+    tintColor: Theme.readout
+    glowOpacity: 0
+    pulse: root.hot
+    marginLeft: 1
+    marginRight: 1
 
     Process {
         id: probe

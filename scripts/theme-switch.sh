@@ -11,7 +11,7 @@ name="${1:?usage: theme-switch.sh <name>}"
 # either differs. "cyberpunk" resolves relative to themes/ and is portable.
 ln -sfn "$name" "$HYPR/themes/current"                # 1. repoint symlink
 hyprctl reload >/dev/null 2>&1 || true                # 2. re-run hyprland.lua (dofile picks up theme)
-"$HYPR/scripts/theme-apply.sh"                        # 3. sync wallpaper/waybar/...
+"$HYPR/scripts/theme-apply.sh"                        # 3. sync wallpaper/GTK/swaync, poke the shell
 if command -v notify-send >/dev/null 2>&1; then
     notify-send "Theme" "Switched to $name" 2>/dev/null || true
 fi

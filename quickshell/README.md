@@ -1,49 +1,77 @@
-# quickshell/ — the QML shell (scaffold)
+# quickshell/ — the shell
 
-A Quickshell bar that mirrors the waybar this desktop runs today. It is a
-**scaffold**: nothing starts it, and running it changes nothing permanent.
+One Quickshell process that is this desktop's bar, launcher (and theme picker),
+volume/brightness OSD and power menu. `hyprland.lua` starts it at login; the
+binds and the bar's own chips drive it over IPC.
 
 ```
-qs -p ~/.config/hypr/quickshell          # run it, Ctrl-C to stop
-qs -p ~/.config/hypr/quickshell -d -n    # daemonize, single instance
-pkill -x quickshell                      # stop a daemonized one
+qs -p ~/.config/hypr/quickshell -d -n    # what hyprland.lua runs: daemonize, single instance
+qs -p ~/.config/hypr/quickshell          # run it in the foreground instead, Ctrl-C to stop
+pkill -x quickshell                      # stop a daemonized one; the first line (or `hyprctl reload`) brings it back
 ```
 
 > `pkill -f 'qs -p'` also matches the shell you typed it in. Use `pkill -x quickshell`.
 
-Waybar stays the autostarted bar and is untouched. This shell uses its own
-layer-shell namespace (`qs-hypr-bar`) and claims **no** exclusive zone, so it
-reserves no screen space and cannot shift a window or disturb waybar's reserved
-strip — both can be on screen at once. Because it copies waybar's geometry it
-will land directly on top of it, so to actually look at it, stop waybar first
-(`pkill -x waybar`; `scripts/theme-apply.sh` brings it back).
+It owns four layer-shell namespaces — `qs-hypr-bar`, `qs-hypr-launcher`,
+`qs-hypr-osd`, `qs-hypr-session` — and `hyprland.lua` blurs each by name. The
+bar reserves its strip (height plus top margin); the other three reserve
+nothing and exist only while shown.
 
 ## What reads what
 
 ```
-settings.json              BEHAVIOR  — which modules, where, how often
-themes/current/palette.json IDENTITY — color, fonts, island geometry
+settings.json               BEHAVIOR  — which modules, where, how often; surface settings; power-menu buttons
+themes/current/palette.json IDENTITY — color roles, fonts, and the look of every surface
 ```
 
 Same behavior-vs-identity split the rest of the repo uses. Both are watched:
 edit either one while the shell is running and it re-applies without a restart.
+A theme *switch* is the one change the watchers cannot see (they follow the
+inode `current` resolved to, not the symlink), so `theme-apply.sh` ends with
+`qs ipc … call theme reload`.
 
 ```
-shell.qml               ShellRoot; one Bar per screen via Variants
+shell.qml               ShellRoot; one Bar per screen via Variants, then Launcher, Osd, SessionMenu; the `theme` IPC target
 config/
   Paths.qml             repo root + scripts dir, derived from Quickshell.shellDir
-  Theme.qml             themes/current/palette.json -> color roles
-  Config.qml            settings.json -> bar layout, intervals, toggles
+  Theme.qml             themes/current/palette.json -> color roles, effects, per-surface geometry
+  Config.qml            settings.json -> bar layout, intervals, toggles, Config.surface()
   qmldir                explicit, so the singletons resolve (see below)
 bar/
-  Bar.qml               PanelWindow, three islands, namespace + zero exclusive zone
-  Island.qml            one island: fill, radius and hairline from the palette
+  Bar.qml               PanelWindow, three islands, reserves its strip
+  Island.qml            one island: fill, radius, hairline, scanlines, accent line — all from the palette
   ModuleLoader.qml      "agenda" -> ../modules/Agenda.qml
+launcher/
+  Launcher.qml          the drun grid, and the theme picker as a second mode of the same window
+osd/
+  Osd.qml               the volume/brightness pill, on the focused monitor
+session/
+  SessionMenu.qml       the power menu: one dimmed surface per monitor, tiles on the focused one
 components/
-  Chip.qml              the one repeated shape: glyph + label + state color
+  Chip.qml              the one repeated shape: glyph + label + state color + hover + tooltip
   ScriptChip.qml        runs a waybar-*.sh emitter, parses its JSON line
-modules/                one file per module, named after its settings key
+  GlowText.qml          Text with the theme's text-shadow glow; a plain Text when Theme.glow is off
+  Scanlines.qml         gruvbox's CRT stripes, clipped to a rounded rect; paints nothing when off
+modules/                one file per bar module, named after its settings key
 ```
+
+## IPC
+
+```
+qs ipc -p ~/.config/hypr/quickshell call <target> <function> [args]
+```
+
+| target | functions | who calls it |
+|---|---|---|
+| `launcher` | `toggle`, `open`, `close`, `themes` | `SUPER+R` (`toggle`), `SUPER+T` (`themes`), the Arch chip |
+| `session` | `toggle`, `open`, `close` | `SUPER+ESCAPE`, the power chip |
+| `osd` | `volumeRaise`, `volumeLower`, `volumeMute`, `brightnessRaise`, `brightnessLower`, `display <volume\|brightness>` | `SUPER+F1..F3`, `SUPER+F5/F6` |
+| `theme` | `reload` | `scripts/theme-apply.sh`, last line |
+
+The F-key binds wrap the `osd` call in `|| wpctl …` / `|| brightnessctl …`, so
+a press still lands when the shell is down. CI greps `hyprland.lua` for every
+`qs("target", "fn")` and `osd("fn", …)` and fails if no QML file declares that
+function.
 
 ## Module map
 
@@ -56,13 +84,17 @@ Nothing here is invented; each module is backed by a real source.
 | `media` | `Mpris.players` |
 | `volume` | `Pipewire.defaultAudioSink` |
 | `battery` | `UPower.displayDevice` |
-| `tray` | `SystemTray.items` |
+| `tray` | `SystemTray.items`; right-click opens the native menu via `SystemTrayItem.display()` |
 | `network` | `Networking.devices` |
 | `bluetooth` | `Bluetooth.defaultAdapter` |
 | `temperature` | `/sys/class/hwmon/*`, resolved by name |
 | `agenda`, `todos`, `updates`, `aur`, `cava` | **the existing `scripts/waybar-*.sh`, unchanged** |
 | `dnd` | `swaync-client -swb` |
-| `launcher`, `power` | the same commands waybar's `on-click` uses |
+| `launcher`, `power` | `qs ipc … call launcher toggle` / `session toggle` — the same door the binds use |
+
+Every chip's tooltip is drawn: a `PopupWindow` under the hovered chip, created
+by `LazyLoader` only while it is hovered (one window per chip would be a window
+each).
 
 ### The reuse seam
 
@@ -70,12 +102,16 @@ Nothing here is invented; each module is backed by a real source.
 update — `{"text":"…","class":"…","tooltip":"…"}`. `ScriptChip` consumes exactly
 that with `Process` + `SplitParser`, so five chips work here with **zero changes
 to the scripts**. The khal parsing, the `checkupdates` retry logic, the JSON
-escaping and the cava framing all stay in one place, still used by waybar, still
-covered by shellcheck in CI.
+escaping and the cava framing all stay in one place, still covered by shellcheck
+in CI. The `waybar-` prefix is historical; the shell is their only reader now.
 
 `class` is the whole styling protocol. The scripts already emit `pending`,
 `overdue`, `zero`, `idle`, `quiet`, `live`, and `Theme.classColor()` maps those
 onto palette roles.
+
+Where waybar refreshed a counter with `pkill -RTMIN+8 waybar`, `ScriptChip.refresh()`
+re-runs the emitter: the Updates and AUR chips call it when the upgrade terminal
+they opened exits.
 
 ## Two things that will bite you
 
@@ -88,14 +124,15 @@ every color silently reading as undefined.
 synthesizes a qmldir for directories that lack one, and the synthesized version
 did not register the plain (non-singleton) components — every module failed with
 `Chip is not a type`. Declaring them by hand fixes that and also satisfies
-qmllint.
+qmllint. (`launcher/`, `osd/` and `session/` need none: `shell.qml` imports each
+directory and names its one type.)
 
 ## Checking it
 
 ```
 qmllint -I /usr/lib/qt6/qml -I quickshell \
   --uncreatable-type disable --unresolved-type disable \
-  quickshell/shell.qml quickshell/{config,bar,components,modules}/*.qml
+  quickshell/shell.qml quickshell/{config,bar,components,modules,launcher,osd,session}/*.qml
 ```
 
 Those two categories are off because qmllint cannot see through Quickshell's
@@ -105,12 +142,8 @@ category that catches real delegate-scope bugs, stays on. CI runs this.
 
 ## Not done yet
 
-Deliberate gaps, not oversights:
-
-- **Tooltips.** `Chip.tooltip` is plumbed through and populated from every
-  script's tooltip field, but nothing draws it — that needs a `PopupWindow`.
-- **Tray menus.** Right-clicking a tray item logs instead of opening its menu;
-  wiring `SystemTrayItem.menu` needs `Quickshell.DBusMenu`.
-- **The other surfaces.** Launcher, notifications, OSD and power menu are still
-  wofi / swaync / swayosd / wlogout. Quickshell ships the services for all four
-  (`NotificationServer`, `Polkit`, `WlSessionLock`); see `docs/qml-migration.md`.
+- **Notifications** are still swaync, and the **lock screen** is still hyprlock.
+  Both on purpose — see `docs/qml-migration.md`.
+- **OSD brightness** drops a press that lands while the previous `brightnessctl`
+  is still running (a few ms). Marked `ponytail:` in `osd/Osd.qml`; queue the
+  deltas if key-repeat ever shows it.

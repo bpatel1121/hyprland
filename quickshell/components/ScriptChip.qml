@@ -12,8 +12,8 @@ import "../config"
 // waybar-agenda.sh, waybar-todos.sh, waybar-updates.sh and waybar-cava.sh all
 // speak it, and SplitParser consumes it directly — so those five bar chips work
 // here with ZERO changes to the scripts. The escaping, the khal parsing, the
-// checkupdates retry logic and the cava framing all stay in one place, still
-// used by waybar, still covered by shellcheck in CI.
+// checkupdates retry logic and the cava framing all stay in one place,
+// still covered by shellcheck in CI — their name is history, not a dependency.
 //
 // `class` is the whole styling protocol: the scripts already emit pending /
 // overdue / zero / idle, and Theme.classColor() maps those onto roles.
@@ -60,7 +60,11 @@ Chip {
     // than flashing a placeholder.
     property bool everRead: false
 
-    function run() {
+    // Re-run the emitter now, ahead of its interval. This is the replacement
+    // for waybar's `signal` mechanism (`pkill -RTMIN+8 waybar` after a pacman
+    // run): Updates.qml and Aur.qml call it when their upgrade terminal exits.
+    // A no-op for a streaming chip, whose process is already running.
+    function refresh() {
         if (!root.runnable)
             return;
         proc.running = true;
@@ -118,6 +122,6 @@ Chip {
         interval: root.intervalSec * 1000
         repeat: true
         triggeredOnStart: true
-        onTriggered: root.run()
+        onTriggered: root.refresh()
     }
 }

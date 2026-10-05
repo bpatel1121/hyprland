@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://github.com/bpatel1121/hyprland/schema/shell-settings.schema.json",
     "title": "hypr QML shell settings",
-    "description": "Behavior for the Quickshell bar in quickshell/. Identity (color, fonts, island geometry) lives in themes/<name>/palette.json instead.",
+    "description": "Behavior for the Quickshell shell in quickshell/ — the bar, the launcher, the OSD and the power menu. Identity (color, fonts, radii, glow) lives in themes/<name>/palette.json instead.",
     "type": "object",
     "required": ["bar", "modules"],
 
@@ -37,7 +37,7 @@
                     "enum": ["top", "bottom"],
                     "description": "Which screen edge the bar anchors to."
                 },
-                "height":  { "type": "integer", "minimum": 16, "maximum": 128, "description": "Island height in px. Does NOT reserve screen space — the scaffold runs with exclusiveZone 0." },
+                "height":  { "type": "integer", "minimum": 16, "maximum": 128, "description": "Island height in px. The bar reserves this plus its top/bottom margin." },
                 "spacing": { "type": "integer", "minimum": 0, "maximum": 32, "description": "Gap between chips inside one island, in px." },
                 "margins": {
                     "type": "object",
@@ -220,6 +220,67 @@
                     "additionalProperties": false
                 }
             },
+            "additionalProperties": false
+        },
+
+        "surfaces": {
+            "type": "object",
+            "description": "Behavior of the non-bar surfaces. Each one's look comes from palette.json (`launcher`, `osd`, `session` blocks).",
+            "properties": {
+                "launcher": {
+                    "type": "object",
+                    "description": "The app launcher (SUPER+R, the Arch chip). Also hosts the theme picker (SUPER+T).",
+                    "properties": {
+                        "width":       { "type": "integer", "minimum": 200, "maximum": 4000, "description": "Window width, px." },
+                        "height":      { "type": "integer", "minimum": 200, "maximum": 4000 },
+                        "columns":     { "type": "integer", "minimum": 1, "maximum": 6, "description": "Result grid columns. wofi ran with --columns 2." },
+                        "iconSize":    { "type": "integer", "minimum": 16, "maximum": 128 },
+                        "placeholder": { "type": "string", "description": "Input hint while the query is empty." },
+                        "recentCount": { "type": "integer", "minimum": 3, "maximum": 20, "description": "How many most-launched apps the empty state lists (one column, window sized to fit). Also the length of the alphabetical fallback before anything has been launched." }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "osd": {
+                    "type": "object",
+                    "description": "The volume/brightness pill (SUPER+F1..F3, F5, F6).",
+                    "properties": {
+                        "timeoutMs":             { "type": "integer", "minimum": 200, "maximum": 10000, "description": "How long the pill stays after the last press." },
+                        "volumeStepPercent":     { "type": "integer", "minimum": 1, "maximum": 50 },
+                        "brightnessStepPercent": { "type": "integer", "minimum": 1, "maximum": 50 }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                },
+                "session": {
+                    "type": "object",
+                    "description": "The power menu (SUPER+ESCAPE, the power chip).",
+                    "required": ["buttons"],
+                    "properties": {
+                        "buttons": {
+                            "type": "array",
+                            "minItems": 1,
+                            "description": "Tiles, in order, three per row.",
+                            "items": {
+                                "type": "object",
+                                "required": ["id", "glyph", "label", "key", "action"],
+                                "properties": {
+                                    "id":          { "type": "string", "pattern": "^[a-z-]+$" },
+                                    "glyph":       { "type": "string", "description": "Nerd Font glyph drawn before the label." },
+                                    "label":       { "type": "string" },
+                                    "key":         { "type": "string", "minLength": 1, "maxLength": 1, "description": "The key that triggers this tile while the menu is open." },
+                                    "action":      { "type": "string", "description": "Run with `sh -c` after the menu closes." },
+                                    "destructive": { "type": "boolean", "description": "Light the tile `urgent` on hover instead of `readout`." }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
+                    "additionalProperties": false
+                }
+            },
+            "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
             "additionalProperties": false
         }
     },

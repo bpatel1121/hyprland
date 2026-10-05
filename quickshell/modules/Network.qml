@@ -3,7 +3,16 @@ import Quickshell.Networking
 import "../config"
 import "../components"
 
-// Silent watchdog: renders NOTHING while the network is up.
+// Silent watchdog: renders NOTHING while the network is up. `#network`:
+//
+//     color: <readout>; background rgba(<readout>, <chip opacity>);
+//     padding: 0 10px; margin: 3px 2px;  no glow
+//     .disconnected  color: rgba(<dormant>, 0.5)      the only state that shows
+//
+// waybar's format-wifi/-ethernet were empty (an empty format hides the
+// module) and format-disconnected "<glyph> off", with tooltip "no network".
+// So the one thing this chip ever draws is the dim dormant "off" on the
+// readout tint.
 //
 // The throughput readout that used to live in this slot was the one chip on the
 // bar that changed width on its own, and a live kB/s figure is not something you
@@ -23,7 +32,11 @@ Chip {
 
     glyph: root.up ? "" : "󰤭"
     label: root.up ? "" : "off"
-    accent: Theme.urgent
+    tooltip: root.up ? "" : "no network"
+
+    accent: Theme.withAlpha(Theme.dormant, 0.5)
+    tintColor: Theme.readout
+    glowOpacity: 0
 
     onActivated: Quickshell.execDetached(["wezterm", "start", "--", "nmtui"])
 }

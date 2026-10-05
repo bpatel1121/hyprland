@@ -2,7 +2,11 @@ import Quickshell.Services.Pipewire
 import "../config"
 import "../components"
 
-// Output volume.
+// Output volume — `#pulseaudio`, waybar's "{icon} {volume}%" / "󰝟 muted":
+//
+//     color: <readout>; background rgba(<readout>, <chip opacity>);
+//     padding: 0 10px; margin: 3px 2px;  no glow
+//     .muted  color: rgba(<dormant>, 0.5)      tint unchanged
 //
 // PwObjectTracker is NOT optional: Pipewire node properties stay unbound until
 // something declares interest in the node, so without the tracker below `volume`
@@ -18,6 +22,7 @@ Chip {
     readonly property bool muted: root.audio?.muted ?? false
     readonly property int percent: Math.round((root.audio?.volume ?? 0) * 100)
 
+    // format-icons: three steps, chosen the way waybar indexes its ramp.
     glyph: {
         if (!root.audio)
             return "";
@@ -31,7 +36,9 @@ Chip {
     }
 
     label: root.audio ? (root.muted ? "muted" : root.percent + "%") : ""
-    accent: root.muted ? Theme.dormant : Theme.readout
+    accent: root.muted ? Theme.withAlpha(Theme.dormant, 0.5) : Theme.readout
+    tintColor: Theme.readout
+    glowOpacity: 0
 
     // Binds the sink so its volume/muted actually update. See the note above.
     PwObjectTracker {

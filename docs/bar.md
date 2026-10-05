@@ -1,17 +1,21 @@
 # The bar, and motion
 
-Waybar is three frosted islands. Left: an Arch chip that opens the launcher,
-workspaces 1–5 (always visible; dormant ones dim), then the media chip with a
-live **soundwave fused to its edge** (`scripts/waybar-cava.sh` streams cava
-frames as block glyphs, so it needs no waybar build flags and vanishes in
-silence). Center: the clock, **alone**, so it sits at true screen center and
-nothing variable-width can shift it. Right: the glance chips (next event, due
-todos) leading the instrument panel — update counters, volume, bluetooth,
-battery, tray — plus three watchdogs that render nothing at all until they
-have something to say: temperature above 80°, the network when it drops, and
-a DND bell while do-not-disturb is on. A power glyph closes the row and only
-goes red when you hover it. `SUPER+R` (or the Arch chip) opens wofi as a
-two-column icon grid.
+The bar is `quickshell/bar/`: three frosted islands, one bar per monitor.
+Left: an Arch chip that opens the launcher, workspaces 1–5 (always visible;
+dormant ones dim), then the media chip with a live **soundwave fused to its
+edge** (`scripts/waybar-cava.sh` streams cava frames as block glyphs — the
+script predates the shell and kept its name — and vanishes in silence).
+Center: the clock, **alone**, so it sits at true screen center and nothing
+variable-width can shift it. Right: the glance chips (next event, due todos)
+leading the instrument panel — update counters, volume, bluetooth, battery,
+tray — plus three watchdogs that render nothing at all until they have
+something to say: temperature above 80°, the network when it drops, and a DND
+bell while do-not-disturb is on. A power glyph closes the row and only goes red
+when you hover it. `SUPER+R` (or the Arch chip) opens the shell's launcher as a
+two-column icon grid; both go through the same `qs ipc … call launcher toggle`,
+so the bind and the chip cannot drift. Which modules sit where, and how often
+they poll, is `quickshell/settings.json`; what they look like is the theme's
+`palette.json`.
 
 Border motion is a daemon, not an animation: Hyprland's `borderangle` loop
 is broken upstream (registers, never ticks — the #9251/#9313 regression

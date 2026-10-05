@@ -50,12 +50,19 @@ hl.monitor({
 ---------------------
 local terminal = "wezterm start" -- main terminal (SUPER+Q)
 local fileManager = "wezterm start -- yazi"
--- --allow-images + columns turns wofi from a dmenu strip into an icon-grid
--- launcher; the theme css sizes it. Width/height here rather than css because
--- wofi treats geometry as config, not style.
-local menu = "wofi --show drun --allow-images --columns 2 --width 640 --height 480 --style "
-    .. home
-    .. "/.config/hypr/themes/current/wofi/style.css"
+
+-- The shell: one Quickshell process (quickshell/) owns the bar, the launcher,
+-- the volume/brightness OSD and the power menu. Each is driven over its IPC
+-- target, so a bind is "ask the shell", never "start a program".
+local shell = home .. "/.config/hypr/quickshell"
+local function qs(target, fn)
+    return "qs ipc -p " .. shell .. " call " .. target .. " " .. fn
+end
+-- Volume/brightness go through the OSD so a pill answers every press; if the
+-- shell is down the bare wpctl/brightnessctl still runs — same action, silent.
+local function osd(fn, fallback)
+    return "sh -c '" .. shq(qs("osd", fn)) .. " 2>/dev/null || " .. shq(fallback) .. "'"
+end
 
 -------------------
 ---- AUTOSTART ----
@@ -69,8 +76,9 @@ hl.on("hyprland.start", function()
     hl.exec_cmd(first_of({ "swww-daemon", "awww-daemon" }, "hyprpaper"))
     -- Notification daemon: swaync (notification center + toggles panel).
     hl.exec_cmd("swaync")
-    -- Volume/brightness OSD server (clients fire from the binds below).
-    hl.exec_cmd(first_of({ "swayosd-server" }))
+    -- The shell. -d detaches, -n refuses to start a second copy on reload.
+    -- It reads themes/current/palette.json itself; theme-apply.sh only pokes it.
+    hl.exec_cmd("qs -p " .. shell .. " -d -n")
     hl.exec_cmd("hypridle") -- dim -> lock -> dpms off
     -- Battery/charger events through the themed notifications (laptops; a
     -- desktop simply never triggers them). -s skips the startup replay.
@@ -83,7 +91,7 @@ hl.on("hyprland.start", function()
     -- panels) fails silently with no prompt at all. The package was installed
     -- but never started, so this had been quietly broken.
     hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
-    hl.exec_cmd(scripts .. "theme-apply.sh") -- themed waybar + wallpaper
+    hl.exec_cmd(scripts .. "theme-apply.sh") -- wallpaper, cursor, GTK, symlinks
     hl.exec_cmd("firefox")
 end)
 
@@ -183,7 +191,7 @@ hl.animation({ leaf = "fadeIn", enabled = true, speed = 1.73, bezier = "almostLi
 hl.animation({ leaf = "fadeOut", enabled = true, speed = 1.46, bezier = "almostLinear" })
 hl.animation({ leaf = "fade", enabled = true, speed = 3.03, bezier = "quick" })
 hl.animation({ leaf = "layers", enabled = true, speed = 3.81, bezier = "easeOutQuint" })
-hl.animation({ leaf = "layersIn", enabled = true, speed = 4, bezier = "easeOutQuint", style = "slide" }) -- wofi drops in, toasts glide in
+hl.animation({ leaf = "layersIn", enabled = true, speed = 4, bezier = "easeOutQuint", style = "slide" }) -- the launcher drops in, toasts glide in
 hl.animation({ leaf = "layersOut", enabled = true, speed = 1.5, bezier = "linear", style = "fade" })
 hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 1.79, bezier = "almostLinear" })
 hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "almostLinear" })
@@ -256,7 +264,7 @@ local mainMod = "SUPER"
 -- Apps / session
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(qs("launcher", "toggle")))
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
 hl.bind(mainMod .. " + X", hl.dsp.window.kill())
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
@@ -264,8 +272,8 @@ hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + N", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "1" }))
 
--- Theme switcher
-hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(scripts .. "theme-menu.sh"))
+-- Theme switcher: the launcher in themes mode (wallpaper + palette per row).
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(qs("launcher", "themes")))
 
 -- Calendar: ikhal's month grid in a floating themed terminal (float rule below).
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd(scripts .. "calendar-menu.sh"))
@@ -278,7 +286,7 @@ hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(scripts .. "todo-menu.sh"))
 -- right` in the vim-direction block below. Both surfaces are themed and follow
 -- themes/current/.
 hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("hyprlock"))
-hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("wlogout -p layer-shell"))
+hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd(qs("session", "toggle")))
 
 -- Screenshots (grim + slurp + wl-clipboard — all installed)
 -- Screenshots confirm themselves: clipboard captures are invisible actions,
@@ -327,26 +335,22 @@ hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
--- Volume / brightness on SUPER + F-keys, through swayosd so an on-screen
--- pill answers every press; first_of() falls back to bare wpctl/brightnessctl
--- when swayosd isn't installed — same action, just silent.
+-- Volume / brightness on SUPER + F-keys, through the shell's OSD (see osd()
+-- above). The OSD acts on Pipewire directly, clamped at 100% like the old
+-- `wpctl -l 1`; the fallbacks are what runs when the shell isn't up.
 hl.bind(
     mainMod .. " + F1",
-    hl.dsp.exec_cmd(
-        first_of({ "swayosd-client --output-volume mute-toggle" }, "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
-    ),
+    hl.dsp.exec_cmd(osd("volumeMute", "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")),
     { repeating = true }
 )
 hl.bind(
     mainMod .. " + F2",
-    hl.dsp.exec_cmd(first_of({ "swayosd-client --output-volume lower" }, "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")),
+    hl.dsp.exec_cmd(osd("volumeLower", "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")),
     { repeating = true }
 )
 hl.bind(
     mainMod .. " + F3",
-    hl.dsp.exec_cmd(
-        first_of({ "swayosd-client --output-volume raise" }, "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+")
-    ),
+    hl.dsp.exec_cmd(osd("volumeRaise", "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+")),
     { repeating = true }
 )
 
@@ -357,16 +361,8 @@ hl.bind(
     )
 )
 
-hl.bind(
-    mainMod .. " + F5",
-    hl.dsp.exec_cmd(first_of({ "swayosd-client --brightness lower" }, "brightnessctl set 5%-")),
-    { repeating = true }
-)
-hl.bind(
-    mainMod .. " + F6",
-    hl.dsp.exec_cmd(first_of({ "swayosd-client --brightness raise" }, "brightnessctl set 5%+")),
-    { repeating = true }
-)
+hl.bind(mainMod .. " + F5", hl.dsp.exec_cmd(osd("brightnessLower", "brightnessctl set 5%-")), { repeating = true })
+hl.bind(mainMod .. " + F6", hl.dsp.exec_cmd(osd("brightnessRaise", "brightnessctl set 5%+")), { repeating = true })
 
 -- Notification center (swaync): history, DND toggle, sliders.
 hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("swaync-client -t"))
@@ -382,44 +378,32 @@ hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true 
 --------------------------------
 -- https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 
--- Frost the waybar islands. The bar surface itself is fully transparent and the
+-- Frost the bar's islands. The bar surface itself is fully transparent and the
 -- islands are ~0.72 alpha, so `ignore_alpha` keeps the gaps between islands
 -- perfectly clear and blurs only the islands themselves. Without this the
 -- translucent islands show raw wallpaper and read as flat dark boxes.
+-- The namespace is set in quickshell/bar/Bar.qml.
 hl.layer_rule({
-    name = "waybar-blur",
-    match = { namespace = "^waybar$" },
+    name = "qs-bar-blur",
+    match = { namespace = "^qs-hypr-bar$" },
     blur = true,
     ignore_alpha = 0.35,
 })
 
--- The other three layer surfaces get the same treatment, or they sit flat and
--- opaque next to a frosted bar. Lower ignore_alpha than waybar's because these
--- are solid panels rather than islands floating on a transparent sheet.
--- Namespaces: wlogout calls itself "logout_dialog" (confirmed in its binary);
--- wofi's could not be confirmed the same way, so verify with `hyprctl layers`
--- while it's open if the blur looks absent.
+-- The shell's other three surfaces, and swaync, get the same treatment, or
+-- they sit flat and opaque next to a frosted bar. Lower ignore_alpha than the
+-- bar's because these are solid panels rather than islands floating on a
+-- transparent sheet. Each QML surface draws its panel on a fully transparent
+-- window, which is what gives ignore_alpha an edge to find.
 hl.layer_rule({
-    name = "wofi-blur",
-    match = { namespace = "^wofi$" },
+    name = "qs-surfaces-blur",
+    match = { namespace = "^qs-hypr-(launcher|osd|session)$" },
     blur = true,
     ignore_alpha = 0.2,
 })
 hl.layer_rule({
     name = "swaync-blur",
     match = { namespace = "^swaync-(notification-window|control-center)$" },
-    blur = true,
-    ignore_alpha = 0.2,
-})
-hl.layer_rule({
-    name = "swayosd-blur",
-    match = { namespace = "^swayosd$" },
-    blur = true,
-    ignore_alpha = 0.2,
-})
-hl.layer_rule({
-    name = "wlogout-blur",
-    match = { namespace = "^(wlogout|logout_dialog)$" },
     blur = true,
     ignore_alpha = 0.2,
 })

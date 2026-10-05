@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# Sync external apps (wallpaper, waybar, swaync, ...) to the ACTIVE theme.
+# Sync external apps (wallpaper, swaync, GTK, ...) to the ACTIVE theme.
 # Does NOT reload Hyprland — hyprland.lua reads the theme itself via dofile.
+# Does NOT restart the shell either: quickshell/ reads themes/current/palette.json
+# itself and is told to re-read it at the end of this script.
 set -uo pipefail
 # HYPR, CUR, theme_key() and theme_wallpaper() all come from here.
 # shellcheck source=scripts/theme-lib.sh
@@ -32,8 +34,8 @@ fi
 # --- Cursor -------------------------------------------------------------------
 # FIRST, deliberately. This used to live down in the GTK block at the bottom of
 # the script, which put it behind the swww daemon wait (up to 1.8s), the
-# wallpaper transition, `sleep 0.9`, and the waybar/swaync/swayosd restarts —
-# so the pointer visibly changed several seconds after the rest of the theme.
+# wallpaper transition and the bar restart the old waybar setup needed — so the
+# pointer visibly changed several seconds after the rest of the theme.
 # Nothing below depends on it, so it goes first and lands instantly.
 #
 # The theme may declare `cursor = "Name"` in theme.lua. Fallback chain:
@@ -71,33 +73,6 @@ mkdir -p "$HOME/.icons/default"
 printf '[Icon Theme]\nName=default\nComment=managed by hypr/scripts/theme-apply.sh\nInherits=%s\n' \
     "$cursor" > "$HOME/.icons/default/index.theme"
 
-# --- Choreography: the bar dips out first, the wallpaper washes over, and
-# the bar returns last, dressed in the new theme (layersIn fades it back).
-pkill -x waybar 2>/dev/null || true
-
-# The bar's `exec` children do NOT die with it: -x matches the exact name only,
-# and waybar-cava.sh stops writing to stdout in silence (its dedup rule), so it
-# never takes the SIGPIPE that would otherwise reap it. Every switch used to
-# strand one more cava holding a live PulseAudio capture.
-#
-# WAIT for waybar to actually be gone before reaping them. It respawns any
-# `exec` module that exits, so killing the streamer while the bar is still up
-# just gets a fresh one a moment later — which is the leak, one per switch.
-for _ in 1 2 3 4 5 6 7 8 9 10; do
-    pgrep -x waybar >/dev/null 2>&1 || break
-    sleep 0.1
-done
-# By SCRIPT PATH — never `pkill -x cava`, which would also kill the standalone
-# visualizer the themes ship a config for.
-pkill -f "hypr/scripts/waybar-cava.sh" 2>/dev/null || true
-# Belt and braces: sweep any cava still holding one of OUR generated configs.
-# The script traps the signals that normally reap it, but a stranded streamer
-# still turned up now and then, and one live PulseAudio capture per switch is
-# not something to leave to a race. Matching on the waybar-cava.* config path
-# is what keeps this from ever touching a cava the user started themselves —
-# that one reads ~/.config/cava/config.
-pkill -f "cava -p .*/waybar-cava\." 2>/dev/null || true
-
 # --- Wallpaper -------------------------------------------------------------
 # Prefer swww/awww: it cross-fades between wallpapers, which is what makes a
 # theme switch look like a transition rather than a snap. Falls back to
@@ -129,26 +104,6 @@ if [ -n "${wall:-}" ]; then
     fi
 fi
 
-# --- Waybar (launched with the theme's config/style if present) ---
-# Killed above, before the wallpaper transition; the pause lets the wave land
-# before the bar fades back in with the new skin.
-sleep 0.9
-# Behavior lives once at the repo root; the theme ships a thin overlay that
-# `include`s it and overrides only what it wants to look different. A theme
-# that ships no overlay at all still gets the shared bar — that middle branch
-# is what keeps "only theme.lua is required" true for the bar too.
-bar_cfg="$HYPR/waybar/config.jsonc"
-[ -f "$CUR/waybar/config.jsonc" ] && bar_cfg="$CUR/waybar/config.jsonc"
-
-if [ -f "$bar_cfg" ] && [ -f "$CUR/waybar/style.css" ]; then
-    waybar -c "$bar_cfg" -s "$CUR/waybar/style.css" >/dev/null 2>&1 &
-elif [ -f "$bar_cfg" ]; then
-    waybar -c "$bar_cfg" >/dev/null 2>&1 &   # modules, but waybar's own css
-else
-    waybar >/dev/null 2>&1 &                 # nothing here at all: pure defaults
-fi
-disown 2>/dev/null || true
-
 # --- WezTerm (recolor open terminals) ---
 # WezTerm auto-reloads when its main config file changes. The theme colors are
 # pulled in via dofile behind the `current` symlink, and repointing a symlink
@@ -170,35 +125,9 @@ if [ -f "$CUR/swaync/style.css" ]; then
     swaync-client -rs 2>/dev/null || true
 fi
 
-# --- swayosd (volume/brightness OSD) ------------------------------------------
-# The server reads its stylesheet at startup, so restyle = restart. Cheap.
-if [ -f "$CUR/swayosd/style.css" ]; then
-    mkdir -p "$HOME/.config/swayosd"
-    ln -sfn "$CUR/swayosd/style.css" "$HOME/.config/swayosd/style.css"
-    if command -v swayosd-server >/dev/null 2>&1; then
-        pkill -x swayosd-server 2>/dev/null || true
-        swayosd-server >/dev/null 2>&1 &
-        disown 2>/dev/null || true
-    fi
-fi
-
-# --- wlogout / cava / fastfetch (plain symlinks) ---
+# --- cava / fastfetch (plain symlinks) ---
 # Each is guarded: a theme that doesn't ship one just keeps whatever is there,
 # per the README's promise that everything but theme.lua degrades gracefully.
-#
-# wlogout follows the same split as waybar and swaync: the layout is behavior
-# (which buttons, which actions, which keybinds) and was byte-identical across
-# themes, so it moved to the repo root; style.css stays identity. A theme's own
-# layout still wins, and the guard fires on either half so a theme with no
-# wlogout/ dir still gets the shared one.
-if [ -d "$CUR/wlogout" ] || [ -f "$HYPR/wlogout/layout" ]; then
-    mkdir -p "$HOME/.config/wlogout"
-    layout="$HYPR/wlogout/layout"
-    [ -f "$CUR/wlogout/layout" ] && layout="$CUR/wlogout/layout"  # optional-override
-    [ -f "$layout" ]                && ln -sfn "$layout"                "$HOME/.config/wlogout/layout"
-    [ -f "$CUR/wlogout/style.css" ] && ln -sfn "$CUR/wlogout/style.css" "$HOME/.config/wlogout/style.css"
-fi
-
 if [ -f "$CUR/cava/config" ]; then
     mkdir -p "$HOME/.config/cava"
     ln -sfn "$CUR/cava/config" "$HOME/.config/cava/config"
@@ -288,4 +217,15 @@ fi
 if [ -f "$CUR/hyprlock.conf" ]; then
     sed "/^[[:space:]]*path[[:space:]]*=/ s|@WALLPAPER@|${wall:-}|g" \
         "$CUR/hyprlock.conf" > "$HYPR/hyprlock.conf"
+fi
+
+# --- The shell (quickshell/) --------------------------------------------------
+# Nothing to restart. The shell reads themes/current/palette.json and
+# quickshell/settings.json itself, but its file watchers follow the file the
+# symlink RESOLVED to when it started, so repointing `current` is invisible
+# to them until asked. One IPC call re-reads both; every surface rebinds live.
+# Guarded: this script also runs at login, when the shell may not be up yet —
+# it reads the right theme on its own first start anyway.
+if command -v qs >/dev/null 2>&1; then
+    qs ipc -p "$HYPR/quickshell" call theme reload >/dev/null 2>&1 || true
 fi

@@ -5,27 +5,36 @@ and adding one of your own.
 
 ## Switching
 
-`SUPER+T` for the wofi picker, or:
+`SUPER+T` opens the shell's launcher in **themes mode**: one row per directory
+in `themes/`, each with its wallpaper as the thumbnail and its twelve palette
+roles as a swatch strip, so you see what you are about to get. Nothing applies
+until Enter; Escape leaves everything as it was. Or, from a shell:
 
 ```
 ~/.config/hypr/scripts/theme-switch.sh cyberpunk
 ```
 
-Open wezterm windows recolor live: theme-apply nudges wezterm.lua's mtime,
-which triggers WezTerm's config reload.
+Either way it is `theme-switch.sh` that runs: repoint `themes/current`, reload
+Hyprland, then `theme-apply.sh` for everything outside Hyprland. The shell is
+not restarted — the script's last line is a `qs ipc … call theme reload`, and
+every surface rebinds to the new palette in place. Open wezterm windows recolor
+live too: theme-apply nudges wezterm.lua's mtime, which triggers WezTerm's
+config reload.
 
 ## Adding a theme
 
 Copy `themes/cyberpunk` to `themes/<name>`, swap the palette and wallpaper,
 and it appears in the picker automatically. Only `theme.lua` is required —
-every other file degrades gracefully if absent. A new theme inherits the shared
-bar behavior, power-menu layout, and notification layout for free, so in
-practice it needs a palette, a wallpaper, and a `waybar/style.css`.
+every other file degrades gracefully if absent. A new theme inherits the shell's
+behavior (bar modules, launcher grid, power-menu buttons) and the notification
+layout for free, so in practice it needs a `palette.json` and a wallpaper. The
+palette is the whole look of the bar, launcher, OSD and power menu: the twelve
+roles plus the `effects`, `bar`, `launcher`, `osd` and `session` blocks (see
+below). There is no stylesheet to write.
 
-To change bar *behavior* for one theme only, restate the key in that theme's
-`waybar/config.jsonc`. The merge is per top-level key rather than deep, so
-overriding one workspace glyph means restating the whole `hyprland/workspaces`
-object — each theme's overlay ships that as a commented-out example.
+Behavior is not per-theme any more. Bar modules, intervals, the launcher's grid
+and the power menu's buttons live once in `quickshell/settings.json`; a theme
+decides how they look, not what they do.
 
 Beyond the visual table, `theme.lua` takes optional identity keys:
 `border_motion = <deciseconds/revolution>` runs the border gradient in motion
@@ -51,13 +60,14 @@ for whenever one does.)
 rounding, blur, shadow. Hyprland reads it directly, and `scripts/theme-lib.sh`
 scrapes a few scalars out of it with `sed`.
 
-`themes/<name>/palette.json` owns **color as a vocabulary**, and is what the QML
-shell in `quickshell/` reads. It is hand-written and validated in CI; nothing
-generates it.
+`themes/<name>/palette.json` owns **color as a vocabulary**, and the look of
+every surface the shell in `quickshell/` draws. It is hand-written and validated
+in CI; nothing generates it.
 
 The twelve roles are not an invention — they are the `@define-color` block that
-was already at the top of every theme's `waybar/style.css`, which both themes had
-independently converged on:
+sat at the top of every theme's old `waybar/style.css`, which both themes had
+independently converged on (those stylesheets are gone from the tree; the roles
+are what survived them):
 
 | role | what it is | cyberpunk | gruvbox |
 |---|---|---|---|
@@ -74,10 +84,22 @@ independently converged on:
 | `text` | default foreground | `#C8D0E0` | `#ebdbb2` |
 | `launcher` | the one hue the bar never uses | `#A130F2` | `#d3869b` |
 
-Alongside them: `font` (family and two sizes), `bar.island` / `bar.chip` (the
-geometry that makes cyberpunk rounded glass and gruvbox a sharp CRT panel), and
-`wallpaper.brightness`, shared by `hyprlock.conf` and the SDDM greeter so boot →
-login → lock read as one design.
+Alongside them, the per-surface identity — the structural differences between
+the two themes, which used to be scattered across four stylesheets:
+
+| block | what it holds |
+|---|---|
+| `effects` | `glow` (cyberpunk's `text-shadow`, drawn by `GlowText.qml`), `glowRadius`, `scanlines` (gruvbox's CRT stripes, drawn by `Scanlines.qml`). A theme switches each on or off; no surface guesses from the colors. |
+| `bar.island` / `bar.chip` | island fill, opacity, radius, frame weight and alpha, chip radius and tint; `accentLine` is cyberpunk's 2px lit hairline along the inside top edge (0 draws none) |
+| `launcher` | window opacity, radius, frame weight, input and row radii, font size |
+| `osd` | pill opacity, radius (999 is a full pill), frame weight, track radius |
+| `session` | backdrop and tile opacity, tile radius, frame weight and resting alpha, font size |
+| `font` | family and two sizes |
+| `wallpaper` | `brightness`, shared by `hyprlock.conf` and the SDDM greeter so boot → login → lock read as one design |
+
+This is where "cyberpunk glows, gruvbox scans" lives: rounded glass with a pink
+hairline versus sharp 4px corners, chunky 2px frames and scanlines come from
+these numbers, read through `Theme.qml`, and from nothing in the QML itself.
 
 `schema/palette.schema.json` describes all of it; the `$schema` key at the top of
 each palette gives editors completion and inline validation.
@@ -86,19 +108,26 @@ each palette gives editors completion and inline validation.
 
 - **`name` must match the directory.** A mismatch silently loads the wrong
   palette through the `current` symlink.
-- **Every color `theme.lua` names must be a role in `palette.json`.** This is the
-  only thing stopping the two files drifting, since the stylesheets still carry
-  their own literals. A hueless shadow (`0x59000000`, as gruvbox uses — it has no
-  glow by design) is exempt: absence of color is not a palette choice.
+- **Every color `theme.lua` names must be a role in `palette.json`.** Window
+  chrome sits pixel-adjacent to the bar and is not drawn by the shell, so this
+  is what stops a border color and a bar frame drifting apart. A hueless shadow
+  (`0x59000000`, as gruvbox uses — it has no glow by design) is exempt: absence
+  of color is not a palette choice.
 
 ### What is NOT in palette.json
 
-The stylesheets. `waybar/style.css`, `wofi/style.css`, `gtk/gtk.css` and the rest
-still hold their own hex literals, and are still the files you edit to change how
-waybar looks. Generating them from the palette would mean rewriting three dozen
-hand-tuned files whose comments document real layer-shell rendering bugs. The
-palette is the source of truth for the *QML* shell today, and the CI cross-check
-is what keeps it honest about the rest.
+Everything the shell does not draw. The bar, launcher, OSD and power menu have no
+stylesheet any more — `palette.json` is their only source, and a hue that is
+not a role in it cannot appear on them (the QML holds no hex literal outside
+`Theme.qml`'s fallbacks). The files that still carry their own hex
+literals are the ones belonging to other programs: `theme.lua` (Hyprland's
+borders and shadow), `gtk/gtk.css`, `swaync/style.css`, `hyprlock.conf`,
+`sddm/Main.qml`, `wezterm/colors.lua`, `starship.toml`, `btop/theme.theme`,
+`cava/config`, `fastfetch/config.jsonc` and `nvim.lua`. Each is hand-tuned to
+its program's own quirks; generating them from the palette would mean rewriting
+a dozen files for a vocabulary most of their formats cannot express. The
+`theme.lua` cross-check above is the one place CI holds a literal-carrying file
+to the palette, because it is the one that sits pixel-adjacent to the shell.
 
 ---
 

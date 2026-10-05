@@ -4,7 +4,7 @@
     "title": "hypr theme palette",
     "description": "Canonical color + bar-identity contract for a theme, read by the QML shell in quickshell/. Window chrome (gaps, borders, blur, shadow) stays in the same theme's theme.lua; this file never duplicates it.",
     "type": "object",
-    "required": ["name", "polarity", "roles", "font", "bar"],
+    "required": ["name", "polarity", "roles", "font", "bar", "effects", "launcher", "osd", "session"],
 
     "$defs": {
         "hex": {
@@ -76,6 +76,18 @@
             "additionalProperties": false
         },
 
+        "effects": {
+            "type": "object",
+            "description": "Which structural tricks this theme uses. Glow is cyberpunk's signature, scanlines are gruvbox's; a theme turns each on or off rather than every surface guessing from the colors.",
+            "required": ["glow", "scanlines"],
+            "properties": {
+                "glow":       { "type": "boolean", "description": "Draw a soft text glow in the accent color on lit elements (the clock, chips, hovered tiles, the OSD readout)." },
+                "glowRadius": { "type": "number", "minimum": 0, "maximum": 32, "description": "Blur radius of that glow, in px. The old CSS used `text-shadow: 0 0 <radius>px`." },
+                "scanlines":  { "type": "boolean", "description": "Overlay 1px dark lines every 3px on every panel fill (the old `repeating-linear-gradient`)." }
+            },
+            "additionalProperties": false
+        },
+
         "bar": {
             "type": "object",
             "description": "Bar identity — the geometry that separates one theme's bar from another's (rounded glass vs. sharp CRT). Behavior lives in quickshell/settings.json instead.",
@@ -89,7 +101,8 @@
                         "opacity":       { "$ref": "#/$defs/unit", "description": "Island alpha. The Hyprland layer rule frosts whatever shows through." },
                         "radius":        { "type": "number", "minimum": 0, "maximum": 40 },
                         "borderWidth":   { "type": "number", "minimum": 0, "maximum": 8, "description": "Hairline weight, in px. Drawn in `frame`." },
-                        "borderOpacity": { "$ref": "#/$defs/unit", "description": "Alpha applied to `frame` for the island edge." }
+                        "borderOpacity": { "$ref": "#/$defs/unit", "description": "Alpha applied to `frame` for the island edge." },
+                        "accentLine":    { "$ref": "#/$defs/unit", "description": "Alpha of a 2px `frame` hairline along the inside top edge of each island (the old `box-shadow: inset 0 2px 0`). 0 draws none." }
                     },
                     "additionalProperties": false
                 },
@@ -102,6 +115,49 @@
                     },
                     "additionalProperties": false
                 }
+            },
+            "additionalProperties": false
+        },
+
+        "launcher": {
+            "type": "object",
+            "description": "Launcher identity — what used to be wofi/style.css. Colors are roles (`launcher` frames it, `surface` is the input, `dormant` is row text, a selected row is `launcher` on `ground`); only geometry differs by theme.",
+            "required": ["radius", "borderWidth"],
+            "properties": {
+                "opacity":     { "$ref": "#/$defs/unit", "description": "Window fill alpha over `ground`. Translucent so the layer rule can frost it." },
+                "radius":      { "type": "number", "minimum": 0, "maximum": 40, "description": "Window corner radius." },
+                "borderWidth": { "type": "number", "minimum": 0, "maximum": 8, "description": "Frame weight, drawn in `launcher`." },
+                "inputRadius": { "type": "number", "minimum": 0, "maximum": 40 },
+                "entryRadius": { "type": "number", "minimum": 0, "maximum": 40, "description": "Corner radius of one result row." },
+                "fontSize":    { "type": "integer", "minimum": 6, "maximum": 48 }
+            },
+            "additionalProperties": false
+        },
+
+        "osd": {
+            "type": "object",
+            "description": "Volume/brightness overlay identity — what used to be swayosd/style.css. Fill is `surface`, frame is `frame`, the readout and the filled track are `readout`, the empty track is `hairline`.",
+            "required": ["radius", "borderWidth"],
+            "properties": {
+                "opacity":     { "$ref": "#/$defs/unit" },
+                "radius":      { "type": "number", "minimum": 0, "maximum": 999, "description": "999 is a full pill." },
+                "borderWidth": { "type": "number", "minimum": 0, "maximum": 8 },
+                "trackRadius": { "type": "number", "minimum": 0, "maximum": 20, "description": "Corner radius of the progress track." }
+            },
+            "additionalProperties": false
+        },
+
+        "session": {
+            "type": "object",
+            "description": "Power-menu identity — what used to be wlogout/style.css. The backdrop is `ground`, tiles are `surface` framed in `frame`, a hovered tile lights `readout`, and the two destructive tiles light `urgent` instead.",
+            "required": ["radius", "borderWidth"],
+            "properties": {
+                "windowOpacity": { "$ref": "#/$defs/unit", "description": "Backdrop alpha over `ground`." },
+                "tileOpacity":   { "$ref": "#/$defs/unit", "description": "Tile fill alpha over `surface`." },
+                "radius":        { "type": "number", "minimum": 0, "maximum": 40 },
+                "borderWidth":   { "type": "number", "minimum": 0, "maximum": 8 },
+                "borderOpacity": { "$ref": "#/$defs/unit", "description": "Alpha applied to `frame` for a resting tile's edge. A hovered tile goes to 1." },
+                "fontSize":      { "type": "integer", "minimum": 6, "maximum": 48 }
             },
             "additionalProperties": false
         },

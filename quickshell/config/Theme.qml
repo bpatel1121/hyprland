@@ -13,10 +13,10 @@ import Quickshell.Io
 // "Property 'withAlpha' of object QtQuick/Palette is not a function" as the only
 // clue. Do not rename this back.
 //
-// That file is the CANONICAL color source for this shell. It is hand-written
-// per theme and validated in CI; nothing generates it. The twelve role names
-// come from the @define-color block already at the top of every theme's
-// waybar/style.css, so this is the same vocabulary the CSS has always used.
+// That file is the CANONICAL color source for every shell surface. It is
+// hand-written per theme and validated in CI; nothing generates it. The twelve
+// role names were the @define-color block at the top of the old waybar
+// stylesheets (git history), so this is the vocabulary the CSS always used.
 //
 // Every role has a fallback below. hyprland.lua guards its own theme load with
 // pcall for the same reason: a missing or malformed theme must degrade to
@@ -79,6 +79,10 @@ Singleton {
     readonly property real islandBorderWidth: root.num_or(root.islandData, "borderWidth", 1)
     readonly property real islandBorderOpacity: root.num_or(root.islandData, "borderOpacity", 0.2)
 
+    // The 2px `frame` hairline along the inside top edge of each island — the
+    // old `box-shadow: inset 0 2px 0`. 0 draws none (gruvbox).
+    readonly property real islandAccentLine: root.num_or(root.islandData, "accentLine", 0)
+
     readonly property real chipRadius: root.num_or(root.chipData, "radius", 8)
     readonly property real chipOpacity: root.num_or(root.chipData, "opacity", 0.08)
 
@@ -86,6 +90,52 @@ Singleton {
     readonly property color islandFill: root.withAlpha(root.islandColor, root.islandOpacity)
     // The island hairline: `frame` at the theme's declared edge alpha.
     readonly property color islandBorder: root.withAlpha(root.frame, root.islandBorderOpacity)
+
+    // --- effects -------------------------------------------------------------
+    // The structural tricks a theme uses. Glow is cyberpunk's signature (the
+    // old `text-shadow: 0 0 Npx`), scanlines are gruvbox's (the old repeating
+    // gradient). Every surface asks these two flags rather than guessing from
+    // the colors — see components/GlowText.qml and components/Scanlines.qml.
+    readonly property var effectsData: root.obj(root.data, "effects")
+    readonly property bool glow: root.num_or(root.effectsData, "glow", false) === true
+    readonly property real glowRadius: root.num_or(root.effectsData, "glowRadius", 8)
+    readonly property bool scanlines: root.num_or(root.effectsData, "scanlines", false) === true
+
+    // --- launcher identity ---------------------------------------------------
+    // What used to be wofi/style.css. Colors are roles; only geometry varies.
+    readonly property var launcherData: root.obj(root.data, "launcher")
+    readonly property real launcherOpacity: root.num_or(root.launcherData, "opacity", 0.8)
+    readonly property real launcherRadius: root.num_or(root.launcherData, "radius", 12)
+    readonly property real launcherBorderWidth: root.num_or(root.launcherData, "borderWidth", 2)
+    readonly property real launcherInputRadius: root.num_or(root.launcherData, "inputRadius", 8)
+    readonly property real launcherEntryRadius: root.num_or(root.launcherData, "entryRadius", 8)
+    readonly property int launcherFontSize: root.num_or(root.launcherData, "fontSize", 15)
+
+    // --- osd identity --------------------------------------------------------
+    // What used to be swayosd/style.css.
+    readonly property var osdData: root.obj(root.data, "osd")
+    readonly property real osdOpacity: root.num_or(root.osdData, "opacity", 0.85)
+    readonly property real osdRadius: root.num_or(root.osdData, "radius", 999)
+    readonly property real osdBorderWidth: root.num_or(root.osdData, "borderWidth", 2)
+    readonly property real osdTrackRadius: root.num_or(root.osdData, "trackRadius", 4)
+
+    // --- session-menu identity -----------------------------------------------
+    // What used to be wlogout/style.css.
+    readonly property var sessionData: root.obj(root.data, "session")
+    readonly property real sessionWindowOpacity: root.num_or(root.sessionData, "windowOpacity", 0.85)
+    readonly property real sessionTileOpacity: root.num_or(root.sessionData, "tileOpacity", 0.92)
+    readonly property real sessionRadius: root.num_or(root.sessionData, "radius", 16)
+    readonly property real sessionBorderWidth: root.num_or(root.sessionData, "borderWidth", 1)
+    readonly property real sessionBorderOpacity: root.num_or(root.sessionData, "borderOpacity", 0.35)
+    readonly property int sessionFontSize: root.num_or(root.sessionData, "fontSize", 18)
+
+    // Re-read palette.json on demand. theme-switch.sh calls this over IPC
+    // after repointing themes/current: the file watcher follows the resolved
+    // inode, so a symlink that now points somewhere else is not a change it
+    // can see — the file it was watching is byte-for-byte what it was.
+    function reload() {
+        paletteFile.reload();
+    }
 
     // --- helpers -------------------------------------------------------------
 
@@ -148,6 +198,7 @@ Singleton {
     }
 
     FileView {
+        id: paletteFile
         path: Paths.currentTheme + "/palette.json"
         watchChanges: true
         onFileChanged: this.reload()

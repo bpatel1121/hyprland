@@ -5,14 +5,14 @@ import Quickshell.Io
 
 // Behavior for this shell, read from quickshell/settings.json.
 //
-// The counterpart to Palette: settings.json is BEHAVIOR (which modules, where,
-// how often), palette.json is IDENTITY (what it looks like). That is the same
-// split the rest of the repo already uses — waybar/config.jsonc at the root is
-// shared, waybar/style.css is per-theme. See docs/architecture.md.
+// The counterpart to Theme: settings.json is BEHAVIOR (which modules, where,
+// how often, which power-menu buttons), palette.json is IDENTITY (what it
+// looks like). Behavior is shared across themes; identity is per theme. See
+// docs/architecture.md.
 //
-// Values here are transcribed from waybar/config.jsonc so the QML bar starts
-// out behaving identically to the bar it will eventually replace. Nothing here
-// feeds waybar; waybar still reads its own config.
+// The bar values were transcribed from the old waybar/config.jsonc, so the bar
+// behaves exactly as the one it replaced; `surfaces` holds what used to be
+// wofi's launch flags, swayosd's steps and wlogout/layout.
 Singleton {
     id: root
 
@@ -22,6 +22,8 @@ Singleton {
     // evaluated before FileView has read settings.json.
     readonly property var bar: root.obj(root.data, "bar")
     readonly property var modules: root.obj(root.data, "modules")
+    // The non-bar surfaces: launcher, osd, session. Same shape as `modules`.
+    readonly property var surfaces: root.obj(root.data, "surfaces")
 
     // --- bar geometry --------------------------------------------------------
     readonly property string position: root.or_(root.bar, "position", "top")
@@ -86,7 +88,18 @@ Singleton {
         return root.or_(root.module(moduleName), key, fallback);
     }
 
+    // One surface setting, with a fallback. `Config.surface("launcher", "columns", 2)`.
+    function surface(name, key, fallback) {
+        return root.or_(root.obj(root.surfaces, name), key, fallback);
+    }
+
+    // Re-read settings.json on demand (paired with Theme.reload()).
+    function reload() {
+        settingsFile.reload();
+    }
+
     FileView {
+        id: settingsFile
         path: Paths.shell + "/settings.json"
         watchChanges: true
         onFileChanged: this.reload()

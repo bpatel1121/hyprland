@@ -116,5 +116,38 @@
         },
 
         "power": { "enabled": true, "glyph": "⏻" }
+    },
+
+    "//surfaces": "The other shell surfaces. Launcher replaced wofi, osd replaced swayosd, session replaced wlogout; each reads its identity (radius, frame, glow) from palette.json and only its BEHAVIOR from here.",
+    "surfaces": {
+        "launcher": {
+            "//": "wofi was launched as --columns 2 --width 640 --height 480 with --allow-images: a two-column icon grid.",
+            "width": 640,
+            "height": 480,
+            "columns": 2,
+            "iconSize": 28,
+            "placeholder": "Search",
+            "//1": "With nothing typed the launcher shows ONE column of the apps you launch most (count, decayed by how long since the last launch), at most this many, and sizes the window to fit them; before anything has been launched it shows the first recentCount apps alphabetically. Typing switches to the full `columns` grid at `height`.",
+            "recentCount": 8
+        },
+
+        "osd": {
+            "//": "How long the pill stays up after the last keypress, and the step each press moves.",
+            "timeoutMs": 1500,
+            "volumeStepPercent": 5,
+            "brightnessStepPercent": 5
+        },
+
+        "session": {
+            "//": "Transcribed from the old wlogout/layout, in order. `destructive` tiles light red on hover instead of the readout color.",
+            "buttons": [
+                { "id": "lock",      "glyph": "󰌾", "label": "lock",      "key": "l", "action": "hyprlock" },
+                { "id": "logout",    "glyph": "󰍃", "label": "logout",    "key": "e", "action": "hyprctl dispatch exit" },
+                { "id": "suspend",   "glyph": "󰒲", "label": "suspend",   "key": "u", "action": "systemctl suspend" },
+                { "id": "hibernate", "glyph": "󰜗", "label": "hibernate", "key": "h", "action": "systemctl hibernate" },
+                { "id": "reboot",    "glyph": "󰜉", "label": "reboot",    "key": "r", "action": "systemctl reboot",   "destructive": true },
+                { "id": "shutdown",  "glyph": "󰐥", "label": "shutdown",  "key": "s", "action": "systemctl poweroff", "destructive": true }
+            ]
+        }
     }
 }

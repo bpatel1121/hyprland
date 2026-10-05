@@ -2,12 +2,12 @@
     "$schema": "../../schema/palette.schema.json",
 
     "//": "Gruvbox dark (github.com/morhetz/gruvbox) over a pixel-art alley at dusk.",
-    "//1": "CANONICAL COLOR SOURCE for the QML shell (quickshell/). Every value here",
-    "//2": "is transcribed from the @define-color block at the top of waybar/style.css",
-    "//3": "and from wofi/style.css — not invented. `tokens` keeps the gruvbox names",
-    "//4": "so the lineage survives; `roles` is what QML actually reads.",
-    "//5": "theme.lua still owns WINDOW chrome (gaps, border, blur, shadow) and is",
-    "//6": "unchanged. CI cross-checks its border/shadow colors against `roles` here.",
+    "//1": "THE source for every shell surface (quickshell/: bar, launcher, OSD, power",
+    "//2": "menu). The roles were transcribed from the @define-color block of the old",
+    "//3": "waybar/style.css and from wofi/style.css — not invented; those stylesheets",
+    "//4": "are gone and live only in git history. `tokens` keeps the gruvbox names",
+    "//5": "so the lineage survives; `roles` is what QML actually reads. theme.lua",
+    "//6": "still owns WINDOW chrome (gaps, border, blur, shadow); CI cross-checks it.",
 
     "name": "gruvbox",
     "polarity": "dark",
@@ -52,19 +52,55 @@
         "sizeAccent": 16
     },
 
-    "//bar": "Bar identity. CRT terminal: near-sharp 4px corners, chunky 2px frame.",
+    "//effects": "Matte CRT: no glow anywhere (the red alert pulse is the one exception, and it is hardcoded), scanlines ride every panel.",
+    "effects": {
+        "glow":       false,
+        "glowRadius": 0,
+        "scanlines":  true
+    },
+
+    "//bar": "Bar identity. CRT terminal: near-sharp 4px corners, chunky 2px frame, no accent hairline.",
     "bar": {
         "island": {
             "color":         "#1d2021",
             "opacity":       0.80,
             "radius":        4,
             "borderWidth":   2,
-            "borderOpacity": 0.55
+            "borderOpacity": 0.55,
+            "accentLine":    0
         },
         "chip": {
             "radius":  4,
-            "opacity": 0.10
+            "opacity": 0.08
         }
+    },
+
+    "//launcher": "Launcher identity (was wofi/style.css): purple 2px frame, 4px everything — a TUI box.",
+    "launcher": {
+        "opacity":       0.82,
+        "radius":        4,
+        "borderWidth":   2,
+        "inputRadius":   4,
+        "entryRadius":   4,
+        "fontSize":      15
+    },
+
+    "//osd": "OSD identity (was swayosd/style.css): a CRT indicator cell — near-sharp, chunky orange frame.",
+    "osd": {
+        "opacity":     0.88,
+        "radius":      4,
+        "borderWidth": 2,
+        "trackRadius": 2
+    },
+
+    "//session": "Power-menu identity (was wlogout/style.css): 4px tiles, chunky 2px orange frame at 55%.",
+    "session": {
+        "windowOpacity": 0.85,
+        "tileOpacity":   0.92,
+        "radius":        4,
+        "borderWidth":   2,
+        "borderOpacity": 0.55,
+        "fontSize":      18
     },
 
     "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim).",

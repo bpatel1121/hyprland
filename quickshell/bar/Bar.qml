@@ -5,18 +5,17 @@ import "../config"
 
 // The bar: three detached islands on one transparent layer-shell surface.
 //
-// ISOLATION IS THE POINT OF THIS SCAFFOLD. Nothing starts it — no autostart
-// line in hyprland.lua, no keybind, no theme-apply.sh hook. It exists only
-// while you run `qs -p ~/.config/hypr/quickshell` by hand. Two properties keep
-// it from disturbing the waybar it is meant to eventually replace:
+// This IS the desktop's bar. hyprland.lua autostarts the shell and waybar is
+// gone; waybar/config.jsonc and the themes' waybar/style.css survive only as
+// the spec this was matched against. Two properties tie it to the compositor:
 //
-//   namespace     "qs-hypr-bar", NOT "waybar" — so the existing `waybar-blur`
-//                 layer rule in hyprland.lua neither matches nor is affected.
-//                 (A matching rule is the documented switch-day change; see
-//                 docs/qml-migration.md.)
-//   exclusiveZone 0 / ExclusionMode.Ignore — reserves NO screen space, so it
-//                 cannot shift a window or fight waybar's reserved strip even
-//                 with both bars on screen at once.
+//   namespace       "qs-hypr-bar" — hyprland.lua's blur layer rule matches
+//                   this name, which is what frosts the translucent islands
+//                   (the CSS fills were tuned for that blur; without it they
+//                   read as flat dark boxes).
+//   exclusive zone  left at the default (ExclusionMode.Auto), so the strip is
+//                   derived from the anchors, height and top margin — the same
+//                   space waybar reserved with `height: 36, margin-top: 8`.
 PanelWindow {
     id: root
 
@@ -26,10 +25,6 @@ PanelWindow {
 
     WlrLayershell.namespace: "qs-hypr-bar"
     WlrLayershell.layer: WlrLayer.Top
-
-    // Claim no space. See the note above.
-    exclusionMode: ExclusionMode.Ignore
-    exclusiveZone: 0
 
     // Never the `transparent` keyword — the themes' CSS bans it repo-wide
     // because it composites as a black halo on GTK3 layer-shell surfaces. An
