@@ -5,10 +5,11 @@
 #
 # Same role assignments as the rest of the desktop, printed: the gold filigree
 # frames the boxes (lines can be gold on paper; text cannot — titles take the
-# gold INK, #8a6a2a), the olive ink is the live readout, the cyan burst is the
-# highlight, and a selected row is a gold band with ink print, like the bar's
-# active workspace. Gradients run from quiet (the smoke) to loud (the sigil's
-# red) — on paper, loud means darker, so no ramp ends in gold.
+# gold INK, #8a6a2a), the olive ink is the live readout, the burst's deep
+# water is the highlight, and a selected row is a gold band with ink print,
+# like the terminal's cursor block. Gradients run from quiet (the smoke) to
+# loud (the sigil's red) — on paper, loud means darker, so no ramp ends in
+# gold.
 
 theme[main_bg]="#f6f5f2"
 theme[main_fg]="#1c1b14"
@@ -52,8 +53,9 @@ theme[used_start]="#d6d3cb"
 theme[used_mid]="#b8641e"
 theme[used_end]="#c0392b"
 
-# Disk io — the burst is the one lit color, so it takes download; the olive
-# ink, the readout, takes upload.
+# Disk io — the burst is the one lit color, so it takes download (as painted,
+# then its deep water, the launcher role); the olive ink, the readout, takes
+# upload.
 theme[download_start]="#d6d3cb"
 theme[download_mid]="#2a8ca6"
 theme[download_end]="#286884"

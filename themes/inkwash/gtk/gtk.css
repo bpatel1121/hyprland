@@ -5,17 +5,18 @@
  * ignores the other's. The gold filigree is the accent, matching the bar's
  * island rim and the window border, so a file dialog looks like it belongs to
  * this desktop — a selected row is a gold band with ink print, like the
- * active workspace. The one place gold can't go is TEXT: accent_color (links,
- * checked switches' glyphs, focus rings on type) takes the cyan burst, the
- * launcher color, because the raw filigree is 2.4:1 on paper.
+ * terminal's cursor block. The one place gold can't go is TEXT: accent_color
+ * (links, checked switches' glyphs, focus rings on type) takes the burst's
+ * deep water, the launcher color (5.7:1), because the raw filigree is 2.4:1
+ * on paper and the burst as painted only 3.6:1.
  *
  * Palette: paper #ebe9e5 · paperWhite #f6f5f2 · paperEdge #d6d3cb · smoke #8a8a7a
  *          filigree #c89a3e · armor #3f4d2a · cape #6f9a3a · bronze #b8641e
- *          sigil #c0392b · smokeThin #a3a398 · ink #1c1b14 · burst #2a8ca6
+ *          sigil #c0392b · smokeDense #7d7d74 · ink #1c1b14 · burstDeep #286884
  */
 
 /* ---- GTK4 / libadwaita ----------------------------------------------------- */
-@define-color accent_color        #2a8ca6;
+@define-color accent_color        #286884;
 @define-color accent_bg_color     #c89a3e;
 @define-color accent_fg_color     #1c1b14;
 

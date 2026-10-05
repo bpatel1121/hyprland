@@ -2,11 +2,12 @@
 #
 # NOT the VU meter the dark themes draw. On paper there is no "lit" level to
 # climb to, so the wave is the painting's own pigments instead: quiet is the
-# olive ink (the readout), rising goes to the cyan burst (the launcher), the
-# peaks are the gold filigree (the frame) — the three identity colors in the
-# order the bar wears them. Gold can top a bar where it could never carry
-# text: a bar is a fill. Red stays out of it; it is a state color, and sound
-# level is not a state.
+# olive ink (the readout), rising goes to the cyan burst as painted (the
+# launcher's lit source — the role itself is the burst printed to its deep
+# water for type), the peaks are the gold filigree (the frame) — the three
+# identity colors in the order the bar wears them. Gold and the raw burst can
+# top a bar where neither could carry text: a bar is a fill. Red stays out of
+# it; it is a state color, and sound level is not a state.
 
 [general]
 framerate = 60
@@ -31,7 +32,7 @@ gradient = 1
 gradient_count = 6
 gradient_color_1 = '#3f4d2a'    # olive ink — quiet (readout)
 gradient_color_2 = '#3f4d2a'    # olive ink
-gradient_color_3 = '#2a8ca6'    # burst     — rising (launcher)
+gradient_color_3 = '#2a8ca6'    # burst     — rising (the launcher's lit source; a bar is a fill)
 gradient_color_4 = '#2a8ca6'    # burst
 gradient_color_5 = '#c89a3e'    # filigree  — loud (frame)
 gradient_color_6 = '#c89a3e'    # filigree  — peak

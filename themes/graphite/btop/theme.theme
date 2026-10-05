@@ -50,7 +50,7 @@ theme[available_start]="#cfc8cf"
 theme[available_mid]="#c0862a"
 theme[available_end]="#c0862a"
 theme[used_start]="#cfc8cf"
-theme[used_mid]="#9c63a8"
+theme[used_mid]="#92589e"
 theme[used_end]="#c4475c"
 
 # Disk io — the violet is the readout; ink is the only other weight loud

@@ -14,10 +14,13 @@
 // hatching does not — so the card is the one raised surface, and the inputs
 // are whiter paper on it, exactly the launcher's window/input split.
 //
-// Same right-third layout as hyprlock, for the same reason: the figure fills
-// the left and center of the sketch, and a centered card would cover the
-// rifle. The offset is a fraction of the width, not a pixel count, so it
-// holds at any resolution or Qt scale SDDM happens to run the greeter at.
+// Same lower-right layout as hyprlock, for the same reason: the figure fills
+// the left and center of the sketch, and the rifle runs on through the right
+// third at mid-height, so a card at the dark greeters' height would sit on
+// the barrel — see the LAYOUT NOTE in hyprlock.conf for the measurements.
+// Both offsets are fractions of the screen, not pixel counts, so the stack
+// lands on the same patch of paper at any resolution or Qt scale SDDM happens
+// to run the greeter at.
 //
 // Deliberately plain Qt Quick: no Qt5Compat.GraphicalEffects (blur/glow),
 // which would add a package dependency and a Qt-version headache for one
@@ -40,7 +43,7 @@ Rectangle {
     readonly property color cInk:     "#2b2427"  // frame — the barrel's heaviest line
     readonly property color cEye:     "#8a4f96"  // readout — the violet eye, the one hue
     readonly property color cVisor:   "#1d1719"  // text
-    readonly property color cEyeLit:  "#9c63a8"  // launcher — the eye where the light catches it
+    readonly property color cEyeLit:  "#92589e"  // launcher — the eye where the light catches it
     readonly property color cRed:     "#c4475c"  // urgent — failure only
     readonly property color cPencil:  "#8f8181"  // dim — quiet type on the card (never on the sketch)
     readonly property color cPaper:   "#e9e4e8"  // ground — the card
@@ -52,9 +55,12 @@ Rectangle {
     // has to re-layout: the message keeps its row and only changes opacity.
     property bool failed: false
 
-    // Horizontal center of the whole stack: the right third. +480/1920 is the
-    // hyprlock offset as a fraction, so the two screens line up.
+    // Center of the whole stack: the right third, below the barrel. +480/1920
+    // is the hyprlock x offset as a fraction, and hyprlock moves its stack
+    // 210px down a 1080-high layout, so 0.2 of the height keeps the two
+    // screens lined up.
     readonly property real stackX: root.width * 0.25
+    readonly property real stackY: root.height * 0.2
 
     // --- wallpaper, settled like hyprlock (brightness 0.92) ------------------
     Image {
@@ -74,7 +80,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: root.stackX
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -140
+        anchors.verticalCenterOffset: -140 + root.stackY
         spacing: 8
 
         Text {
@@ -112,7 +118,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: root.stackX
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 60
+        anchors.verticalCenterOffset: 60 + root.stackY
         width: panel.width + 48
         height: panel.height + 40
         radius: 10
@@ -222,9 +228,25 @@ Rectangle {
     }
 
     // --- power row, bottom-right (glyphs need the Nerd Font) ----------------
-    // Ink at rest, not dormant: these sit on the sketch. Violet when touched —
-    // the same lift the launcher gets — and red only for power off.
+    // Ink at rest, not dormant. Violet when touched — the same lift the
+    // launcher gets — and red only for power off.
+    //
+    // On a paper tile, like the login card: the sketch's paper darkens toward
+    // its corners, and in this one the violet is 2.5:1 and the red 2.2:1
+    // straight on the hatching — the resting ink reads (7:1), the touch does
+    // not. The tile is the card's numbers (session.radius / borderWidth /
+    // borderOpacity / tileOpacity), and on it the row reads at 12:1 resting,
+    // 4:1 touched, 3.8:1 for red.
+    Rectangle {
+        anchors.fill: powerRow
+        anchors.margins: -10
+        radius: 10
+        color: Qt.rgba(root.cPaper.r, root.cPaper.g, root.cPaper.b, 0.97)
+        border.width: 1
+        border.color: Qt.rgba(root.cInk.r, root.cInk.g, root.cInk.b, 0.7)
+    }
     Row {
+        id: powerRow
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: 28

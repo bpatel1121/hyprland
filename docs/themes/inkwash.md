@@ -10,19 +10,28 @@ notification edge, btop's boxes, the OSD slip, the lock input's outline), the
 armor's **olive ink** is every readout — a second, greener ink beside the
 black `text`, so a readout is still ink rather than a second hue — and the
 **cyan burst** is the launcher, the one lit thing in the picture going to the
-one surface that covers the bar. State colors keep their meanings: bronze for
-pending repo updates, the cape's green for AUR/charging, the sigil's red for
-alerts, `dim`/`dormant` are the smoke wash for quiet type and empty
-workspaces. What changes is the identity: where cyberpunk is rounded neon
+one surface that covers the bar — printed to its own deep water (`#286884`),
+because the launcher's selected row is the launcher color on an 18% tint of
+itself over paper, and the burst as painted stops reading there (2.4:1; the
+deep water holds 3.6:1). The raw burst survives as a fill: cava, btop's
+download ramp, the terminal's selection. State colors keep their meanings:
+bronze for pending repo updates, the cape's green for AUR/charging, the
+sigil's red for alerts, `dim`/`dormant` are the smoke wash for quiet type and
+empty workspaces — two smoke *weights*, both printed to ≥ 3:1 on the paper
+surfaces, because a grey that is merely a tint reads as nothing on
+near-white. What changes is the identity: where cyberpunk is rounded neon
 glass and gruvbox a CRT, inkwash is a **sketchbook page** — opaque-ish white
 paper islands (`bar.island.opacity` 0.88, the fill is `surface` rather than
 `ground`, because the painting frosted through a light fill goes muddy),
 small 6px corners (5 on the chips and the launcher's rows, 8 on the launcher
 window and the power tiles), 1px rims everywhere like brush edges, no glow
 and no scanlines (`effects` both off: ink doesn't emit and paper has no
-raster), and the active workspace drawn as a solid gold **pill** with a paper
-digit (`readoutBright` is deliberately not declared, which is what makes
-`Workspaces.qml` pick the solid-frame block over the emissive lozenge). The
+raster), and the active workspace drawn as an **olive-ink lozenge** with a
+paper digit and an ink rim: `readoutBright` (a lifted olive) *is* declared,
+unlike graphite, because the alternative — the solid-`frame` block
+`Workspaces.qml` draws when it is absent — would put a paper digit on gold at
+2.1:1, and the one thing on the bar that must read at a glance is which
+workspace you are on. Gold stays the frame everywhere else. The
 window border runs filigree gold → cape green and is **still**: there is no
 `border_motion` key, because ink is laid once and dries.
 
@@ -35,11 +44,12 @@ light desktop; AUR `bibata-cursor-theme-bin`). The terminal-side files
 rule: the filigree's gold is 2.4:1 on paper and cannot carry *text*, so where
 the dark themes print their frame color they print its ink — `#8a6a2a`, the
 gold darkened to 4.6:1 — and gold itself stays for lines, fills, the cursor
-block and selected rows (ink on gold is 6.7:1). The burst gets the same
-treatment where it has to be prose rather than a glyph: `#286884`, its own
-deep water, is the cyan slot and the prompt arrow. The editor is
+block and selected rows (ink on gold is 6.7:1). The burst needs no second
+ink: the `launcher` role already is its deep water, so it is the cyan slot and
+the prompt arrow as-is, and the burst as painted sits in the bright-cyan slot
+for the swatch. The editor is
 `tokyonight-day`, which LazyVim already ships, with the current line number
-as a paper digit on the gold. The lock screen and greeter put their stack in
+as an ink digit on the gold. The lock screen and greeter put their stack in
 the **upper left** rather than centered: the figure fills the center, and the
 dark themes' centered input would land across his face — and his shoulder
 plate reaches a quarter of the way across the screen below the midline, so a

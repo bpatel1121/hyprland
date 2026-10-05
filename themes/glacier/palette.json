@@ -65,10 +65,10 @@
         "scanlines":  false
     },
 
-    "//bar": "Bar identity. Frosted glass: the islands are the most translucent of any theme (0.55 — the painting shows through, blurred by the layer rule), a thin 1px ice hairline at 35%, 12px corners, and a faint cyan bloom (0.22 over 20px) that reads as cold light on ice rather than neon. No accent line.",
+    "//bar": "Bar identity. Frosted glass: the islands are the most translucent of any theme (0.55 — the painting shows through, blurred by the layer rule), a thin 1px ice hairline at 35%, 12px corners, and a faint cyan bloom (0.22 over 20px) that reads as cold light on ice rather than neon. No accent line. The fill is a navy a shade UNDER `ground`, not `surface`: the top of the painting is bright ice and sky, and at 45% show-through a deep-ice fill composited to a mid blue that the quiet type could not sit on (`dormant` 2.6:1, `urgent` 3.0:1 over the picture's average; 2.3:1 and 2.7:1 over the strip the bar actually covers). The darker fill lands the composite at ~#264469 — `dormant` 3.1:1, `urgent` 3.6:1, `text` 8.5:1 — with the frost untouched.",
     "bar": {
         "island": {
-            "color":         "#0f2556",
+            "color":         "#061129",
             "opacity":       0.55,
             "radius":        12,
             "borderWidth":   1,

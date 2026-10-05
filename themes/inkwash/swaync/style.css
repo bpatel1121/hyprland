@@ -5,7 +5,8 @@
  * no outer box-shadow, no `transparent` keyword (GTK composites both as black
  * halos — and a black halo around a WHITE card is the worst case of all).
  * Palette discipline: GOLD rims, INK is the content, sigil red = urgent only;
- * the cyan burst is the touch color, as it is on the launcher.
+ * the cyan burst — printed to its deep water, the `launcher` role, so it can
+ * carry type on paper — is the touch color, as it is on the launcher.
  */
 
 @define-color paper   #ebe9e5;
@@ -13,10 +14,10 @@
 @define-color edge    #d6d3cb;
 @define-color gold    #c89a3e;
 @define-color olive   #3f4d2a;
-@define-color burst   #2a8ca6;
+@define-color burst   #286884;
 @define-color red     #c0392b;
 @define-color smoke   #8a8a7a;
-@define-color faded   #a3a398;
+@define-color faded   #7d7d74;
 @define-color ink     #1c1b14;
 
 * {

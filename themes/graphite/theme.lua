@@ -7,7 +7,7 @@
 -- a sketch doesn't emit. Border runs ink -> violet, the line and the eye.
 return {
     gaps_in = 5, gaps_out = 14, border_size = 2,
-    active_border  = { colors = { "rgba(2b2427ff)", "rgba(9c63a8ff)" }, angle = 45 },
+    active_border  = { colors = { "rgba(2b2427ff)", "rgba(92589eff)" }, angle = 45 },
     inactive_border = "rgba(cfc8cfff)",              -- paperEdge (hairline)
     rounding = 8, rounding_power = 2,   -- a card's corner: softer than the CRT, tighter than the glass
     active_opacity = 1.0, inactive_opacity = 0.97,

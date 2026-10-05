@@ -194,7 +194,23 @@ Rectangle {
     // --- power row, bottom-right (glyphs need the Nerd Font) ----------------
     // Dormant at rest, ice cyan when touched — the frame hue is the lift here,
     // as it is on the bar's chips — and red only for power off.
+    //
+    // On a frosted pane, which the dark greeters never needed: this corner of
+    // the painting is the lit ice floor, the brightest thing in it, and even
+    // at brightness 0.5 dormant type straight on it is 1.6:1 (red 2:1). The
+    // pane is the notification card — deep ice at 0.85 with a 1px seam — and
+    // on it the row reads at 3.7:1 resting, 7:1 touched, 4.3:1 for red.
+    Rectangle {
+        anchors.fill: powerRow
+        anchors.margins: -10
+        radius: 12
+        color: root.cInner
+        opacity: 0.85
+        border.width: 1
+        border.color: root.cSeam
+    }
     Row {
+        id: powerRow
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: 28

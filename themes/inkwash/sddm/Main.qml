@@ -42,7 +42,7 @@ Rectangle {
     readonly property color cGold:    "#c89a3e"  // frame — the filigree on the armor
     readonly property color cOlive:   "#3f4d2a"  // readout — the armor's olive ink
     readonly property color cInk:     "#1c1b14"  // text
-    readonly property color cBurst:   "#2a8ca6"  // launcher — the cyan burst
+    readonly property color cBurst:   "#286884"  // launcher — the cyan burst, printed to its deep water
     readonly property color cRed:     "#c0392b"  // urgent — failure only
     readonly property color cSmoke:   "#8a8a7a"  // dim — quiet type on paper (never on the wash)
     readonly property color cPaper:   "#ebe9e5"  // ground — the card

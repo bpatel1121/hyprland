@@ -12,9 +12,16 @@
     "//8": "Two-tone rule, ink edition: the GOLD FILIGREE is the frame, the OLIVE INK",
     "//9": "of the armor is the readout (a second, greener ink next to the black text),",
     "//10": "and the CYAN BURST is the launcher — the one lit thing in the picture goes",
-    "//11": "to the one surface that covers the bar.",
-    "//12": "No readoutBright on purpose: the active workspace is then solid `frame`, a",
-    "//13": "gold pill with a paper digit, not an emissive lozenge (modules/Workspaces.qml).",
+    "//11": "to the one surface that covers the bar — printed to its own deep water,",
+    "//12": "because the launcher's selected row is the launcher color on an 18% tint of",
+    "//13": "itself over paper, and the burst as painted (#2a8ca6) stops reading there",
+    "//14": "(2.4:1); the deep water holds 3.6:1. The raw burst survives as a FILL",
+    "//15": "(cava, btop's download ramp, the terminal's selection and bright cyan).",
+    "//16": "readoutBright IS declared, unlike graphite: the gold cannot carry a paper",
+    "//17": "digit (2.1:1), so a solid-`frame` block would be an unreadable active",
+    "//18": "workspace. With a lifted olive declared, modules/Workspaces.qml draws the",
+    "//19": "lozenge instead — olive ink with a paper digit (5:1) and an ink rim — which",
+    "//20": "is what a marked station looks like in ink anyway. Gold stays the frame.",
 
     "name": "inkwash",
     "polarity": "light",
@@ -29,11 +36,12 @@
         "warn":     "#b8641e",
         "ok":       "#6f9a3a",
         "urgent":   "#c0392b",
-        "dormant":  "#a3a398",
+        "dormant":  "#7d7d74",
         "text":     "#1c1b14",
-        "launcher": "#2a8ca6",
+        "launcher": "#286884",
 
-        "surfaceAlt": "#efede8"
+        "readoutBright": "#56683a",
+        "surfaceAlt":    "#efede8"
     },
 
     "//tokens": "What in the painting -> role, so a palette bump stays traceable.",
@@ -43,17 +51,19 @@
         "paperEdge":  "hairline",
         "wash":       "surfaceAlt",
         "smoke":      "dim",
-        "smokeThin":  "dormant",
+        "smokeDense": "dormant",
         "filigree":   "frame",
         "armor":      "readout",
+        "armorLit":   "readoutBright",
         "bronze":     "warn",
         "cape":       "ok",
         "sigil":      "urgent",
         "ink":        "text",
-        "burst":      "launcher"
+        "burstDeep":  "launcher"
     },
 
-    "//print": "Two derived inks the terminal-side files share, because the filigree's gold (2.4:1) cannot carry TEXT on paper: gold ink #8a6a2a is `frame` printed down to 4.6:1, and burstDeep #286884 is the burst's own deep water, `launcher` printed to 5.7:1 (the raw burst is 3.6:1 — a glyph, not prose). Gold stays for lines, fills and the cursor block.",
+    "//print": "Derived inks the terminal-side files share, because the filigree's gold (2.4:1) cannot carry TEXT on paper: gold ink #8a6a2a is `frame` printed down to 4.6:1. Gold stays for lines, fills and the cursor block. The burst needs no second ink — `launcher` already IS its deep water (5.7:1 on paper); the burst as painted, #2a8ca6 (3.6:1), is the lit source it was printed from and appears only as a fill.",
+    "//quiet": "`dim` and `dormant` are two smoke weights, not a weight and a tint: on paper the quiet greys have to be DARKER than they look right, because every surface that carries them is near-white. `dormant` is the launcher's secondary type (generic names, the placeholder) and the resting power glyph at 60%, so it is printed to 3.1:1 on the launcher window and 3.7:1 on an island — the thin smoke (#a3a398, 2.3:1) read as nothing there.",
 
     "font": {
         "mono": "JetBrainsMono Nerd Font",
@@ -86,7 +96,7 @@
         }
     },
 
-    "//launcher": "Launcher identity: a 1px cyan-burst rim around a paper sheet, 8px window, 5px input + rows.",
+    "//launcher": "Launcher identity: a 1px deep-water rim (the burst, printed) around a paper sheet, 8px window, 5px input + rows.",
     "launcher": {
         "opacity":       0.93,
         "radius":        8,

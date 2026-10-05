@@ -1,8 +1,8 @@
 # lazygit — inkwash. Gold filigree frame, ink readouts, no neon: the active
 # panel border is the frame color (a line, so the filigree's gold can carry it),
-# selection is a raised paper band, searching lights the burst, and the marked
-# base commit is a gold band with ink print — the same block the bar's active
-# workspace wears.
+# selection is a raised paper band, searching lights the burst as painted (a
+# border, not type), and the marked base commit is a gold band with ink print
+# — the same block the terminal's cursor is.
 gui:
   nerdFontsVersion: "3"
   showRandomTip: false

@@ -19,12 +19,14 @@ light themes draw.
 What changes is the identity: where cyberpunk is neon glass, gruvbox a CRT
 and graphite ink on paper, glacier is **frost** — and the frost is
 structural, not a color. The islands are the most translucent of any theme
-(`bar.island.opacity` 0.55 over a deep-ice fill), the launcher 0.62, the OSD
+(`bar.island.opacity` 0.55 over a navy fill a shade under `ground` — the top
+of the painting is bright ice, and a lighter fill composited to a mid blue
+the quiet type could not sit on), the launcher 0.62, the OSD
 pill 0.7, the power tiles 0.7 over a 0.6 scrim, and `theme.lua` runs the
 biggest blur in the repo (size 10, three passes, vibrancy 0.25), so the
 painting shows through every surface as ice behind glass rather than a dimmed
 photo. The edges are thin — 1px everywhere the dark themes used 2 — at 35% on
-the islands and 50% on the tiles, white hairlines at low alpha. Glow is on,
+the islands and 50% on the tiles, ice-cyan hairlines at low alpha. Glow is on,
 the one cold one (cyberpunk's is the other): `effects.glowRadius` 10 with a
 faint cyan bloom around each island (`bar.island.glow` 0.22 over 20px), a
 white clock in an ice-cyan halo on the lock screen, and nothing louder. No
@@ -51,7 +53,9 @@ than centered: the figure sits dead center, and the other dark themes'
 centered clock would land across her chest and the input across her lap, so
 the whole stack moves down (210px in `hyprlock.conf`, `root.height * 0.2` in
 `sddm/Main.qml`) and crosses only her legs and the ice floor, leaving the cap,
-the face and the hair clear. Both keep the
+the face and the hair clear. The greeter's power row sits on a frosted pane
+(deep ice at 0.85, the notification card's numbers) because its corner is the
+lit floor, where dormant type is 1.6:1 even at half brightness. Both keep the
 `1 - brightness` scrim at `wallpaper.brightness` 0.5 with a 10px blur — a
 notch darker and softer than the other dark themes, because the picture is
 already bright ice. One note on the picture: the wallpaper is 3840×2160 and

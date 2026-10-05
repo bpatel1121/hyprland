@@ -13,12 +13,14 @@ bar, the launcher (the one surface that covers the bar), a hovered tile or
 button, a focused input, the prompt's arrow, a selected row in a file dialog.
 Where cyberpunk and gruvbox pick a frame hue *and* a readout hue, graphite has
 one hue and spends it on readout and launcher both (`#8a4f96` as the readout,
-`#9c63a8`, the eye where the light catches it, as the launcher); the frame is
-the thing that gives it up. State colors keep their meanings — brass for
+`#92589e`, the eye where the light catches it — one step lighter, no more, so
+the launcher's selected row still reads on its own tint — as the launcher);
+the frame is the thing that gives it up. State colors keep their meanings — brass for
 pending repo updates, tritium green for AUR/charging, laser red for alerts —
 and are absent from the picture by design: they show only when something is
 true, and `dim`/`dormant` are the paper's own pencil greys for quiet type and
-empty workspaces.
+empty workspaces — two pencil *weights*, both printed to ≥ 3:1 on the paper
+surfaces, because a grey that is merely a tint reads as nothing on near-white.
 
 What is structurally different: it is light, and it is still. Where cyberpunk
 is rounded neon glass and gruvbox a CRT, graphite is a **drawn card** —
@@ -51,10 +53,14 @@ syntax highlighting reads by weight and a directory in `ls` comes out as hard
 pencil. The cursor is an ink block with paper print, the same object as the
 bar's active pill. The editor is `tokyonight-day`, which LazyVim already
 ships, with the current line number wearing the ink block. The lock screen and
-greeter keep their layout in the **right third** rather than centered: the
-figure fills the left and center of the sketch, and a centered input would
-land across the rifle. The greeter puts the inputs on a paper card
-(`session`'s tile numbers) and keeps the `1 - brightness` scrim — at
+greeter keep their stack in the **lower right** rather than centered: the
+figure fills the left and center of the sketch, and the rifle runs on through
+the right third at mid-height, so the stack sits in the clean paper below the
+barrel (`position = 480` and 210px down in `hyprlock.conf`, the same offsets
+as screen fractions in `sddm/Main.qml`). The greeter puts the inputs on a paper card
+(`session`'s tile numbers), the power row on a smaller one (the sketch's paper
+darkens toward its corners, and the violet and red touch states are under
+2.5:1 straight on that hatching), and keeps the `1 - brightness` scrim — at
 `wallpaper.brightness` 0.92 that is an 8% ink wash, where the dark themes'
 0.55 would turn the paper to slate.
 

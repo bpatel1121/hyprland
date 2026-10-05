@@ -88,9 +88,9 @@ straight into the vocabulary:
 | `warn` | pending repo updates | `#F2D230` | `#fabd2f` | `#e9c46a` | `#c0862a` | `#b8641e` |
 | `ok` | AUR pending, charging | `#30F291` | `#98971a` | `#7bd389` | `#4f8a5a` | `#6f9a3a` |
 | `urgent` | low battery, overdue, offline | `#F24848` | `#fb4934` | `#ff6b81` | `#c4475c` | `#c0392b` |
-| `dormant` | empty workspaces, zeroed counters | `#898D99` | `#928374` | `#7f8fbf` | `#a99fa5` | `#a3a398` |
+| `dormant` | empty workspaces, zeroed counters | `#898D99` | `#928374` | `#7f8fbf` | `#877c82` | `#7d7d74` |
 | `text` | default foreground | `#C8D0E0` | `#ebdbb2` | `#e6eefc` | `#1d1719` | `#1c1b14` |
-| `launcher` | the one hue the bar never uses | `#A130F2` | `#d3869b` | `#b6ecf9` | `#9c63a8` | `#2a8ca6` |
+| `launcher` | the one hue the bar never uses | `#A130F2` | `#d3869b` | `#b6ecf9` | `#92589e` | `#286884` |
 
 Alongside them, the per-surface identity — the structural differences between
 the themes, which used to be scattered across four stylesheets:

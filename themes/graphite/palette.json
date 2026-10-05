@@ -29,9 +29,9 @@
         "warn":     "#c0862a",
         "ok":       "#4f8a5a",
         "urgent":   "#c4475c",
-        "dormant":  "#a99fa5",
+        "dormant":  "#877c82",
         "text":     "#1d1719",
-        "launcher": "#9c63a8",
+        "launcher": "#92589e",
 
         "surfaceAlt": "#ece7ea"
     },
@@ -53,7 +53,8 @@
         "vest":      "surfaceAlt"
     },
 
-    "//print": "Derived inks the terminal-side files share. The state colors are tuned as fills and glyphs on the bar, not as body text, so each has a printed form: brass ink #8f5f1a is `warn` printed (5.0:1 on sheet), tritium ink #3f7049 is `ok` printed (5.3:1), laser ink #ad3d51 is `urgent` printed (5.4:1). The violet needs no ink: `readout` already reads at 5.2:1. The hueless ANSI slots are two pencil weights between `frame` and `dim`: hard pencil #5c5054 (7.0:1) and soft pencil #74676b (4.9:1).",
+    "//print": "Derived inks the terminal-side files share. The state colors are tuned as fills and glyphs on the bar, not as body text, so each has a printed form: brass ink #8f5f1a is `warn` printed (5.0:1 on sheet), tritium ink #3f7049 is `ok` printed (5.3:1), laser ink #ad3d51 is `urgent` printed (5.4:1). The violet needs no ink: `readout` already reads at 5.2:1, and `launcher` at 4.6:1. The hueless ANSI slots are two pencil weights between `frame` and `dim`: hard pencil #5c5054 (7.0:1) and soft pencil #74676b (4.9:1).",
+    "//quiet": "`dim` and `dormant` are two pencil weights, not a weight and a tint: on paper the quiet greys have to be DARKER than they look right, because every surface that carries them is near-white. `dormant` is the launcher's secondary type (generic names, the placeholder) and the resting power glyph at 60%, so it is printed to 3.1:1 on the launcher window and 3.5:1 on an island — a strap-grey tint (2.3:1) read as nothing there. `launcher` is the eye lit, but only a step up from `readout`: the launcher's selected row is the launcher color on its own 18% tint, which is the one pairing on the desktop where a lighter violet stops reading (3.2:1 here; the brighter #9c63a8 was 2.8:1).",
 
     "font": {
         "mono": "JetBrainsMono Nerd Font",

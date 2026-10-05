@@ -30,8 +30,8 @@ gradient = 1
 gradient_count = 6
 gradient_color_1 = '#8a4f96'    # violet  — quiet (readout)
 gradient_color_2 = '#8a4f96'    # violet
-gradient_color_3 = '#9c63a8'    # lit violet — rising (launcher)
-gradient_color_4 = '#9c63a8'    # lit violet
+gradient_color_3 = '#92589e'    # lit violet — rising (launcher)
+gradient_color_4 = '#92589e'    # lit violet
 gradient_color_5 = '#2b2427'    # ink     — loud (frame)
 gradient_color_6 = '#2b2427'    # ink     — peak
 

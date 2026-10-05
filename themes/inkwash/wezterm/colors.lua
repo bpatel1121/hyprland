@@ -14,7 +14,7 @@ return {
     cursor_bg     = "#c89a3e",           -- frame: the gold filigree, as a block...
     cursor_border = "#c89a3e",
     cursor_fg     = "#1c1b14",           -- ...with ink print on it (6.7:1)
-    selection_bg  = "#2a8ca6",           -- launcher: the cyan burst
+    selection_bg  = "#2a8ca6",           -- the burst as painted: the launcher's lit source (a fill, so it needs no printing)
     selection_fg  = "#1c1b14",           -- ink on the burst (4.4:1)
     ansi = {
         "#3f4d2a", -- black   = readout. "Black" is the olive ink; inverse-video apps get olive on paper (8.4:1).
@@ -24,7 +24,7 @@ return {
         "#2e5c8a", -- blue    = the burst's deep water, inked bluer (6.4:1) — the painting has no blue but this
         "#8a3d58", -- magenta = wine: the sigil's red cooled (6.7:1). The one slot the painting
                    --           has no pigment for; apps that expect a magenta still get one.
-        "#286884", -- cyan    = burstDeep, launcher printed (5.7:1)
+        "#286884", -- cyan    = launcher: the burst's deep water (5.7:1)
         "#6f6f62", -- white   = dim, printed (4.7:1) — the gruvbox-light convention: "white" on
                    --           paper is a grey ink, so inverse-video and faint text both read.
     },
@@ -35,10 +35,11 @@ return {
         "#a8822f", -- a lighter gold ink (3.3:1); the raw filigree cannot print
         "#3d76ad", -- the deep water, lifted (4.4:1)
         "#a85270", -- wine, lifted (4.7:1)
-        "#2a8ca6", -- bright cyan = launcher, the burst as painted (3.6:1). The frame slot the
-                   -- dark themes keep for their identity accent is gold here, which cannot
-                   -- carry text on paper — so the terminal's accent is the burst, and
-                   -- fastfetch's keys point at the gold ink slot (33) instead.
+        "#2a8ca6", -- bright cyan = the burst as painted (3.6:1), the launcher's lit source.
+                   -- The frame slot the dark themes keep for their identity accent is
+                   -- gold here, which cannot carry text on paper — so the terminal's
+                   -- accent is the burst, and fastfetch's keys point at the gold ink
+                   -- slot (33) instead.
         "#1c1b14", -- bright white = text: bold-white emphasis is the strongest ink,
                    -- the gruvbox-light / solarized-light convention.
     },
