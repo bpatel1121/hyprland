@@ -401,6 +401,15 @@ hl.layer_rule({
     blur = true,
     ignore_alpha = 0.2,
 })
+-- The launcher and the power menu animate themselves (a fade and an 8px rise,
+-- a backdrop fade); the compositor's layersIn slide on top of that read as two
+-- motions fighting. The OSD keeps the slide — a pill rising from the bottom
+-- edge is the right motion for it, and it has none of its own.
+hl.layer_rule({
+    name = "qs-surfaces-self-animated",
+    match = { namespace = "^qs-hypr-(launcher|session)$" },
+    no_anim = true,
+})
 hl.layer_rule({
     name = "swaync-blur",
     match = { namespace = "^swaync-(notification-window|control-center)$" },

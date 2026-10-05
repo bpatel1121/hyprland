@@ -39,7 +39,9 @@
             "//": "1-5 always render; dormant ones draw in the `dormant` role rather than vanishing, so the bar reads as a row of stations. 6+ appear on demand.",
             "persistent": 5,
             "showSpecial": true,
-            "specialGlyph": "󰊠"
+            "specialGlyph": "󰊠",
+            "//1": "`pills`: an 8px dot per workspace, the active one a 26px lozenge, numbers only on hover. `numbers`: the digit stations the bar launched with.",
+            "style": "pills"
         },
 
         "media": {

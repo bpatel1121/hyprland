@@ -510,7 +510,7 @@ Scope {
                     anchors.verticalCenter: parent.verticalCenter
                     // U+F002 nf-fa-search, as an escape: BMP private-use glyphs
                     // do not survive every editor (see modules/Clock.qml).
-                    text: ""
+                    text: "\uf002"
                     color: Theme.launcher
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.launcherFontSize

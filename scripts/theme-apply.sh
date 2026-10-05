@@ -38,17 +38,16 @@ fi
 # pointer visibly changed several seconds after the rest of the theme.
 # Nothing below depends on it, so it goes first and lands instantly.
 #
-# The theme may declare `cursor = "Name"` in theme.lua. Fallback chain:
-# declared theme -> capitaine -> default, checking what's actually installed.
+# The theme may declare `cursor = "Name"` in theme.lua; it is used when it is
+# actually installed, else the stock `default` (capitaine is no longer shipped).
 want_cursor=$(theme_key cursor)
 cursor="default"
-[ -d /usr/share/icons/capitaine-cursors ] && cursor="capitaine-cursors"
 [ -n "$want_cursor" ] && { [ -d "/usr/share/icons/$want_cursor" ] \
     || [ -d "$HOME/.icons/$want_cursor" ] \
     || [ -d "$HOME/.local/share/icons/$want_cursor" ]; } && cursor="$want_cursor"
 # Loud rather than silent: a theme asking for a cursor that isn't installed used
-# to fall back to capitaine with no trace, which reads exactly like "the cursor
-# never switches". Say so instead.
+# to fall back with no trace, which reads exactly like "the cursor never
+# switches". Say so instead.
 if [ -n "$want_cursor" ] && [ "$cursor" != "$want_cursor" ]; then
     if command -v notify-send >/dev/null 2>&1; then
         notify-send -u critical "Cursor theme missing" \

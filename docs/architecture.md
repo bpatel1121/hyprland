@@ -74,7 +74,7 @@ surface re-read both files.
 Theming reaches outside Hyprland too. `theme-apply.sh` links the theme's
 `gtk/` into both `~/.config/gtk-3.0` and `~/.config/gtk-4.0` and then drives
 `gsettings` (dark scheme, adw-gtk3-dark, Papirus-Dark, and whichever cursor
-the theme declares — `capitaine-cursors` is only the fallback). The
+the theme declares, with the stock `default` as the only fallback). The
 css and the ini are deliberately redundant: GTK3 apps started outside a
 portal/dconf session read the ini and never consult gsettings. Both theme
 names degrade — a machine without `adw-gtk-theme` or Papirus falls back to

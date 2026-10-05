@@ -29,8 +29,15 @@ import "../components"
 //             child, so wlogout always came up with "lock" already lit, and
 //             hovering another tile lit a second one without moving focus.
 //             Reproduced, because that is how it looked.
-//   activate  wlogout destroyed its window BEFORE `system(action)`; same here,
-//             so hyprlock never comes up underneath this surface.
+//   activate  wlogout destroyed its window BEFORE `system(action)`; same here:
+//             `open` drops first, which releases the keyboard and starts the
+//             fade-out on the same tick the action is launched.
+//   motion    hyprland.lua gives this namespace `no_anim` (the
+//             qs-surfaces-self-animated layer rule), so the compositor neither
+//             slides nor fades it — the surface animates itself. The sheet
+//             fades in over 150ms and out over 120ms; the grid fades with it
+//             and rises 8px, the launcher body's motion. Each window stays
+//             mapped until its sheet has faded out, like the OSD's pill.
 //
 // Everything else — fill, frame, radius, font, glow — comes from
 // wlogout/style.css by way of palette.json `session` (see Theme.qml). The
@@ -51,6 +58,12 @@ Scope {
     // Index of the tile holding keyboard focus; 0 ("lock") on every open, as
     // GTK did. Arrows move it, Enter activates it.
     property int focusIndex: 0
+
+    // Length of the fade the windows are about to run: 150ms in, 120ms out.
+    // Set BEFORE `open` flips, so every `Behavior` below has already read the
+    // new figure by the time the flip starts it — a duration bound straight to
+    // `open` could be re-evaluated after the animation it was meant for.
+    property int fadeMs: 150
 
     // The old wlogout/layout, transcribed into settings.json in the same order.
     readonly property var buttons: {
@@ -78,15 +91,18 @@ Scope {
         }
         menu.screenName = name;
         menu.focusIndex = 0;
+        menu.fadeMs = 150;
         menu.open = true;
     }
 
+    // `open` goes false at once: the keyboard is released now, the windows
+    // unmap on their own once the fade-out has run.
     function hide() {
+        menu.fadeMs = 120;
         menu.open = false;
     }
 
-    // Run one tile's action. Closes FIRST — see the header: a lock screen
-    // launched while this surface is still mapped ends up underneath it.
+    // Run one tile's action. Hides FIRST — see the header.
     function activate(index) {
         const b = menu.buttons[index];
         if (!b || !b.action)
@@ -161,12 +177,16 @@ Scope {
             readonly property int inset: Math.min(230,
                 Math.round(Math.min(content.width, content.height) * 0.2))
 
-            visible: menu.open
+            // Stays mapped until the sheet has faded out, so the menu dissolves
+            // instead of blinking off (osd/Osd.qml does the same for its pill).
+            visible: menu.open || sheet.opacity > 0
 
             WlrLayershell.namespace: "qs-hypr-session"
             // Over fullscreen windows, as wlogout was (GTK_LAYER_SHELL_LAYER_OVERLAY).
             WlrLayershell.layer: WlrLayer.Overlay
             // wlogout: keyboard_interactivity TRUE on the primary window only.
+            // Keyed on `open`, not `visible`: a window that is only still
+            // mapped for its fade-out must not be swallowing keys meanwhile.
             WlrLayershell.keyboardFocus: (menu.open && root.primary)
                 ? WlrKeyboardFocus.Exclusive
                 : WlrKeyboardFocus.None
@@ -256,9 +276,22 @@ Scope {
 
                 // window { background-color: rgba(ground, 0.85) } — the sheet
                 // that dims the desktop. Clicking it, outside any tile, closes.
+                //
+                // Full strength only under the tiles. wlogout drew just that
+                // one monitor at this alpha, so dimming every other output as
+                // hard read darker than it ever was; three quarters keeps
+                // them clearly "behind" without going black.
                 Rectangle {
+                    id: sheet
                     anchors.fill: parent
-                    color: Theme.withAlpha(Theme.ground, Theme.sessionWindowOpacity)
+                    color: Theme.withAlpha(Theme.ground, root.primary
+                        ? Theme.sessionWindowOpacity
+                        : Theme.sessionWindowOpacity * 0.75)
+
+                    opacity: menu.open ? 1 : 0
+                    Behavior on opacity {
+                        NumberAnimation { duration: menu.fadeMs }
+                    }
 
                     MouseArea {
                         anchors.fill: parent
@@ -281,6 +314,18 @@ Scope {
                     columns: menu.columns
                     spacing: 0   // --column-spacing 0 --row-spacing 0
                     visible: root.primary
+
+                    // Fades with the sheet and rises 8px into place — the
+                    // launcher body's `y: open ? 0 : 8`, as a center offset
+                    // because the grid is anchored rather than placed.
+                    anchors.verticalCenterOffset: menu.open ? 0 : 8
+                    opacity: menu.open ? 1 : 0
+                    Behavior on anchors.verticalCenterOffset {
+                        NumberAnimation { duration: menu.fadeMs; easing.type: Easing.OutCubic }
+                    }
+                    Behavior on opacity {
+                        NumberAnimation { duration: menu.fadeMs }
+                    }
 
                     Repeater {
                         model: menu.buttons

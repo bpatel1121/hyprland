@@ -85,7 +85,8 @@
                         "enabled":      { "$ref": "#/$defs/enabled" },
                         "persistent":   { "type": "integer", "minimum": 0, "maximum": 10, "description": "Workspaces 1..N always render, dimmed when empty." },
                         "showSpecial":  { "type": "boolean", "description": "Show a glyph for the scratchpad while it is on screen." },
-                        "specialGlyph": { "type": "string" }
+                        "specialGlyph": { "type": "string" },
+                        "style":        { "enum": ["pills", "numbers"], "description": "pills: a dot per workspace, the active one a lozenge, numbers only on hover. numbers: the original digit stations." }
                     },
                     "patternProperties": { "^//": { "$ref": "#/$defs/comment" } },
                     "additionalProperties": false

@@ -9,7 +9,25 @@ import Quickshell.Hyprland
 import "../config"
 import "../components"
 
-// Workspace stations — `#workspaces button`, one Chip per workspace:
+// Workspace stations, in one of two styles (`modules.workspaces.style`).
+//
+// "pills" (the default) — one 8px pill per workspace, 6px apart, centred in
+// the bar. State is carried by width and tone rather than a digit:
+//
+//     active     26 × 8   the lit fill (see `emissive` below)
+//     occupied    8 × 8   rgba(<dormant>, 0.85)       has windows
+//     empty       8 × 8   rgba(<dormant>, 0.35)       nothing there
+//     urgent      8 × 8   <urgent>, breathing 1 → 0.5 → 1 (keeps its look under the pointer)
+//     :hover     26 × 16  rgba(<readout>, 0.6), its number on it
+//
+// Focus SLIDES: width and color animate over 140ms, so moving to the next
+// workspace reads as the lozenge gliding one slot over rather than one dot
+// going dark and another lighting. The number exists only under the pointer:
+// the pill opens into a lozenge tall enough to hold it (`ground` on the
+// active and urgent pills, `readout` on the rest) and closes again on leave.
+//
+// "numbers" — the digit stations the bar launched with, `#workspaces button`
+// as one Chip per workspace:
 //
 //     padding: 0 9px; margin: 3px 1px; border-radius: <chip radius>;
 //     transition: color 0.2s ease-in-out;
@@ -20,10 +38,11 @@ import "../components"
 //     .special  color: <frame>; background: rgba(<frame>, ~0.10); glow 0.55
 //     .urgent   color: <ground>; background: <urgent>; pulse-red
 //
-// Cascade order matters and is reproduced: `:hover` is declared after
-// `.active` (so hovering the active station flattens it to the surface fill)
-// but before `.special` and `.urgent` (which keep their look under the
-// pointer).
+// The color rules are the SAME in both styles — the pills carry them on a
+// fill instead of a glyph. Cascade order matters and is reproduced in both:
+// `:hover` is declared after `.active` (so hovering the active station
+// flattens it) but before `.special` and `.urgent` (which keep their look
+// under the pointer).
 //
 // 1..`persistent` ALWAYS render (waybar's persistent-workspaces 1-5); an empty
 // one draws dormant rather than disappearing, so the bar reads as a row of
@@ -31,13 +50,17 @@ import "../components"
 // while they exist. The scratchpad gets a ghost glyph that exists only while
 // it is on screen — it IS the "you are in the scratchpad" indicator (waybar's
 // show-special + special-visible-only). Hyprland reports it with a negative
-// id, which is how it is told apart from a numbered workspace here.
+// id, which is how it is told apart from a numbered workspace here. It is a
+// glyph, not a station, so it looks the same in either style.
 Row {
     id: root
 
     readonly property int persistent: Config.get("workspaces", "persistent", 5)
     readonly property bool showSpecial: Config.get("workspaces", "showSpecial", true)
     readonly property string specialGlyph: Config.get("workspaces", "specialGlyph", "󰊠")
+    // Anything but the opt-in "numbers" draws pills, so a stale or misspelt
+    // value degrades to the default rather than to no workspaces at all.
+    readonly property bool pills: Config.get("workspaces", "style", "pills") !== "numbers"
 
     // Which "lit" the active station gets. Cyberpunk's CSS was an emissive
     // lozenge — `linear-gradient(180deg, <readoutBright>, <readout>)` with a
@@ -48,9 +71,9 @@ Row {
     readonly property bool emissive: !Qt.colorEqual(Theme.readoutBright, Theme.readout)
 
     height: parent ? parent.height : 0
-    // `#workspaces { padding: 0; margin: 0 }` — the buttons' own 1px margins
-    // are the only gaps.
-    spacing: 0
+    // Pills: a 6px gap between stations. Numbers: `#workspaces { padding: 0;
+    // margin: 0 }` — the buttons' own 1px margins are the only gaps.
+    spacing: root.pills ? 6 : 0
 
     // Per workspace id: does it hold windows, is it urgent. Rebuilt from
     // Hyprland's live model whenever any of those change.
@@ -87,8 +110,115 @@ Row {
         GradientStop { position: 1.0; color: Theme.readout }
     }
 
+    // --- pills ---------------------------------------------------------------
+    // One Repeater per style; the one not in use gets an empty model, so the
+    // Row only ever holds stations of one kind.
     Repeater {
-        model: root.shownIds
+        model: root.pills ? root.shownIds : []
+
+        // The hit box: the full bar height, reaching 3px into the gap on either
+        // side so the row has no dead zones between dots. The pill proper is
+        // `body`, centred inside it.
+        Item {
+            id: pill
+
+            required property int modelData
+
+            readonly property bool isActive: pill.modelData === root.focusedId
+            readonly property bool isOccupied: root.info[pill.modelData]?.occupied === true
+            readonly property bool isUrgent: root.info[pill.modelData]?.urgent === true
+            readonly property bool hovered: hit.containsMouse
+            // `.active`'s lit look survives neither `.urgent` nor `:hover`.
+            readonly property bool lit: pill.isActive && !pill.isUrgent && !pill.hovered
+
+            // 0 → 1 → 0 over two seconds while urgent — the same clock as
+            // Chip's pulse, so a red pill and a red chip elsewhere on the bar
+            // beat together. A pill has no text to glow, so the pulse is the
+            // pill itself breathing between full and half opacity.
+            property real pulsePhase: 0
+            SequentialAnimation on pulsePhase {
+                running: pill.isUrgent
+                loops: Animation.Infinite
+                NumberAnimation { from: 0; to: 1; duration: 1000; easing.type: Easing.InOutQuad }
+                NumberAnimation { from: 1; to: 0; duration: 1000; easing.type: Easing.InOutQuad }
+            }
+
+            // The lozenge is 26 wide: for the active station, and for any
+            // station under the pointer so its number fits.
+            width: (pill.isActive || pill.hovered) ? 26 : 8
+            height: root.height
+            Behavior on width {
+                NumberAnimation { duration: 140; easing.type: Easing.OutCubic }
+            }
+
+            Rectangle {
+                id: body
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width
+                // 8 at rest; under the pointer it opens to 16, which clears a
+                // 13px bold digit's cap height with a little air. Radius tracks
+                // the height so it stays a pill at either size.
+                height: pill.hovered ? 16 : 8
+                radius: body.height / 2
+                Behavior on height {
+                    NumberAnimation { duration: 140; easing.type: Easing.OutCubic }
+                }
+
+                // The same cascade as the digit stations, on the fill. Under
+                // the gradient (emissive + lit) this is the gradient's bottom
+                // stop, so the ColorAnimation starts from the right place when
+                // the gradient drops.
+                color: pill.isUrgent ? Theme.urgent
+                     : pill.hovered ? Theme.withAlpha(Theme.readout, 0.6)
+                     : pill.isActive ? (root.emissive ? Theme.readout : Theme.frame)
+                     : Theme.withAlpha(Theme.dormant, pill.isOccupied ? 0.85 : 0.35)
+                Behavior on color {
+                    ColorAnimation { duration: 140 }
+                }
+
+                gradient: pill.lit && root.emissive ? root.lit : null
+                // The rim: rgba(214, 248, 252, 0.9) in the CSS — near-white,
+                // which the palette has no role for; `text` at the same alpha
+                // is the closest honest reading of it.
+                border.width: pill.lit && root.emissive ? 1 : 0
+                border.color: Theme.withAlpha(Theme.text, 0.9)
+
+                opacity: pill.isUrgent ? 1 - 0.5 * pill.pulsePhase : 1
+
+                // The number, only under the pointer. format-icons: "1".."10"
+                // are themselves, anything else is "•". No glow — `:hover`
+                // dropped the text-shadow on the digit stations too.
+                GlowText {
+                    anchors.centerIn: parent
+                    text: pill.modelData <= 10 ? String(pill.modelData) : "•"
+                    color: (pill.isUrgent || pill.isActive) ? Theme.ground : Theme.readout
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSize
+                    font.bold: true
+                    glowOpacity: 0
+
+                    opacity: pill.hovered ? 1 : 0
+                    Behavior on opacity {
+                        NumberAnimation { duration: 140 }
+                    }
+                }
+            }
+
+            MouseArea {
+                id: hit
+                anchors.fill: parent
+                anchors.leftMargin: -3
+                anchors.rightMargin: -3
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: Hyprland.dispatch("workspace " + pill.modelData)
+            }
+        }
+    }
+
+    // --- numbers -------------------------------------------------------------
+    Repeater {
+        model: root.pills ? [] : root.shownIds
 
         Chip {
             id: station
@@ -144,6 +274,23 @@ Row {
         }
     }
 
+    // Whether a special workspace is on screen. Quickshell never flags one as
+    // `active` — a monitor's active workspace stays the ordinary one underneath
+    // the scratchpad — so this listens to Hyprland's own `activespecial` event
+    // instead: `activespecial>>special:magic,eDP-1` when it opens, an empty
+    // name when it closes. One event per toggle, nothing polled.
+    property bool specialShown: false
+
+    Connections {
+        target: Hyprland
+
+        function onRawEvent(event) {
+            if (event.name !== "activespecial")
+                return;
+            root.specialShown = event.parse(2)[0] !== "";
+        }
+    }
+
     // The scratchpad ghost — `#workspaces button.special`, present only while
     // the special workspace is up. Frame-colored: an overlay of the frame, not
     // one of the readout stations. No hover rule applies (`.special` is
@@ -151,16 +298,7 @@ Row {
     Chip {
         id: ghost
 
-        readonly property bool visibleNow: {
-            if (!root.showSpecial)
-                return false;
-            const list = Hyprland.workspaces.values;
-            for (let i = 0; i < list.length; i++) {
-                if (list[i].id < 0 && list[i].active)
-                    return true;
-            }
-            return false;
-        }
+        readonly property bool visibleNow: root.showSpecial && root.specialShown
 
         label: ghost.visibleNow ? root.specialGlyph : ""
 
