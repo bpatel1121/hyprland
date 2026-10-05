@@ -1,0 +1,99 @@
+# Inkwash · light — starship
+#
+# theme-apply.sh symlinks this to ~/.config/starship.toml.
+#
+# Same minimal one-line layout as the other themes, palette re-cast for paper:
+#   path    ink       #1c1b14   where you are
+#   branch  gold ink  #8a6a2a   what you're on (the frame, printed — the raw
+#                               filigree gold is 2.4:1 on paper, unreadable)
+#   arrow   burst     #286884   where you type  (red when the last cmd failed)
+#   dirty ● bronze    #b8641e   uncommitted work exists
+#   venv 󰌠  burst     #286884   a virtualenv is active (glyph only, no name)
+#
+# The arrow is NOT the readout color, unlike the dark themes: readout is the
+# olive ink here, which next to the black-ink path says nothing at a glance.
+# The cyan burst is the live color instead — the one lit thing in the
+# painting — and it is red's complement, the same reason cyberpunk picked
+# cyan: success and failure stay apart in peripheral vision. Printed down to
+# its deep water (#286884, 5.7:1) so a single glyph still reads on paper.
+#
+# Glyph choices (󰘬 ● ❯ ❮ ↑ ↓ ×) are the JetBrainsMono-Nerd-Font-verified set
+# from the cyberpunk config — see its comments before "fixing" any of them.
+
+# The literal space before $character is load-bearing (see cyberpunk config).
+format = "$conda${custom.venv}$directory$git_branch${custom.git_dirty} $character"
+add_newline = true
+
+[directory]
+style = "fg:#1c1b14 bold"
+format = "[$path]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = true
+read_only = " ro"
+read_only_style = "fg:#c0392b"
+
+[git_branch]
+symbol = "󰘬 "
+style = "fg:#8a6a2a"
+format = "  [$symbol$branch]($style)"
+
+# Off in favour of the single dirty dot below (same reasoning as cyberpunk).
+[git_status]
+disabled = true
+
+# One bronze dot when the working tree has anything uncommitted, nothing when
+# clean. Do NOT add a `shell = [...]` key and keep the `when` condition — see
+# the cyberpunk config for why both matter.
+[custom.git_dirty]
+description = "one dot when there are uncommitted changes"
+when = 'test -n "$(git status --porcelain 2>/dev/null)"'
+command = "printf ●"
+style = "fg:#b8641e"
+format = " [$output]($style)"
+
+# Leading chip when a virtualenv is active, nothing when one isn't. Ahead of
+# $directory so a glance down the left edge says which shells are in an env,
+# without costing the path a character. Symbol only, no venv name. Takes the
+# arrow's color, not the frame's — "an env is live" is state being reported,
+# and the gold ink stays the branch's. See the cyberpunk config for the full
+# reasoning and the note on why there is no `shell` key.
+#
+# 󰌠 is nf-md-language_python (U+F0320) — same Material Design block as 󰘬.
+[custom.venv]
+description = "one glyph when a python virtualenv is active"
+when = 'test -n "$VIRTUAL_ENV"'
+command = "printf 󰌠"
+style = "fg:#286884"
+format = "[$output]($style) "
+
+# The burst on success; far from the sigil red of failure so it reads at a
+# glance (see the header).
+[character]
+success_symbol = "[❯](fg:#286884)"
+error_symbol = "[❯](fg:#c0392b)"
+vimcmd_symbol = "[❮](fg:#8a8a7a)"
+
+# Everything else off — this is the "minimal" part.
+[cmd_duration]
+disabled = true
+[package]
+disabled = true
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[docker_context]
+disabled = true
+
+# The conda glyph is nf-dev-python (U+E715), written as a TOML escape rather
+# than the raw private-use character the dark configs carry.
+[conda]
+symbol = "\uE715"
+ignore_base = false
+style = "fg:#286884"
+format = "[$symbol]($style) "

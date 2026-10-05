@@ -1,0 +1,68 @@
+# Graphite · light — btop
+#
+# Linked in as ~/.config/btop/themes/current.theme by theme-apply.sh (btop.conf
+# says color_theme = "current" once and never changes).
+#
+# Same role assignments as the rest of the desktop, drawn in pencil: INK frames
+# the boxes and titles them (the frame is ink here, so unlike a colored frame
+# it can carry text), the VIOLET is the live readout and the highlighted key
+# letters — the things you act on — and a selected row is a black pill with
+# paper print, like the bar's active workspace. Gradients run from quiet
+# (pencil) to loud (laser red) — on paper, loud means darker and hotter, so no
+# ramp ends in a light grey. Brass, tritium and laser appear only as state.
+
+theme[main_bg]="#f6f3f5"
+theme[main_fg]="#1d1719"
+theme[title]="#2b2427"
+theme[hi_fg]="#8a4f96"
+theme[selected_bg]="#2b2427"
+theme[selected_fg]="#e9e4e8"
+theme[inactive_fg]="#8f8181"
+theme[graph_text]="#8f8181"
+theme[meter_bg]="#cfc8cf"
+theme[proc_misc]="#8a4f96"
+
+# Box outlines — ink is the frame color everywhere in this desktop.
+theme[cpu_box]="#2b2427"
+theme[mem_box]="#2b2427"
+theme[net_box]="#2b2427"
+theme[proc_box]="#2b2427"
+theme[div_line]="#cfc8cf"
+
+# Temperature: pencil -> brass -> laser red at the top.
+theme[temp_start]="#8f8181"
+theme[temp_mid]="#c0862a"
+theme[temp_end]="#c4475c"
+
+# CPU load: pencil -> the violet readout -> laser red.
+theme[cpu_start]="#8f8181"
+theme[cpu_mid]="#8a4f96"
+theme[cpu_end]="#c4475c"
+
+# Free / cached / available / used memory.
+theme[free_start]="#cfc8cf"
+theme[free_mid]="#4f8a5a"
+theme[free_end]="#4f8a5a"
+theme[cached_start]="#cfc8cf"
+theme[cached_mid]="#8f8181"
+theme[cached_end]="#8f8181"
+theme[available_start]="#cfc8cf"
+theme[available_mid]="#c0862a"
+theme[available_end]="#c0862a"
+theme[used_start]="#cfc8cf"
+theme[used_mid]="#9c63a8"
+theme[used_end]="#c4475c"
+
+# Disk io — the violet is the readout; ink is the only other weight loud
+# enough to stand next to it, and the two are the bar's own pairing.
+theme[download_start]="#cfc8cf"
+theme[download_mid]="#8a4f96"
+theme[download_end]="#8a4f96"
+theme[upload_start]="#cfc8cf"
+theme[upload_mid]="#2b2427"
+theme[upload_end]="#2b2427"
+
+# Process box gradient.
+theme[process_start]="#8f8181"
+theme[process_mid]="#c0862a"
+theme[process_end]="#c4475c"

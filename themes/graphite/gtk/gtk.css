@@ -1,0 +1,65 @@
+/* Graphite · light — GTK
+ *
+ * Symlinked by theme-apply.sh to BOTH ~/.config/gtk-3.0/gtk.css and
+ * ~/.config/gtk-4.0/gtk.css; each toolkit reads its own color names and
+ * ignores the other's. The violet is the accent — the one hue, on the things
+ * you act on: links, checked switches, focus rings, a selected row — matching
+ * the launcher's rim and the bar's readouts, so a file dialog looks like it
+ * belongs to this desktop. Everything else is grey: paper windows, a sheet
+ * for views and cards, the paper's edge for borders. `readout` carries the
+ * accent text (5.2:1 on the sheet, so it needs no printed ink) and `launcher`
+ * the accent fills, with the sheet as their print (4.0:1 — a selected row is
+ * read for a moment, not for a page).
+ *
+ * Palette: paper #e9e4e8 · sheet #f6f3f5 · paper edge #cfc8cf · pencil #8f8181
+ *          ink #2b2427 · eye #8a4f96 · tritium #4f8a5a · brass #c0862a
+ *          laser #c4475c · strap #a99fa5 · visor #1d1719 · lit eye #9c63a8
+ */
+
+/* ---- GTK4 / libadwaita ----------------------------------------------------- */
+@define-color accent_color        #8a4f96;
+@define-color accent_bg_color     #9c63a8;
+@define-color accent_fg_color     #f6f3f5;
+
+@define-color window_bg_color     #e9e4e8;
+@define-color window_fg_color     #1d1719;
+@define-color view_bg_color       #f6f3f5;
+@define-color view_fg_color       #1d1719;
+@define-color headerbar_bg_color  #f6f3f5;
+@define-color headerbar_fg_color  #1d1719;
+@define-color sidebar_bg_color    #f6f3f5;
+@define-color sidebar_fg_color    #1d1719;
+@define-color card_bg_color       #f6f3f5;
+@define-color card_fg_color       #1d1719;
+@define-color popover_bg_color    #f6f3f5;
+@define-color popover_fg_color    #1d1719;
+@define-color dialog_bg_color     #e9e4e8;
+@define-color dialog_fg_color     #1d1719;
+
+@define-color destructive_color    #c4475c;
+@define-color destructive_bg_color #c4475c;
+@define-color destructive_fg_color #f6f3f5;
+@define-color success_color        #4f8a5a;
+@define-color success_bg_color     #4f8a5a;
+@define-color warning_color        #c0862a;
+@define-color warning_bg_color     #c0862a;
+@define-color error_color          #c4475c;
+@define-color error_bg_color       #c4475c;
+
+/* ---- GTK3 / adw-gtk3 ------------------------------------------------------- */
+@define-color theme_bg_color            #e9e4e8;
+@define-color theme_fg_color            #1d1719;
+@define-color theme_base_color          #f6f3f5;
+@define-color theme_text_color          #1d1719;
+@define-color theme_selected_bg_color   #9c63a8;
+@define-color theme_selected_fg_color   #f6f3f5;
+@define-color insensitive_bg_color      #f6f3f5;
+@define-color insensitive_fg_color      #8f8181;
+@define-color borders                   #cfc8cf;
+@define-color unfocused_borders         #cfc8cf;
+@define-color warning_color_gtk3        #c0862a;
+
+/* Card corners on GTK popovers/menus, to sit with Hyprland's rounding = 8. */
+popover, menu, .context-menu {
+    border-radius: 6px;
+}

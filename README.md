@@ -51,7 +51,7 @@ session locks at 10, the screen sleeps at 15.
 | [Login screen](docs/sddm.md) | the SDDM greeter, and installing it |
 | [Plugins](docs/plugins.md) | the hyprpm steps, done by hand on purpose |
 | [QML migration](docs/qml-migration.md) | the Quickshell shell: what was moved, what deliberately was not |
-| **Themes** | [cyberpunk](docs/themes/cyberpunk.md) · [gruvbox](docs/themes/gruvbox.md) |
+| **Themes** | [cyberpunk](docs/themes/cyberpunk.md) · [gruvbox](docs/themes/gruvbox.md) · [glacier](docs/themes/glacier.md) · [graphite](docs/themes/graphite.md) (light) · [inkwash](docs/themes/inkwash.md) (light) |
 
 ## The shell
 

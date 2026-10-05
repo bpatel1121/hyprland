@@ -1,0 +1,20 @@
+# lazygit — inkwash. Gold filigree frame, ink readouts, no neon: the active
+# panel border is the frame color (a line, so the filigree's gold can carry it),
+# selection is a raised paper band, searching lights the burst, and the marked
+# base commit is a gold band with ink print — the same block the bar's active
+# workspace wears.
+gui:
+  nerdFontsVersion: "3"
+  showRandomTip: false
+  theme:
+    activeBorderColor: ["#c89a3e", "bold"]
+    inactiveBorderColor: ["#8a8a7a"]
+    searchingActiveBorderColor: ["#2a8ca6", "bold"]
+    selectedLineBgColor: ["#d6d3cb"]
+    optionsTextColor: ["#3f4d2a"]
+    cherryPickedCommitFgColor: ["#3f4d2a"]
+    cherryPickedCommitBgColor: ["#efede8"]
+    markedBaseCommitFgColor: ["#1c1b14"]
+    markedBaseCommitBgColor: ["#c89a3e"]
+    unstagedChangesColor: ["#c0392b"]
+    defaultFgColor: ["#1c1b14"]

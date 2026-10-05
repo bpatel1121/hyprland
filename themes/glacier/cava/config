@@ -1,0 +1,39 @@
+# Glacier · frost — cava
+#
+# Not a VU meter this time. The other themes climb readout -> green -> yellow
+# -> red because color means state; glacier keeps the meaning (quiet is the
+# readout color, loud is the frame color) but stays inside the one hue: quiet
+# is white, rising goes pale cyan (the launcher's frost), loud is ice cyan —
+# the sword's edge. Ice gets brighter, not warmer. The only reason warm would
+# appear is an alert, and a loud song is not one.
+
+[general]
+framerate = 60
+autosens = 1
+overshoot = 20
+bars = 0            # 0 = auto-fit the terminal width
+bar_width = 2
+bar_spacing = 1
+
+[input]
+method = pulse
+source = auto
+
+[output]
+method = ncurses
+channels = stereo
+mono_option = average
+
+[color]
+background = '#0b1838'      # sky (ground)
+gradient = 1
+gradient_count = 6
+gradient_color_1 = '#e8f4ff'    # readout  — quiet
+gradient_color_2 = '#e8f4ff'    # readout
+gradient_color_3 = '#b6ecf9'    # launcher — rising (frost)
+gradient_color_4 = '#b6ecf9'    # launcher
+gradient_color_5 = '#5bd7fa'    # frame    — loud (the sword's edge)
+gradient_color_6 = '#5bd7fa'    # frame
+
+[smoothing]
+noise_reduction = 45

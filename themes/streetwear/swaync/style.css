@@ -1,0 +1,127 @@
+/* Streetwear · light — swaync (notifications + control center)
+ *
+ * Paper dialect: near-opaque off-white cards, a 1px yellow tag edge, medium
+ * 10px corners, no glow, no scanlines. Same layer-shell rules as the bar: no
+ * outer box-shadow, no `transparent` keyword (GTK composites both as black
+ * halos — and a black halo around a WHITE card is the worst case of all).
+ * Palette discipline: TAG frames, NAVY is the content, pink-red = urgent only;
+ * the holo pink is the touch color, as it is on the launcher.
+ */
+
+@define-color paper   #f4efe8;
+@define-color sheet   #fbf8f2;
+@define-color seam    #e3dcd0;
+@define-color tag     #e9b92a;
+@define-color navy    #13202a;
+@define-color holo    #d66676;
+@define-color red     #d6476a;
+@define-color dim     #7d8aa0;
+@define-color faded   #98a4b6;
+@define-color ink     #1b2630;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  /* GtkListBoxRow ships default padding — the last few off-grid pixels. */
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+.notification {
+  background-color: rgba(251, 248, 242, 0.92);  /* sheet; frosted by swaync-blur rule — near-opaque, blue through paper goes muddy */
+  border: 1px solid rgba(233, 185, 42, 0.60);   /* the tag edge — a card, not a poster */
+  border-radius: 10px;
+  margin: 8px 14px;                            /* the same grid as gaps_out and the bar */
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @ink; font-weight: bold; }
+.notification-content .body    { color: @dim; }
+.notification-content .time    { color: @dim; font-size: 11px; }
+.notification.critical { border-color: @red; }
+/* No X, anywhere. Dismissal is click-the-notification (default action +
+ * hide-on-action in swaync/config.json) and the control center's "clear"
+ * button. An element that does not exist cannot be misaligned. */
+.close-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  box-shadow: none;
+}
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @ink;
+  border-radius: 8px;
+}
+/* Hover is a seam-colored band under navy type: readout is already the text
+ * color on paper, so "lift to readout" would show nothing. */
+.notification-action:hover { color: @navy; background-color: @seam; }
+
+/* ---- control center: a paper sheet with a tag edge ---- */
+.control-center {
+  background-color: rgba(244, 239, 232, 0.94);  /* paper, near-opaque (see above) */
+  border: 2px solid @tag;
+  border-radius: 10px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(233, 185, 42, 0.40); }
+
+.widget-title { color: @navy; font-weight: bold; }
+.widget-title > button {
+  background-color: @sheet;
+  color: @dim;
+  border: 1px solid rgba(233, 185, 42, 0.45);
+  border-radius: 8px;
+}
+.widget-title > button:hover { color: @red; border-color: @red; }
+
+.widget-dnd { color: @ink; }
+.widget-dnd > switch {
+  background-color: @sheet;
+  border: 1px solid @seam;
+  border-radius: 8px;
+}
+.widget-dnd > switch:checked { background-color: @tag; }
+.widget-dnd > switch slider { background-color: @faded; border-radius: 7px; }
+.widget-dnd > switch:checked slider { background-color: @navy; }  /* navy knob on the yellow tag */
+
+/* ---- now playing: a paper card over the art. Keeps swaync's blurred-art
+ * backdrop (content-derived); frame, type, and controls speak the theme. ---- */
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(251, 248, 242, 0.78);
+  border: 1px solid rgba(233, 185, 42, 0.55);
+  border-radius: 8px;
+  padding: 10px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-album-art { border-radius: 8px; }
+.widget-mpris .widget-mpris-title    { color: @navy; font-weight: bold; }
+.widget-mpris .widget-mpris-subtitle { color: @dim; }
+/* controls + carousel arrows — navy at rest, holo pink when touched */
+.widget-mpris button {
+  color: @navy;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+}
+.widget-mpris button:hover { color: @holo; }
+
+progressbar progress { background-color: @navy; border-radius: 4px; }
+progressbar trough   { background-color: @seam; border-radius: 4px; }

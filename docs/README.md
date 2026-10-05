@@ -20,6 +20,9 @@ file; it grew past the point where a reader could find anything in it.
 |---|---|
 | [cyberpunk](themes/cyberpunk.md) | neon noir — amber and magenta on near-black |
 | [gruvbox](themes/gruvbox.md) | matte CRT — orange frame, muted sky readouts |
+| [glacier](themes/glacier.md) | frost — ice-cyan frame, white readouts, pale-cyan launcher, the painting showing through every surface |
+| [graphite](themes/graphite.md) | light · grey ink on paper — ink frame, one violet for readouts and the launcher |
+| [inkwash](themes/inkwash.md) | light · ink-wash painting on paper — gold filigree frame, olive-ink readouts, cyan burst launcher |
 
 ## A note on the comments
 

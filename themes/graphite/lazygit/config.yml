@@ -1,0 +1,21 @@
+# lazygit — graphite. Ink frame, violet where you act, no neon: the active
+# panel border is the frame color (ink — a drawn line), the inactive borders
+# are pencil, selection is a raised paper band, and the marked base commit is
+# a black pill with paper print — the same block the bar's active workspace
+# wears. The violet is the options line (the keys you can press) and a
+# cherry-picked commit (a thing you picked up); red only for unstaged work.
+gui:
+  nerdFontsVersion: "3"
+  showRandomTip: false
+  theme:
+    activeBorderColor: ["#2b2427", "bold"]
+    inactiveBorderColor: ["#8f8181"]
+    searchingActiveBorderColor: ["#c0862a", "bold"]
+    selectedLineBgColor: ["#cfc8cf"]
+    optionsTextColor: ["#8a4f96"]
+    cherryPickedCommitFgColor: ["#f6f3f5"]
+    cherryPickedCommitBgColor: ["#9c63a8"]
+    markedBaseCommitFgColor: ["#e9e4e8"]
+    markedBaseCommitBgColor: ["#2b2427"]
+    unstagedChangesColor: ["#c4475c"]
+    defaultFgColor: ["#1d1719"]

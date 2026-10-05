@@ -1,0 +1,63 @@
+/* Streetwear · light — GTK
+ *
+ * Symlinked by theme-apply.sh to BOTH ~/.config/gtk-3.0/gtk.css and
+ * ~/.config/gtk-4.0/gtk.css; each toolkit reads its own color names and
+ * ignores the other's. The yellow tag is the accent, matching the bar's island
+ * edge and the window border, so a file dialog looks like it belongs to this
+ * desktop — a selected row is a yellow tag with navy print, like the active
+ * workspace. The one place yellow can't go is TEXT: accent_color (links,
+ * checked switches' glyphs, focus rings on type) takes the tag's ink #8a6b0e,
+ * the yellow printed down to 4.7:1, because the raw tag is 1.7:1 on paper.
+ *
+ * Palette: paper #f4efe8 · jacket #fbf8f2 · seam #e3dcd0 · inked sky #7d8aa0
+ *          tag #e9b92a · navy #13202a · teal #2f8f74 · orange #e07a2e
+ *          pink-red #d6476a · faded sky #98a4b6 · ink #1b2630 · holo #d66676
+ */
+
+/* ---- GTK4 / libadwaita ----------------------------------------------------- */
+@define-color accent_color        #8a6b0e;
+@define-color accent_bg_color     #e9b92a;
+@define-color accent_fg_color     #13202a;
+
+@define-color window_bg_color     #f4efe8;
+@define-color window_fg_color     #1b2630;
+@define-color view_bg_color       #fbf8f2;
+@define-color view_fg_color       #1b2630;
+@define-color headerbar_bg_color  #fbf8f2;
+@define-color headerbar_fg_color  #1b2630;
+@define-color sidebar_bg_color    #fbf8f2;
+@define-color sidebar_fg_color    #1b2630;
+@define-color card_bg_color       #fbf8f2;
+@define-color card_fg_color       #1b2630;
+@define-color popover_bg_color    #fbf8f2;
+@define-color popover_fg_color    #1b2630;
+@define-color dialog_bg_color     #f4efe8;
+@define-color dialog_fg_color     #1b2630;
+
+@define-color destructive_color    #d6476a;
+@define-color destructive_bg_color #d6476a;
+@define-color destructive_fg_color #fbf8f2;
+@define-color success_color        #2f8f74;
+@define-color success_bg_color     #2f8f74;
+@define-color warning_color        #e07a2e;
+@define-color warning_bg_color     #e07a2e;
+@define-color error_color          #d6476a;
+@define-color error_bg_color       #d6476a;
+
+/* ---- GTK3 / adw-gtk3 ------------------------------------------------------- */
+@define-color theme_bg_color            #f4efe8;
+@define-color theme_fg_color            #1b2630;
+@define-color theme_base_color          #fbf8f2;
+@define-color theme_text_color          #1b2630;
+@define-color theme_selected_bg_color   #e9b92a;
+@define-color theme_selected_fg_color   #13202a;
+@define-color insensitive_bg_color      #fbf8f2;
+@define-color insensitive_fg_color      #7d8aa0;
+@define-color borders                   #e3dcd0;
+@define-color unfocused_borders         #e3dcd0;
+@define-color warning_color_gtk3        #e07a2e;
+
+/* Medium corners on GTK popovers/menus, to sit with Hyprland's rounding = 10. */
+popover, menu, .context-menu {
+    border-radius: 8px;
+}

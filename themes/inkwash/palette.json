@@ -1,0 +1,123 @@
+{
+    "$schema": "../../schema/palette.schema.json",
+
+    "//": "Inkwash · a LIGHT theme: paper panels over a digital ink-wash painting.",
+    "//1": "THE source for every shell surface (quickshell/: bar, launcher, OSD, power",
+    "//2": "menu). No upstream palette — every role is lifted from the wallpaper",
+    "//3": "itself: the white-grey paper, the smoke wash, the olive-black armor, the",
+    "//4": "gold filigree, the green cape, the cyan burst, the one red sigil. `tokens`",
+    "//5": "names each role after what it is in the painting so the mapping stays",
+    "//6": "traceable. theme.lua still owns WINDOW chrome (gaps, border, blur, shadow);",
+    "//7": "CI cross-checks it.",
+    "//8": "Two-tone rule, ink edition: the GOLD FILIGREE is the frame, the OLIVE INK",
+    "//9": "of the armor is the readout (a second, greener ink next to the black text),",
+    "//10": "and the CYAN BURST is the launcher — the one lit thing in the picture goes",
+    "//11": "to the one surface that covers the bar.",
+    "//12": "No readoutBright on purpose: the active workspace is then solid `frame`, a",
+    "//13": "gold pill with a paper digit, not an emissive lozenge (modules/Workspaces.qml).",
+
+    "name": "inkwash",
+    "polarity": "light",
+
+    "roles": {
+        "ground":   "#ebe9e5",
+        "surface":  "#f6f5f2",
+        "hairline": "#d6d3cb",
+        "dim":      "#8a8a7a",
+        "frame":    "#c89a3e",
+        "readout":  "#3f4d2a",
+        "warn":     "#b8641e",
+        "ok":       "#6f9a3a",
+        "urgent":   "#c0392b",
+        "dormant":  "#a3a398",
+        "text":     "#1c1b14",
+        "launcher": "#2a8ca6",
+
+        "surfaceAlt": "#efede8"
+    },
+
+    "//tokens": "What in the painting -> role, so a palette bump stays traceable.",
+    "tokens": {
+        "paper":      "ground",
+        "paperWhite": "surface",
+        "paperEdge":  "hairline",
+        "wash":       "surfaceAlt",
+        "smoke":      "dim",
+        "smokeThin":  "dormant",
+        "filigree":   "frame",
+        "armor":      "readout",
+        "bronze":     "warn",
+        "cape":       "ok",
+        "sigil":      "urgent",
+        "ink":        "text",
+        "burst":      "launcher"
+    },
+
+    "//print": "Two derived inks the terminal-side files share, because the filigree's gold (2.4:1) cannot carry TEXT on paper: gold ink #8a6a2a is `frame` printed down to 4.6:1, and burstDeep #286884 is the burst's own deep water, `launcher` printed to 5.7:1 (the raw burst is 3.6:1 — a glyph, not prose). Gold stays for lines, fills and the cursor block.",
+
+    "font": {
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 13,
+        "sizeAccent": 16
+    },
+
+    "//effects": "Flat ink: no glow (nothing is lit on paper but the burst, and that is a fill, not a halo), no scanlines (paper has no raster).",
+    "effects": {
+        "glow":       false,
+        "glowRadius": 0,
+        "scanlines":  false
+    },
+
+    "//bar": "Bar identity. Paper islands: near-opaque white paper, a 1px gold rim at 80%, small 6px corners — a brush edge, not glass. Opaque-ish on purpose: the painting frosted through a light fill goes muddy, so the fill is paper and the figure stays outside it.",
+    "bar": {
+        "island": {
+            "color":         "#f6f5f2",
+            "opacity":       0.88,
+            "radius":        6,
+            "borderWidth":   1,
+            "borderOpacity": 0.8,
+            "accentLine":    0,
+            "glow":          0,
+            "glowRange":     18
+        },
+        "chip": {
+            "radius":  5,
+            "opacity": 0.08
+        }
+    },
+
+    "//launcher": "Launcher identity: a 1px cyan-burst rim around a paper sheet, 8px window, 5px input + rows.",
+    "launcher": {
+        "opacity":       0.93,
+        "radius":        8,
+        "borderWidth":   1,
+        "inputRadius":   5,
+        "entryRadius":   5,
+        "fontSize":      15
+    },
+
+    "//osd": "OSD identity: a small-cornered paper slip with a 1px gold rim, olive-ink track. No pill — nothing here is a lozenge.",
+    "osd": {
+        "opacity":     0.93,
+        "radius":      6,
+        "borderWidth": 1,
+        "trackRadius": 3
+    },
+
+    "//session": "Power-menu identity: paper tiles with 8px corners and a 1px gold edge at 80%, over a light scrim.",
+    "session": {
+        "windowOpacity": 0.8,
+        "tileOpacity":   0.95,
+        "radius":        8,
+        "borderWidth":   1,
+        "borderOpacity": 0.8,
+        "fontSize":      18
+    },
+
+    "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim). 0.92, not 0.55: the painting is a light field, and the dark themes' dim would turn the paper grey — the lock and the greeter are read with ink on paper, not cream on dusk.",
+    "wallpaper": {
+        "brightness": 0.92,
+        "contrast":   1.0,
+        "blurSize":   6
+    }
+}

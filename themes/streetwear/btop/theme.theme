@@ -1,0 +1,66 @@
+# Streetwear · light — btop
+#
+# Linked in as ~/.config/btop/themes/current.theme by theme-apply.sh (btop.conf
+# says color_theme = "current" once and never changes).
+#
+# Same role assignments as the rest of the desktop, printed: the yellow tag
+# frames the boxes (lines can be yellow on paper; text cannot — titles take
+# the tag INK, #8a6b0e), navy is the live readout, and a selected row is a
+# yellow tag with navy print, like the bar's active workspace. Gradients run
+# from quiet (the inked sky) to loud (pink-red) — on paper, loud means darker,
+# so no ramp ends in yellow.
+
+theme[main_bg]="#fbf8f2"
+theme[main_fg]="#1b2630"
+theme[title]="#8a6b0e"
+theme[hi_fg]="#c04a60"
+theme[selected_bg]="#e9b92a"
+theme[selected_fg]="#13202a"
+theme[inactive_fg]="#7d8aa0"
+theme[graph_text]="#7d8aa0"
+theme[meter_bg]="#e3dcd0"
+theme[proc_misc]="#2f8f74"
+
+# Box outlines — the yellow tag is the frame color everywhere in this desktop.
+theme[cpu_box]="#e9b92a"
+theme[mem_box]="#e9b92a"
+theme[net_box]="#e9b92a"
+theme[proc_box]="#e9b92a"
+theme[div_line]="#e3dcd0"
+
+# Temperature: inked sky -> orange -> pink-red at the top.
+theme[temp_start]="#7d8aa0"
+theme[temp_mid]="#e07a2e"
+theme[temp_end]="#d6476a"
+
+# CPU load.
+theme[cpu_start]="#7d8aa0"
+theme[cpu_mid]="#2f8f74"
+theme[cpu_end]="#d6476a"
+
+# Free / cached / available / used memory.
+theme[free_start]="#e3dcd0"
+theme[free_mid]="#2f8f74"
+theme[free_end]="#2f8f74"
+theme[cached_start]="#e3dcd0"
+theme[cached_mid]="#7d8aa0"
+theme[cached_end]="#7d8aa0"
+theme[available_start]="#e3dcd0"
+theme[available_mid]="#e07a2e"
+theme[available_end]="#e07a2e"
+theme[used_start]="#e3dcd0"
+theme[used_mid]="#d66676"
+theme[used_end]="#d6476a"
+
+# Disk io — navy is the readout; the pink is the only other ink loud enough.
+theme[download_start]="#e3dcd0"
+theme[download_mid]="#13202a"
+theme[download_end]="#13202a"
+theme[upload_start]="#e3dcd0"
+theme[upload_mid]="#d66676"
+theme[upload_end]="#d66676"
+
+# Process box gradient.
+theme[process_start]="#7d8aa0"
+theme[process_mid]="#e07a2e"
+theme[process_end]="#d6476a"

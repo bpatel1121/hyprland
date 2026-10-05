@@ -1,0 +1,67 @@
+# Inkwash · light — btop
+#
+# Linked in as ~/.config/btop/themes/current.theme by theme-apply.sh (btop.conf
+# says color_theme = "current" once and never changes).
+#
+# Same role assignments as the rest of the desktop, printed: the gold filigree
+# frames the boxes (lines can be gold on paper; text cannot — titles take the
+# gold INK, #8a6a2a), the olive ink is the live readout, the cyan burst is the
+# highlight, and a selected row is a gold band with ink print, like the bar's
+# active workspace. Gradients run from quiet (the smoke) to loud (the sigil's
+# red) — on paper, loud means darker, so no ramp ends in gold.
+
+theme[main_bg]="#f6f5f2"
+theme[main_fg]="#1c1b14"
+theme[title]="#8a6a2a"
+theme[hi_fg]="#286884"
+theme[selected_bg]="#c89a3e"
+theme[selected_fg]="#1c1b14"
+theme[inactive_fg]="#8a8a7a"
+theme[graph_text]="#8a8a7a"
+theme[meter_bg]="#d6d3cb"
+theme[proc_misc]="#6f9a3a"
+
+# Box outlines — the gold filigree is the frame color everywhere in this desktop.
+theme[cpu_box]="#c89a3e"
+theme[mem_box]="#c89a3e"
+theme[net_box]="#c89a3e"
+theme[proc_box]="#c89a3e"
+theme[div_line]="#d6d3cb"
+
+# Temperature: smoke -> bronze -> sigil red at the top.
+theme[temp_start]="#8a8a7a"
+theme[temp_mid]="#b8641e"
+theme[temp_end]="#c0392b"
+
+# CPU load: smoke -> olive ink -> sigil red.
+theme[cpu_start]="#8a8a7a"
+theme[cpu_mid]="#3f4d2a"
+theme[cpu_end]="#c0392b"
+
+# Free / cached / available / used memory.
+theme[free_start]="#d6d3cb"
+theme[free_mid]="#6f9a3a"
+theme[free_end]="#6f9a3a"
+theme[cached_start]="#d6d3cb"
+theme[cached_mid]="#8a8a7a"
+theme[cached_end]="#8a8a7a"
+theme[available_start]="#d6d3cb"
+theme[available_mid]="#b8641e"
+theme[available_end]="#b8641e"
+theme[used_start]="#d6d3cb"
+theme[used_mid]="#b8641e"
+theme[used_end]="#c0392b"
+
+# Disk io — the burst is the one lit color, so it takes download; the olive
+# ink, the readout, takes upload.
+theme[download_start]="#d6d3cb"
+theme[download_mid]="#2a8ca6"
+theme[download_end]="#286884"
+theme[upload_start]="#d6d3cb"
+theme[upload_mid]="#3f4d2a"
+theme[upload_end]="#3f4d2a"
+
+# Process box gradient.
+theme[process_start]="#8a8a7a"
+theme[process_mid]="#b8641e"
+theme[process_end]="#c0392b"

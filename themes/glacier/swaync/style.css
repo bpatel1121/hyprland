@@ -1,0 +1,126 @@
+/* Glacier · frost — swaync (notifications + control center)
+ *
+ * Frosted dialect: translucent deep-ice cards the swaync-blur rule frosts,
+ * thin 1px ice-cyan edges at low alpha, 12px corners, and a quiet cyan glow
+ * on titles only. Same layer-shell rules as the bar: NO outer box-shadow, no
+ * `transparent` keyword (GTK composites both as black halos). Glow is
+ * text-shadow only.
+ */
+
+@define-color sky     #0b1838;
+@define-color deepIce #15295a;
+@define-color iceEdge #223b6e;
+@define-color frame   #5bd7fa;
+@define-color readout #e8f4ff;
+@define-color red     #ff6b81;
+@define-color gray    #7f8fbf;
+@define-color fg      #e6eefc;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  /* GtkListBoxRow ships default padding — the last few off-grid pixels. */
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+.notification {
+  background-color: rgba(21, 41, 90, 0.85);    /* deep ice, frosted by swaync-blur rule */
+  border: 1px solid rgba(91, 215, 250, 0.45);  /* a thin ice edge — a card, not a poster */
+  border-radius: 12px;
+  margin: 8px 14px;                            /* the same grid as gaps_out and the bar */
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @fg; font-weight: bold; }
+.notification-content .body    { color: @gray; }
+.notification-content .time    { color: @gray; font-size: 11px; }
+.notification.critical { border-color: @red; }
+/* No X, anywhere. Dismissal is click-the-notification (default action +
+ * hide-on-action in swaync/config.json) and the control center's "clear"
+ * button. An element that does not exist cannot be misaligned. */
+.close-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  box-shadow: none;
+}
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @fg;
+  border-radius: 8px;
+}
+.notification-action:hover { color: @readout; background-color: @deepIce; }
+
+/* ---- control center: a sheet of frosted ice ---- */
+.control-center {
+  background-color: rgba(11, 24, 56, 0.80);    /* sky, frosted */
+  border: 1px solid rgba(91, 215, 250, 0.60);
+  border-radius: 12px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(91, 215, 250, 0.30); }
+
+/* white type in a faint cyan bloom — the bar's clock, at card scale */
+.widget-title { color: @readout; font-weight: bold; text-shadow: 0 0 10px rgba(91, 215, 250, 0.30); }
+.widget-title > button {
+  background-color: @deepIce;
+  color: @gray;
+  border: 1px solid rgba(91, 215, 250, 0.35);
+  border-radius: 8px;
+}
+.widget-title > button:hover { color: @red; border-color: @red; }
+
+.widget-dnd { color: @fg; }
+.widget-dnd > switch {
+  background-color: @deepIce;
+  border: 1px solid @iceEdge;
+  border-radius: 8px;
+}
+.widget-dnd > switch:checked { background-color: @frame; }
+.widget-dnd > switch slider { background-color: @gray; border-radius: 7px; }
+.widget-dnd > switch:checked slider { background-color: @sky; }
+
+/* ---- now playing: a frosted pane. Keeps swaync's blurred-art backdrop
+ * (content-derived); frame, type, and controls speak the theme. ---- */
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(21, 41, 90, 0.60);
+  border: 1px solid rgba(91, 215, 250, 0.35);
+  border-radius: 10px;
+  padding: 10px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-album-art { border-radius: 8px; }
+.widget-mpris .widget-mpris-title {
+  color: @readout; font-weight: bold;
+  text-shadow: 0 0 10px rgba(91, 215, 250, 0.30);
+}
+.widget-mpris .widget-mpris-subtitle { color: @gray; }
+/* controls + carousel arrows — white at rest, ice cyan when touched */
+.widget-mpris button {
+  color: @readout;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+}
+.widget-mpris button:hover { color: @frame; text-shadow: 0 0 10px rgba(91, 215, 250, 0.45); }
+
+progressbar progress { background-color: @readout; border-radius: 4px; }
+progressbar trough   { background-color: @iceEdge; border-radius: 4px; }

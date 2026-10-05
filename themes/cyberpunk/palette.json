@@ -58,15 +58,17 @@
         "scanlines":  false
     },
 
-    "//bar": "Bar identity. Rounded neon glass: generous radius, 1px lit pink edge, a 2px lit pink hairline along the top inside edge.",
+    "//bar": "Bar identity. Rounded neon glass: generous radius, a lit pink edge, and a soft pink bloom around each island — the window shadow in theme.lua at bar scale. accentLine (the old inset top hairline) is off: at 1.5x it read as a pink bar sitting on the islands.",
     "bar": {
         "island": {
             "color":         "#06080E",
             "opacity":       0.72,
             "radius":        14,
             "borderWidth":   1,
-            "borderOpacity": 0.16,
-            "accentLine":    0.85
+            "borderOpacity": 0.26,
+            "accentLine":    0,
+            "glow":          0.30,
+            "glowRange":     18
         },
         "chip": {
             "radius":  9,

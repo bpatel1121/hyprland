@@ -51,8 +51,15 @@ polarity = "light",
 theme-apply.sh reads that and flips the whole desktop's polarity in one go:
 `prefer-light`, `adw-gtk3` instead of `-dark`, `Papirus-Light` — and because
 Firefox and most websites honor `prefers-color-scheme`, the browser follows
-without being told. (No light theme ships right now — the machinery is here
-for whenever one does.)
+without being told. [graphite](themes/graphite.md), the light monochrome
+theme, is the worked example of what else a light palette has to think about:
+a near-opaque island fill (a wallpaper frosted through a light fill goes
+muddy), `wallpaper.brightness` near 1 so the lock screen and greeter don't dim
+a light picture into slate, a frame that is *ink* rather than a hue (a 1px
+near-black rim reads as a drawn line on paper where a colored one reads as a
+sticker), and terminal-side files whose ANSI table is built for ≥ 4.5:1 on
+near-white — the state colors printed down to ink weight, because a brass
+that reads as a dot on the bar is unreadable as text on paper.
 
 ## The palette contract
 
@@ -65,27 +72,28 @@ every surface the shell in `quickshell/` draws. It is hand-written and validated
 in CI; nothing generates it.
 
 The twelve roles are not an invention — they are the `@define-color` block that
-sat at the top of every theme's old `waybar/style.css`, which both themes had
-independently converged on (those stylesheets are gone from the tree; the roles
-are what survived them):
+sat at the top of every theme's old `waybar/style.css`, which both dark themes
+had independently converged on (those stylesheets are gone from the tree; the
+roles are what survived them). Graphite, the light monochrome one, was written
+straight into the vocabulary:
 
-| role | what it is | cyberpunk | gruvbox |
-|---|---|---|---|
-| `ground` | the desktop floor | `#030408` | `#1d2021` |
-| `surface` | raised panels, popovers, inputs | `#0A0E1A` | `#282828` |
-| `hairline` | separators, unfocused borders | `#212638` | `#3c3836` |
-| `dim` | de-emphasised text and glyphs | `#4D5A80` | `#665c54` |
-| `frame` | **the identity color** | `#F230B2` | `#fe8019` |
-| `readout` | every telemetry value | `#29BECC` | `#83a598` |
-| `warn` | pending repo updates | `#F2D230` | `#fabd2f` |
-| `ok` | AUR pending, charging | `#30F291` | `#98971a` |
-| `urgent` | low battery, overdue, offline | `#F24848` | `#fb4934` |
-| `dormant` | empty workspaces, zeroed counters | `#898D99` | `#928374` |
-| `text` | default foreground | `#C8D0E0` | `#ebdbb2` |
-| `launcher` | the one hue the bar never uses | `#A130F2` | `#d3869b` |
+| role | what it is | cyberpunk | gruvbox | glacier | graphite | inkwash |
+|---|---|---|---|---|---|---|
+| `ground` | the desktop floor | `#030408` | `#1d2021` | `#0b1838` | `#e9e4e8` | `#ebe9e5` |
+| `surface` | raised panels, popovers, inputs | `#0A0E1A` | `#282828` | `#15295a` | `#f6f3f5` | `#f6f5f2` |
+| `hairline` | separators, unfocused borders | `#212638` | `#3c3836` | `#223b6e` | `#cfc8cf` | `#d6d3cb` |
+| `dim` | de-emphasised text and glyphs | `#4D5A80` | `#665c54` | `#51578c` | `#8f8181` | `#8a8a7a` |
+| `frame` | **the identity color** | `#F230B2` | `#fe8019` | `#5bd7fa` | `#2b2427` | `#c89a3e` |
+| `readout` | every telemetry value | `#29BECC` | `#83a598` | `#e8f4ff` | `#8a4f96` | `#3f4d2a` |
+| `warn` | pending repo updates | `#F2D230` | `#fabd2f` | `#e9c46a` | `#c0862a` | `#b8641e` |
+| `ok` | AUR pending, charging | `#30F291` | `#98971a` | `#7bd389` | `#4f8a5a` | `#6f9a3a` |
+| `urgent` | low battery, overdue, offline | `#F24848` | `#fb4934` | `#ff6b81` | `#c4475c` | `#c0392b` |
+| `dormant` | empty workspaces, zeroed counters | `#898D99` | `#928374` | `#7f8fbf` | `#a99fa5` | `#a3a398` |
+| `text` | default foreground | `#C8D0E0` | `#ebdbb2` | `#e6eefc` | `#1d1719` | `#1c1b14` |
+| `launcher` | the one hue the bar never uses | `#A130F2` | `#d3869b` | `#b6ecf9` | `#9c63a8` | `#2a8ca6` |
 
 Alongside them, the per-surface identity — the structural differences between
-the two themes, which used to be scattered across four stylesheets:
+the themes, which used to be scattered across four stylesheets:
 
 | block | what it holds |
 |---|---|
@@ -97,9 +105,17 @@ the two themes, which used to be scattered across four stylesheets:
 | `font` | family and two sizes |
 | `wallpaper` | `brightness`, shared by `hyprlock.conf` and the SDDM greeter so boot → login → lock read as one design |
 
-This is where "cyberpunk glows, gruvbox scans" lives: rounded glass with a pink
-hairline versus sharp 4px corners, chunky 2px frames and scanlines come from
-these numbers, read through `Theme.qml`, and from nothing in the QML itself.
+This is where "cyberpunk glows, gruvbox scans, graphite draws" lives:
+rounded glass with a pink hairline, versus sharp 4px corners, chunky 2px frames
+and scanlines, versus near-opaque paper with a 1px ink rim and neither
+effect, all come from these numbers, read through `Theme.qml`, and from nothing
+in the QML itself.
+
+[glacier](themes/glacier.md) frosts: the same numbers pushed the other way —
+islands at 0.55 and the launcher at 0.62 over the repo's heaviest blur, 1px
+ice-cyan hairlines at low alpha, a quiet cyan `glow` (the one glow theme
+besides cyberpunk) and `readoutBright` declared so the active workspace is a
+white → ice lozenge. Frost is low opacity plus blur, not a color.
 
 `schema/palette.schema.json` describes all of it; the `$schema` key at the top of
 each palette gives editors completion and inline validation.

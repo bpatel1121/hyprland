@@ -1,0 +1,52 @@
+// Inkwash · light — fastfetch
+//
+// Same frame/content split as the bar, printed: GOLD-INK keys, ink values.
+// The `colors` module at the bottom puts the actual palette on screen.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+    "logo": {
+        "source": "arch",
+        "padding": { "top": 1, "right": 3 },
+        // ANSI palette INDEXES, not literal RGB, like the other configs — so
+        // already-printed output recolors live on SUPER+T. The slots are the
+        // light scheme's: normal cyan (36) is the burst's deep water and
+        // normal yellow (33) the gold ink — see wezterm/colors.lua for how
+        // the inks were printed. Burst body, gold core: the one lit thing in
+        // the painting, rimmed in filigree.
+        "color": { "1": "36", "2": "33" }
+    },
+
+    "display": {
+        "separator": "  ",
+        "color": {
+            "keys":  "33",   // gold ink #8a6a2a — the frame, printed (the raw filigree is 2.4:1 on paper)
+            "title": "36"    // burstDeep #286884 — the values are already ink, so the title takes the one cool accent
+        }
+    },
+
+    "modules": [
+        "break",
+        { "type": "title", "keyWidth": 10 },
+        "separator",
+
+        { "type": "os",         "key": "󰣇 os     " },
+        { "type": "kernel",     "key": "󰌢 kernel " },
+        { "type": "uptime",     "key": "󰅐 uptime " },
+        { "type": "packages",   "key": "󰮯 pkgs   " },
+        { "type": "shell",      "key": "󰆍 shell  " },
+        { "type": "wm",         "key": "󰕮 wm     " },
+        { "type": "terminal",   "key": "󰆍 term   " },
+        { "type": "font",       "key": "󰛖 font   " },
+
+        "break",
+        { "type": "cpu",        "key": "󰻠 cpu    " },
+        { "type": "gpu",        "key": "󰢮 gpu    " },
+        { "type": "memory",     "key": "󰍛 memory " },
+        { "type": "disk",       "key": "󰋊 disk   " },
+
+        "break",
+        { "type": "colors", "symbol": "circle", "paddingLeft": 2 },
+        "break"
+    ]
+}

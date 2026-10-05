@@ -1,0 +1,120 @@
+{
+    "$schema": "../../schema/palette.schema.json",
+
+    "//": "Glacier · FROST. One hue, navy to ice, over a painting: a blue-haired figure",
+    "//1": "on an ice throne, ice swords, snowflakes, stars. No upstream palette — every",
+    "//2": "role is lifted from the picture, and `tokens` names each after what it is",
+    "//3": "there so the mapping stays traceable. THE source for every shell surface",
+    "//4": "(quickshell/: bar, launcher, OSD, power menu); theme.lua still owns WINDOW",
+    "//5": "chrome (gaps, border, blur, shadow) and CI cross-checks it against this.",
+    "//6": "Two-tone rule, cold edition: ICE CYAN (the swords) is the frame, WHITE (the",
+    "//7": "cap) is the readout, PALE CYAN (the near-white ice) is the launcher. Warm",
+    "//8": "never appears at rest — warn/ok/urgent are state, chosen for contrast on",
+    "//9": "`surface`, not scenery. readoutBright is declared, so the active workspace",
+    "//10": "is an emissive white -> ice lozenge (see modules/Workspaces.qml), a lit",
+    "//11": "snowflake rather than a solid block. Frost is structural, not a color: the",
+    "//12": "islands sit at 0.55 so the painting shows through Hyprland's blur, and the",
+    "//13": "only glow is a quiet cyan one.",
+
+    "name": "glacier",
+    "polarity": "dark",
+
+    "roles": {
+        "ground":   "#0b1838",
+        "surface":  "#15295a",
+        "hairline": "#223b6e",
+        "dim":      "#51578c",
+        "frame":    "#5bd7fa",
+        "readout":  "#e8f4ff",
+        "warn":     "#e9c46a",
+        "ok":       "#7bd389",
+        "urgent":   "#ff6b81",
+        "dormant":  "#7f8fbf",
+        "text":     "#e6eefc",
+        "launcher": "#b6ecf9",
+
+        "readoutBright": "#ffffff",
+        "surfaceAlt":    "#1c3570"
+    },
+
+    "//tokens": "What in the painting -> role, so a palette bump stays traceable. warn/ok/urgent have no token: they are state, not scenery.",
+    "tokens": {
+        "sky":       "ground",
+        "deepIce":   "surface",
+        "iceEdge":   "hairline",
+        "throne":    "surfaceAlt",
+        "hair":      "dim",
+        "swords":    "frame",
+        "cap":       "readout",
+        "star":      "readoutBright",
+        "hairLit":   "dormant",
+        "snow":      "text",
+        "frost":     "launcher"
+    },
+
+    "font": {
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 13,
+        "sizeAccent": 16
+    },
+
+    "//effects": "Cold glow: text glows in ice cyan, wider and quieter than cyberpunk's neon (10px, low alpha everywhere it is used). No scanlines — ice has no raster.",
+    "effects": {
+        "glow":       true,
+        "glowRadius": 10,
+        "scanlines":  false
+    },
+
+    "//bar": "Bar identity. Frosted glass: the islands are the most translucent of any theme (0.55 — the painting shows through, blurred by the layer rule), a thin 1px ice hairline at 35%, 12px corners, and a faint cyan bloom (0.22 over 20px) that reads as cold light on ice rather than neon. No accent line.",
+    "bar": {
+        "island": {
+            "color":         "#0f2556",
+            "opacity":       0.55,
+            "radius":        12,
+            "borderWidth":   1,
+            "borderOpacity": 0.35,
+            "accentLine":    0,
+            "glow":          0.22,
+            "glowRange":     20
+        },
+        "chip": {
+            "radius":  8,
+            "opacity": 0.08
+        }
+    },
+
+    "//launcher": "Launcher identity: a pale-cyan 1px frame around frosted glass (0.62), 12px window, 8px input + rows.",
+    "launcher": {
+        "opacity":       0.62,
+        "radius":        12,
+        "borderWidth":   1,
+        "inputRadius":   8,
+        "entryRadius":   8,
+        "fontSize":      15
+    },
+
+    "//osd": "OSD identity: a frosted pill — 1px ice-cyan frame, white track, 0.7 so the wallpaper still shows under the frost.",
+    "osd": {
+        "opacity":     0.7,
+        "radius":      999,
+        "borderWidth": 1,
+        "trackRadius": 4
+    },
+
+    "//session": "Power-menu identity: 12px frosted tiles with a 1px ice edge at 50%, over a 0.6 navy scrim — the lightest backdrop of the dark themes, so the throne stays visible behind the menu.",
+    "session": {
+        "windowOpacity": 0.6,
+        "tileOpacity":   0.7,
+        "radius":        12,
+        "borderWidth":   1,
+        "borderOpacity": 0.5,
+        "fontSize":      18
+    },
+
+    "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim). 0.5 with a 10px blur: the picture is already bright ice, and the lock screen is where the figure is actually seen (the desktop keeps her under the windows), so it is dimmed a touch further than the other dark themes and frosted harder.",
+    "wallpaper": {
+        "brightness": 0.5,
+        "contrast":   1.05,
+        "blurSize":   10
+    }
+}

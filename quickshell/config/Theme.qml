@@ -82,6 +82,9 @@ Singleton {
     // The 2px `frame` hairline along the inside top edge of each island — the
     // old `box-shadow: inset 0 2px 0`. 0 draws none (gruvbox).
     readonly property real islandAccentLine: root.num_or(root.islandData, "accentLine", 0)
+    // Outer bloom in `frame`: alpha and blur radius. 0 alpha draws nothing.
+    readonly property real islandGlow: root.num_or(root.islandData, "glow", 0)
+    readonly property real islandGlowRange: root.num_or(root.islandData, "glowRange", 18)
 
     readonly property real chipRadius: root.num_or(root.chipData, "radius", 8)
     readonly property real chipOpacity: root.num_or(root.chipData, "opacity", 0.08)

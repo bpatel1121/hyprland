@@ -1,0 +1,19 @@
+# lazygit — glacier. Ice-cyan frame, white readouts, navy everywhere else: the
+# active panel border is the frame color, selection is a raised surface, and
+# warm appears only as state (searching, a marked base, unstaged work).
+gui:
+  nerdFontsVersion: "3"
+  showRandomTip: false
+  theme:
+    activeBorderColor: ["#5bd7fa", "bold"]
+    inactiveBorderColor: ["#51578c"]
+    searchingActiveBorderColor: ["#e9c46a", "bold"]
+    selectedLineBgColor: ["#223b6e"]
+    optionsTextColor: ["#e8f4ff"]
+    cherryPickedCommitFgColor: ["#e8f4ff"]
+    cherryPickedCommitBgColor: ["#1c3570"]
+    # navy on the warn yellow, not white: white on #e9c46a is under 2:1
+    markedBaseCommitFgColor: ["#0b1838"]
+    markedBaseCommitBgColor: ["#e9c46a"]
+    unstagedChangesColor: ["#ff6b81"]
+    defaultFgColor: ["#e6eefc"]

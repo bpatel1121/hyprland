@@ -30,6 +30,9 @@ themes/
 │                               (gitignored: the ACTIVE theme is machine
 │                               state; theme-apply creates it if missing)
 ├── gruvbox/                    dark · pixel alley (see "The gruvbox theme")
+├── glacier/                    dark · frost, ice throne (see "The glacier theme")
+├── graphite/                   LIGHT · grey ink on paper, one violet (see "The graphite theme")
+├── inkwash/                    LIGHT · ink-wash painting, gold and cyan (see "The inkwash theme")
 └── cyberpunk/
     ├── theme.lua               borders, gaps, blur, shadow (read by hyprland.lua)
     ├── palette.json            color roles + the look of every shell surface (read by quickshell/)

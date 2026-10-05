@@ -1,0 +1,123 @@
+{
+    "$schema": "../../schema/palette.schema.json",
+
+    "//": "Graphite · the LIGHT MONOCHROME theme: grey ink on near-white paper, with ONE hue.",
+    "//1": "THE source for every shell surface (quickshell/: bar, launcher, OSD, power",
+    "//2": "menu). No upstream palette — every role is lifted from the wallpaper, an ink",
+    "//3": "sketch of a figure in tactical gear aiming a rifle: the paper, its darkened",
+    "//4": "edges, the pencil hatching, the heavy ink of the barrel, and the single",
+    "//5": "violet EYE. `tokens` names each role after what it is in the picture so the",
+    "//6": "mapping stays traceable. theme.lua still owns WINDOW chrome (gaps, border,",
+    "//7": "blur, shadow); CI cross-checks it.",
+    "//8": "One-accent rule: everything is grey ink on paper and exactly one hue exists,",
+    "//9": "the violet, which marks THE THING YOU ACT ON — readouts, the launcher,",
+    "//10": "hovered things. The frame is INK (near-black), not a color: islands, window",
+    "//11": "borders and notification rims are drawn lines. No readoutBright on purpose:",
+    "//12": "the active workspace is then solid `frame`, a black pill with the digit in",
+    "//13": "`ground`, instead of an emissive lozenge (see modules/Workspaces.qml).",
+
+    "name": "graphite",
+    "polarity": "light",
+
+    "roles": {
+        "ground":   "#e9e4e8",
+        "surface":  "#f6f3f5",
+        "hairline": "#cfc8cf",
+        "dim":      "#8f8181",
+        "frame":    "#2b2427",
+        "readout":  "#8a4f96",
+        "warn":     "#c0862a",
+        "ok":       "#4f8a5a",
+        "urgent":   "#c4475c",
+        "dormant":  "#a99fa5",
+        "text":     "#1d1719",
+        "launcher": "#9c63a8",
+
+        "surfaceAlt": "#ece7ea"
+    },
+
+    "//tokens": "What in the picture -> role, so a palette bump stays traceable. warn/ok/urgent are NOT in the picture (it has one hue); they are named for the lights the gear would carry if the sketch were colored, and appear only as state.",
+    "tokens": {
+        "paper":     "ground",
+        "sheet":     "surface",
+        "paperEdge": "hairline",
+        "pencil":    "dim",
+        "ink":       "frame",
+        "eye":       "readout",
+        "brass":     "warn",
+        "tritium":   "ok",
+        "laser":     "urgent",
+        "strap":     "dormant",
+        "visor":     "text",
+        "eyeLit":    "launcher",
+        "vest":      "surfaceAlt"
+    },
+
+    "//print": "Derived inks the terminal-side files share. The state colors are tuned as fills and glyphs on the bar, not as body text, so each has a printed form: brass ink #8f5f1a is `warn` printed (5.0:1 on sheet), tritium ink #3f7049 is `ok` printed (5.3:1), laser ink #ad3d51 is `urgent` printed (5.4:1). The violet needs no ink: `readout` already reads at 5.2:1. The hueless ANSI slots are two pencil weights between `frame` and `dim`: hard pencil #5c5054 (7.0:1) and soft pencil #74676b (4.9:1).",
+
+    "font": {
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 13,
+        "sizeAccent": 16
+    },
+
+    "//effects": "Flat sketch: no glow (ink does not emit), no scanlines (paper has no raster).",
+    "effects": {
+        "glow":       false,
+        "glowRadius": 0,
+        "scanlines":  false
+    },
+
+    "//bar": "Bar identity. Paper islands: near-opaque sheet, a 1px ink rim at 70%, 8px corners. Opaque-ish on purpose — a grey sketch frosted through a light fill just goes grey, so the fill is paper and the drawing stays outside it.",
+    "bar": {
+        "island": {
+            "color":         "#f6f3f5",
+            "opacity":       0.92,
+            "radius":        8,
+            "borderWidth":   1,
+            "borderOpacity": 0.7,
+            "accentLine":    0,
+            "glow":          0,
+            "glowRange":     18
+        },
+        "chip": {
+            "radius":  6,
+            "opacity": 0.07
+        }
+    },
+
+    "//launcher": "Launcher identity: a 1px violet rim around a paper sheet (the one surface drawn in the hue — you act on it), 10px window, 6px input + rows.",
+    "launcher": {
+        "opacity":       0.95,
+        "radius":        10,
+        "borderWidth":   1,
+        "inputRadius":   6,
+        "entryRadius":   6,
+        "fontSize":      15
+    },
+
+    "//osd": "OSD identity: a full pill with a 1px ink rim, violet track.",
+    "osd": {
+        "opacity":     0.95,
+        "radius":      999,
+        "borderWidth": 1,
+        "trackRadius": 4
+    },
+
+    "//session": "Power-menu identity: paper tiles with 10px corners and a 1px ink edge at 70%, over a light scrim.",
+    "session": {
+        "windowOpacity": 0.8,
+        "tileOpacity":   0.97,
+        "radius":        10,
+        "borderWidth":   1,
+        "borderOpacity": 0.7,
+        "fontSize":      18
+    },
+
+    "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim). 0.92, not 0.55: the picture is near-white paper, and the dark themes' dim would turn it to slate — the lock and the greeter are read with ink on paper, not cream on dusk.",
+    "wallpaper": {
+        "brightness": 0.92,
+        "contrast":   1.0,
+        "blurSize":   6
+    }
+}

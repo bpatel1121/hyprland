@@ -67,7 +67,8 @@
             "radius":        4,
             "borderWidth":   2,
             "borderOpacity": 0.55,
-            "accentLine":    0
+            "accentLine":    0,
+            "glow":          0
         },
         "chip": {
             "radius":  4,

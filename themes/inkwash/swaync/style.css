@@ -1,0 +1,127 @@
+/* Inkwash · light — swaync (notifications + control center)
+ *
+ * Ink dialect: near-opaque white-paper cards, a 1px gold filigree rim at 80%,
+ * small 6px corners, no glow, no scanlines. Same layer-shell rules as the bar:
+ * no outer box-shadow, no `transparent` keyword (GTK composites both as black
+ * halos — and a black halo around a WHITE card is the worst case of all).
+ * Palette discipline: GOLD rims, INK is the content, sigil red = urgent only;
+ * the cyan burst is the touch color, as it is on the launcher.
+ */
+
+@define-color paper   #ebe9e5;
+@define-color sheet   #f6f5f2;
+@define-color edge    #d6d3cb;
+@define-color gold    #c89a3e;
+@define-color olive   #3f4d2a;
+@define-color burst   #2a8ca6;
+@define-color red     #c0392b;
+@define-color smoke   #8a8a7a;
+@define-color faded   #a3a398;
+@define-color ink     #1c1b14;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  /* GtkListBoxRow ships default padding — the last few off-grid pixels. */
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+.notification {
+  background-color: rgba(246, 245, 242, 0.93);  /* sheet; frosted by swaync-blur rule — near-opaque, the painting through paper goes muddy */
+  border: 1px solid rgba(200, 154, 62, 0.80);   /* the gold rim — a brush edge, not a frame */
+  border-radius: 6px;
+  margin: 8px 14px;                            /* the same grid as gaps_out and the bar */
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @ink; font-weight: bold; }
+.notification-content .body    { color: @smoke; }
+.notification-content .time    { color: @smoke; font-size: 11px; }
+.notification.critical { border-color: @red; }
+/* No X, anywhere. Dismissal is click-the-notification (default action +
+ * hide-on-action in swaync/config.json) and the control center's "clear"
+ * button. An element that does not exist cannot be misaligned. */
+.close-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  box-shadow: none;
+}
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @ink;
+  border-radius: 5px;
+}
+/* Hover lifts the type to the burst over a paper-edge band: the one lit
+ * color in the painting, the same touch the launcher gets. */
+.notification-action:hover { color: @burst; background-color: @edge; }
+
+/* ---- control center: a paper sheet with a gold rim ---- */
+.control-center {
+  background-color: rgba(235, 233, 229, 0.94);  /* paper, near-opaque (see above) */
+  border: 1px solid @gold;
+  border-radius: 6px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(200, 154, 62, 0.55); }
+
+.widget-title { color: @olive; font-weight: bold; }
+.widget-title > button {
+  background-color: @sheet;
+  color: @smoke;
+  border: 1px solid rgba(200, 154, 62, 0.6);
+  border-radius: 5px;
+}
+.widget-title > button:hover { color: @red; border-color: @red; }
+
+.widget-dnd { color: @ink; }
+.widget-dnd > switch {
+  background-color: @sheet;
+  border: 1px solid @edge;
+  border-radius: 5px;
+}
+.widget-dnd > switch:checked { background-color: @gold; }
+.widget-dnd > switch slider { background-color: @faded; border-radius: 4px; }
+.widget-dnd > switch:checked slider { background-color: @olive; }  /* olive-ink knob on the gold */
+
+/* ---- now playing: a paper card over the art. Keeps swaync's blurred-art
+ * backdrop (content-derived); frame, type, and controls speak the theme. ---- */
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(246, 245, 242, 0.80);
+  border: 1px solid rgba(200, 154, 62, 0.7);
+  border-radius: 6px;
+  padding: 10px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-album-art { border-radius: 5px; }
+.widget-mpris .widget-mpris-title    { color: @olive; font-weight: bold; }
+.widget-mpris .widget-mpris-subtitle { color: @smoke; }
+/* controls + carousel arrows — olive ink at rest, the burst when touched */
+.widget-mpris button {
+  color: @olive;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+}
+.widget-mpris button:hover { color: @burst; }
+
+progressbar progress { background-color: @olive; border-radius: 3px; }
+progressbar trough   { background-color: @edge; border-radius: 3px; }

@@ -51,6 +51,21 @@ Rectangle {
         ColorAnimation { duration: 160 }
     }
 
+    // The outer bloom (components/IslandGlow.qml), only when the theme asks
+    // for one. A Loader so the Qt 6.9 type it needs can be missing without
+    // taking the island down with it.
+    Loader {
+        anchors.fill: parent
+        z: -1
+        active: Theme.islandGlow > 0
+        source: Qt.resolvedUrl("../components/IslandGlow.qml")
+        onLoaded: item.cornerRadius = Qt.binding(() => root.radius)
+        onStatusChanged: {
+            if (status === Loader.Error)
+                console.warn("Island: glow unavailable (RectangularShadow needs Qt 6.9+)");
+        }
+    }
+
     // gruvbox's CRT stripes, inside the frame (a no-op when the theme has none).
     Scanlines {
         anchors.margins: root.border.width

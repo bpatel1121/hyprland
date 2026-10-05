@@ -1,0 +1,128 @@
+/* Graphite · light — swaync (notifications + control center)
+ *
+ * Sketch dialect: near-opaque paper cards, a 1px INK edge at 70%, 8px corners,
+ * no glow, no scanlines. Same layer-shell rules as the bar: no outer
+ * box-shadow, no `transparent` keyword (GTK composites both as black halos —
+ * and a black halo around a WHITE card is the worst case of all). Palette
+ * discipline: INK frames and INK is the content, the VIOLET is the touch
+ * color — hover, actions, the DND switch when it is on — as it is on the
+ * launcher; red = urgent only.
+ */
+
+@define-color paper   #e9e4e8;
+@define-color sheet   #f6f3f5;
+@define-color edge    #cfc8cf;
+@define-color ink     #2b2427;
+@define-color eye     #8a4f96;
+@define-color eyeLit  #9c63a8;
+@define-color red     #c4475c;
+@define-color pencil  #8f8181;
+@define-color strap   #a99fa5;
+@define-color visor   #1d1719;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  /* GtkListBoxRow ships default padding — the last few off-grid pixels. */
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+.notification {
+  background-color: rgba(246, 243, 245, 0.92);  /* sheet; frosted by swaync-blur rule — near-opaque, a grey sketch through paper just goes grey */
+  border: 1px solid rgba(43, 36, 39, 0.70);     /* the ink rim — a drawn card edge, bar.island.borderOpacity */
+  border-radius: 8px;
+  margin: 8px 14px;                            /* the same grid as gaps_out and the bar */
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @visor; font-weight: bold; }
+.notification-content .body    { color: @pencil; }
+.notification-content .time    { color: @pencil; font-size: 11px; }
+.notification.critical { border-color: @red; }
+/* No X, anywhere. Dismissal is click-the-notification (default action +
+ * hide-on-action in swaync/config.json) and the control center's "clear"
+ * button. An element that does not exist cannot be misaligned. */
+.close-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  box-shadow: none;
+}
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @visor;
+  border-radius: 6px;
+}
+/* Hover is the one hue: violet type on a paper band — the action is the
+ * thing you act on, so it gets the eye. */
+.notification-action:hover { color: @eye; background-color: @paper; }
+
+/* ---- control center: a paper sheet with an ink edge ---- */
+.control-center {
+  background-color: rgba(233, 228, 232, 0.94);  /* paper, near-opaque (see above) */
+  border: 1px solid rgba(43, 36, 39, 0.70);
+  border-radius: 8px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(43, 36, 39, 0.45); }
+
+.widget-title { color: @ink; font-weight: bold; }
+.widget-title > button {
+  background-color: @sheet;
+  color: @pencil;
+  border: 1px solid rgba(43, 36, 39, 0.45);
+  border-radius: 6px;
+}
+.widget-title > button:hover { color: @red; border-color: @red; }
+
+.widget-dnd { color: @visor; }
+.widget-dnd > switch {
+  background-color: @sheet;
+  border: 1px solid @edge;
+  border-radius: 6px;
+}
+.widget-dnd > switch:checked { background-color: @eyeLit; }
+.widget-dnd > switch slider { background-color: @strap; border-radius: 5px; }
+.widget-dnd > switch:checked slider { background-color: @sheet; }  /* paper knob on the violet */
+
+/* ---- now playing: a paper card over the art. Keeps swaync's blurred-art
+ * backdrop (content-derived); frame, type, and controls speak the theme. ---- */
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(246, 243, 245, 0.78);
+  border: 1px solid rgba(43, 36, 39, 0.55);
+  border-radius: 6px;
+  padding: 10px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-album-art { border-radius: 6px; }
+.widget-mpris .widget-mpris-title    { color: @ink; font-weight: bold; }
+.widget-mpris .widget-mpris-subtitle { color: @pencil; }
+/* controls + carousel arrows — ink at rest, violet when touched */
+.widget-mpris button {
+  color: @ink;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+}
+.widget-mpris button:hover { color: @eye; }
+
+progressbar progress { background-color: @eye; border-radius: 4px; }
+progressbar trough   { background-color: @edge; border-radius: 4px; }

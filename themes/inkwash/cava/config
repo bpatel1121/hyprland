@@ -1,0 +1,40 @@
+# Inkwash · light — cava
+#
+# NOT the VU meter the dark themes draw. On paper there is no "lit" level to
+# climb to, so the wave is the painting's own pigments instead: quiet is the
+# olive ink (the readout), rising goes to the cyan burst (the launcher), the
+# peaks are the gold filigree (the frame) — the three identity colors in the
+# order the bar wears them. Gold can top a bar where it could never carry
+# text: a bar is a fill. Red stays out of it; it is a state color, and sound
+# level is not a state.
+
+[general]
+framerate = 60
+autosens = 1
+overshoot = 20
+bars = 0            # 0 = auto-fit the terminal width
+bar_width = 2
+bar_spacing = 1
+
+[input]
+method = pulse
+source = auto
+
+[output]
+method = ncurses
+channels = stereo
+mono_option = average
+
+[color]
+background = '#ebe9e5'      # ground — the paper
+gradient = 1
+gradient_count = 6
+gradient_color_1 = '#3f4d2a'    # olive ink — quiet (readout)
+gradient_color_2 = '#3f4d2a'    # olive ink
+gradient_color_3 = '#2a8ca6'    # burst     — rising (launcher)
+gradient_color_4 = '#2a8ca6'    # burst
+gradient_color_5 = '#c89a3e'    # filigree  — loud (frame)
+gradient_color_6 = '#c89a3e'    # filigree  — peak
+
+[smoothing]
+noise_reduction = 45
