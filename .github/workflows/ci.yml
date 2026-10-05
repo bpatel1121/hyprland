@@ -131,7 +131,7 @@ jobs:
         run: |
           bad=0
           for f in themes/*/theme.lua; do
-            for k in cursor border_motion polarity; do
+            for k in cursor border_motion polarity transition; do
               lua=$(THEME_FILE="$f" KEY="$k" lua5.4 -e 'local t = dofile(os.getenv("THEME_FILE"))
                        local v = t[os.getenv("KEY")]
                        io.write(v ~= nil and tostring(v) or "")')
@@ -152,9 +152,7 @@ jobs:
           python3 - <<'PY'
           import glob, os, re, sys
           bad = False
-          srcs = [p for p in (['hyprland.lua', 'waybar/config.jsonc']
-                              + glob.glob('themes/*/waybar/config.jsonc')
-                              + glob.glob('scripts/*.sh')) if os.path.isfile(p)]
+          srcs = [p for p in (['hyprland.lua'] + glob.glob('scripts/*.sh')) if os.path.isfile(p)]
           pats = [re.compile(r'/\.config/hypr/scripts/([A-Za-z0-9._-]+\.sh)'),
                   re.compile(r'\$(?:HYPR|REPO|\{HYPR\})/scripts/([A-Za-z0-9._-]+\.sh)'),
                   re.compile(r'BASH_SOURCE\[0\]\}"\)/([A-Za-z0-9._-]+\.sh)'),
@@ -175,8 +173,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import glob, json, json5, tomllib
-          for f in (['waybar/config.jsonc'] + glob.glob('themes/*/waybar/config.jsonc')
-                    + glob.glob('themes/*/fastfetch/config.jsonc')):
+          for f in glob.glob('themes/*/fastfetch/config.jsonc'):
               json5.load(open(f)); print('OK', f)
           for f in glob.glob('swaync/config.json'):
               json.load(open(f)); print('OK', f)
@@ -184,35 +181,12 @@ jobs:
               tomllib.load(open(f, 'rb')); print('OK', f)
           PY
 
-      # wlogout's layout is a STREAM of objects, not a JSON array — parse it
-      # one object at a time or it fails for the wrong reason.
-      - name: wlogout layout is well-formed
-        run: |
-          python3 - <<'PY'
-          import glob, json, sys
-          bad = False
-          for f in ['wlogout/layout'] + glob.glob('themes/*/wlogout/layout'):
-              try:
-                  dec, text, i, n = json.JSONDecoder(), open(f).read(), 0, 0
-                  while (i := text.find('{', i)) != -1:
-                      obj, i = dec.raw_decode(text, i)
-                      for k in ('label', 'action', 'text', 'keybind'):
-                          assert k in obj, f'button missing "{k}": {obj}'
-                      n += 1
-                  print(f'OK {f} ({n} buttons)')
-              except Exception as e:
-                  print(f'FAIL {f}: {e}'); bad = True
-          sys.exit(1 if bad else 0)
-          PY
-
-      - name: CSS parse (waybar / wofi / wlogout / gtk / swaync / swayosd)
+      - name: CSS parse (gtk / swaync)
         run: |
           python3 - <<'PY'
           import glob, tinycss2
           files = []
-          for pat in ['themes/*/waybar/style.css','themes/*/wofi/style.css',
-                      'themes/*/wlogout/style.css','themes/*/gtk/gtk.css',
-                      'themes/*/swaync/style.css','themes/*/swayosd/style.css']:
+          for pat in ['themes/*/gtk/gtk.css', 'themes/*/swaync/style.css']:
               files += glob.glob(pat)
           bad = False
           for f in files:
@@ -229,7 +203,7 @@ jobs:
           bad = False
           def code(f):  # css with comments stripped
               return re.sub(r'/\*.*?\*/', '', open(f).read(), flags=re.S)
-          for f in glob.glob('themes/*/waybar/style.css') + glob.glob('themes/*/wlogout/style.css'):
+          for f in glob.glob('themes/*/swaync/style.css'):
               for m in re.finditer(r'box-shadow\s*:\s*([^;}]*)', code(f)):
                   v = m.group(1).strip()
                   if v != 'none' and not v.startswith('inset'):
@@ -248,7 +222,7 @@ jobs:
       #
       # `# optional-override` marks the deliberate case: a path expected to be
       # absent, because the shared default at the repo root is the norm and the
-      # per-theme copy is opt-in (wlogout/layout is the current example).
+      # per-theme copy is opt-in (no theme ships one today).
       - name: theme-apply.sh references no dead theme paths
         run: |
           grep -o '\$CUR/[A-Za-z0-9_./-]*' \
@@ -264,9 +238,11 @@ jobs:
             done
 
       # ---- QML shell (quickshell/) --------------------------------------------
-      # Everything below guards the QML scaffold and the palette contract it
-      # depends on. None of it can affect a running desktop; it exists so the
-      # additions are held to the same standard as the rest of the tree.
+      # The shell IS the desktop's bar, launcher, OSD and power menu now, and
+      # nothing here can run it — so what follows holds its two contracts
+      # (palette.json, settings.json) and its QML to the same standard as the
+      # rest of the tree, which is the only thing standing between a typo and a
+      # login with no bar.
 
       - name: Palette schema + every role present
         run: |
@@ -363,38 +339,8 @@ jobs:
           sys.exit(1 if bad else 0)
           PY
 
-      # The QML bar and waybar read SEPARATE config files and will until the
-      # switch (see docs/qml-migration.md). That duplication is deliberate, but
-      # it must not drift: a tuned interval in one and not the other is exactly
-      # the kind of difference nobody notices until the bars disagree.
-      - name: QML settings match waybar's intervals and thresholds
-        run: |
-          python3 - <<'PY'
-          import json, json5, sys
-          wb = json5.load(open('waybar/config.jsonc'))
-          qs = json.load(open('quickshell/settings.json'))['modules']
-          checks = [
-              ('updates',     'intervalSec', wb['custom/updates']['interval']),
-              ('aur',         'intervalSec', wb['custom/aur']['interval']),
-              ('agenda',      'intervalSec', wb['custom/agenda']['interval']),
-              ('todos',       'intervalSec', wb['custom/todos']['interval']),
-              ('temperature', 'criticalC',   wb['temperature']['critical-threshold']),
-              ('battery',     'warnPercent', wb['battery']['states']['warning']),
-              ('battery',     'criticalPercent', wb['battery']['states']['critical']),
-              ('tray',        'spacing',     wb['tray']['spacing']),
-          ]
-          bad = False
-          for mod, key, want in checks:
-              got = qs.get(mod, {}).get(key)
-              if got == want:
-                  print(f'OK    {mod}.{key} = {got}')
-              else:
-                  print(f'FAIL  {mod}.{key} is {got} but waybar says {want}'); bad = True
-          sys.exit(1 if bad else 0)
-          PY
-
       # Every script the QML shell shells out to must exist — the same rot the
-      # "Every referenced script exists" step above catches for waybar.
+      # "Every referenced script exists" step above catches for hyprland.lua.
       - name: QML shell references no missing scripts
         run: |
           bad=0
@@ -418,22 +364,39 @@ jobs:
           "$QMLLINT" --uncreatable-type disable --unresolved-type disable \
             -I quickshell \
             quickshell/shell.qml quickshell/config/*.qml quickshell/bar/*.qml \
-            quickshell/components/*.qml quickshell/modules/*.qml
+            quickshell/components/*.qml quickshell/modules/*.qml \
+            quickshell/launcher/*.qml quickshell/osd/*.qml quickshell/session/*.qml quickshell/fx/*.qml
           # The greeters' globals (config, sddm, userModel, sessionModel) are
           # injected by SDDM at runtime and cannot be resolved statically.
           "$QMLLINT" --unqualified disable themes/*/sddm/Main.qml
 
-      # The scaffold must stay a scaffold: nothing may start it. If this fails,
-      # the QML shell has become load-bearing and the "no effect on the running
-      # desktop" promise no longer holds.
-      - name: QML shell is not autostarted
+      # The shell is load-bearing now: hyprland.lua must start it, every bind
+      # that used to launch wofi/wlogout/swayosd must talk to it, and the IPC
+      # targets those binds name must exist in the QML. A rename on either side
+      # is otherwise "SUPER+R does nothing" after the next login.
+      - name: QML shell is autostarted and every IPC target it is asked for exists
         run: |
           bad=0
-          for f in hyprland.lua scripts/theme-apply.sh scripts/theme-switch.sh; do
-            if grep -nE '(^|[^[:alnum:]_])(qs|quickshell)([^[:alnum:]_]|$)' "$f"; then
-              echo "FAIL $f references the QML shell — it is meant to be launched by hand only"
-              bad=1
+          grep -q 'exec_cmd("qs -p " .. shell .. " -d -n")' hyprland.lua \
+            || { echo "FAIL hyprland.lua no longer autostarts the shell"; bad=1; }
+          for t in launcher session osd theme fx; do
+            grep -rqE "target: *\"$t\"" quickshell/ \
+              || { echo "FAIL quickshell/ has no IpcHandler target \"$t\""; bad=1; }
+          done
+          # every qs("target", "fn") / osd("fn", ...) in hyprland.lua names a declared function
+          for call in $(grep -oE 'qs\("[a-z]+", "[A-Za-z]+"\)' hyprland.lua | sed -E 's/qs\("([a-z]+)", "([A-Za-z]+)"\)/\1:\2/'); do
+            t=${call%%:*}; fn=${call##*:}
+            grep -rqE "function $fn\(" quickshell/ \
+              || { echo "FAIL hyprland.lua calls $t.$fn but no QML declares function $fn()"; bad=1; }
+          done
+          for fn in $(grep -oE 'osd\("[A-Za-z]+"' hyprland.lua | sed -E 's/osd\("([A-Za-z]+)"/\1/'); do
+            grep -rqE "function $fn\(" quickshell/osd/ \
+              || { echo "FAIL hyprland.lua calls osd.$fn but quickshell/osd/ declares no function $fn()"; bad=1; }
+          done
+          for dead in waybar wofi wlogout swayosd; do
+            if grep -nE "(^|[^[:alnum:]_-])$dead([^[:alnum:]_-]|$)" hyprland.lua scripts/theme-apply.sh scripts/theme-switch.sh | grep -v '^\S*:[0-9]*:\s*#' | grep -v '^\S*:[0-9]*:\s*--'; then
+              echo "FAIL a live line still references $dead"; bad=1
             fi
           done
-          [ $bad -eq 0 ] && echo "OK: nothing autostarts quickshell/"
+          [ $bad -eq 0 ] && echo "OK: shell autostarted, IPC surface matches the binds"
           exit $bad
