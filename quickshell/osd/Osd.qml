@@ -299,7 +299,7 @@ Scope {
                 + Math.max(icon.implicitHeight, label.implicitHeight, root.trackHeight)
 
             // 999 in the CSS means "fully round"; Qt wants it no larger than
-            // half the shorter side, and Scanlines clips to the same value.
+            // half the shorter side, and Texture clips to the same value.
             radius: Math.min(Theme.osdRadius, pill.height / 2)
             color: Theme.withAlpha(Theme.surface, Theme.osdOpacity)
             border.width: Theme.osdBorderWidth
@@ -314,7 +314,7 @@ Scope {
             // so they ride the fill and not the frame — a CSS background-image
             // paints the padding box, inside the border, whose inner corner
             // radius is the outer one less the border width.
-            Scanlines {
+            Texture {
                 anchors.margins: pill.border.width
                 radius: Math.max(0, pill.radius - pill.border.width)
             }

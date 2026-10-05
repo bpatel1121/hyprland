@@ -15,6 +15,13 @@ return {
     -- Full matte: a plain dark shadow for depth, no color cast. Gruvbox is
     -- pigment, not light — windows sit ON the alley, they don't glow over it.
     shadow = { enabled = true, range = 12, render_power = 3, color = 0x59000000 },
+    -- The wallpaper sweep on switch (swww): lamplight growing out of the top
+    -- corner, slow, the way a lantern comes up. Flags after the type pass through.
+    transition = "grow --transition-pos top-right --transition-duration 1.6",
+    -- Tab-group titles (SUPER+G): `text` on the active tab, `dormant` on the rest;
+    -- the strip itself wears active_border / inactive_border (hyprland.lua).
+    tab_text = "rgba(ebdbb2ff)",
+    tab_text_inactive = "rgba(928374ff)",
     cursor = "Bibata-Modern-Amber",                  -- warm amber pointer
     -- Border motion, but at a crawl: lantern-light drift, not neon spin.
     dim_strength = 0.10,                             -- unfocused windows step back

@@ -1,0 +1,96 @@
+# Harbor · dusk over water — starship
+#
+# theme-apply.sh symlinks this to ~/.config/starship.toml.
+#
+# Same minimal one-line layout as cyberpunk, palette re-cast:
+#   path    cream    #efe6d3   where you are
+#   branch  amber    #e0ab5a   what you're on (the frame color)
+#   arrow   lit amber #f6c870  where you type  (red when the last cmd failed)
+#   dirty ● pavement #f27c35   uncommitted work exists
+#   venv 󰌠  lit amber #f6c870  a virtualenv is active (glyph only, no name)
+#
+# Branch and arrow are one hue at two weights, as the bar's frame and readout
+# are. No cyan: the smoke is the launcher's, and the prompt is not a launcher.
+#
+# Glyph choices (󰘬 ● ❯ ❮ ↑ ↓ ×) are the JetBrainsMono-Nerd-Font-verified set
+# from the cyberpunk config — see its comments before "fixing" any of them.
+
+# The literal space before $character is load-bearing (see cyberpunk config).
+format = "$conda${custom.venv}$directory$git_branch${custom.git_dirty} $character"
+add_newline = true
+
+[directory]
+style = "fg:#efe6d3 bold"
+format = "[$path]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = true
+read_only = " ro"
+read_only_style = "fg:#eb4030"
+
+[git_branch]
+symbol = "󰘬 "
+style = "fg:#e0ab5a"
+format = "  [$symbol$branch]($style)"
+
+# Off in favour of the single dirty dot below (same reasoning as cyberpunk).
+[git_status]
+disabled = true
+
+# One orange dot when the working tree has anything uncommitted, nothing when
+# clean — the lamplit pavement, a lit stretch of ground: something pending,
+# and only as state. Do NOT add a `shell = [...]` key and keep the `when`
+# condition — see the cyberpunk config for why both matter.
+[custom.git_dirty]
+description = "one dot when there are uncommitted changes"
+when = 'test -n "$(git status --porcelain 2>/dev/null)"'
+command = "printf ●"
+style = "fg:#f27c35"
+format = " [$output]($style)"
+
+# Leading chip when a virtualenv is active, nothing when one isn't. Ahead of
+# $directory so a glance down the left edge says which shells are in an env,
+# without costing the path a character. Symbol only, no venv name. Takes the
+# readout color (the arrow's), not the frame color — "an env is live" is state
+# being reported, and the mid amber stays the branch's. See the cyberpunk
+# config for the full reasoning and the note on why there is no `shell` key.
+#
+# 󰌠 is nf-md-language_python (U+F0320) — same Material Design block as 󰘬.
+[custom.venv]
+description = "one glyph when a python virtualenv is active"
+when = 'test -n "$VIRTUAL_ENV"'
+command = "printf 󰌠"
+style = "fg:#f6c870"
+format = "[$output]($style) "
+
+# Lit amber on success — the readout color everywhere in this theme, and far
+# enough from red that failure reads at a glance. Not the mid amber: that is
+# the branch's, and the arrow is a readout, not a frame.
+[character]
+success_symbol = "[❯](fg:#f6c870)"
+error_symbol = "[❯](fg:#eb4030)"
+vimcmd_symbol = "[❮](fg:#62939f)"
+
+# Everything else off — this is the "minimal" part.
+[cmd_duration]
+disabled = true
+[package]
+disabled = true
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[docker_context]
+disabled = true
+
+# The same glyph the other themes use (U+E715), written as an escape so the
+# file carries no raw private-use character.
+[conda]
+symbol = "\ue715"
+ignore_base = false
+style = "fg:#7dd3a6"
+format = "[$symbol]($style) "

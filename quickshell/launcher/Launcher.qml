@@ -459,7 +459,7 @@ Scope {
 
             // Inset by the frame so the stripes ride the fill, not the border —
             // GTK painted background-image under the border, never over it.
-            Scanlines {
+            Texture {
                 anchors.margins: body.border.width
                 radius: body.innerRadius
             }

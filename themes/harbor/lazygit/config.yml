@@ -1,0 +1,20 @@
+# lazygit — harbor. Amber frame, lit-amber readouts, teal-black everywhere
+# else: the active panel border is the frame color, selection is a raised
+# surface, and orange and red appear only as state (searching, a marked base,
+# unstaged work).
+gui:
+  nerdFontsVersion: "3"
+  showRandomTip: false
+  theme:
+    activeBorderColor: ["#e0ab5a", "bold"]
+    inactiveBorderColor: ["#4f7a84"]
+    searchingActiveBorderColor: ["#f27c35", "bold"]
+    selectedLineBgColor: ["#243a44"]
+    optionsTextColor: ["#f6c870"]
+    cherryPickedCommitFgColor: ["#f6c870"]
+    cherryPickedCommitBgColor: ["#1f3540"]
+    # dusk on the pavement orange (6.5:1), not cream: cream on #f27c35 is 2.2:1
+    markedBaseCommitFgColor: ["#0e1a20"]
+    markedBaseCommitBgColor: ["#f27c35"]
+    unstagedChangesColor: ["#eb4030"]
+    defaultFgColor: ["#efe6d3"]

@@ -10,3 +10,8 @@
 # dirtied the tree on every SUPER+T and would let a pull overwrite another
 # machine's choice. theme-apply.sh creates it (default: cyberpunk) if absent.
 /themes/current
+
+# Rendered by scripts/theme-apply.sh from themes/current/wezterm/colors.lua so
+# WezTerm sees a real content change on every switch (a repointed symlink is
+# not one). The per-theme files are tracked; this copy is not.
+/wezterm-colors.lua

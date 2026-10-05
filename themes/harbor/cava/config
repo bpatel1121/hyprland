@@ -1,0 +1,40 @@
+# Harbor · dusk over water — cava
+#
+# A VU meter again, climbing quiet -> rising -> loud the way cyberpunk's and
+# gruvbox's do, because color means state: quiet is the readout (the hoodie,
+# lit amber), rising goes the lamplit pavement's orange (warn), loud hits the
+# hair's red (urgent). Amber rising to lamplight to red — the picture's own
+# warm run, low to high. It no longer ends in the frame: with the readout
+# amber too, a climb to the frame would be one flat hue, and a peak is the
+# one place a desktop's red reads as level rather than alarm.
+
+[general]
+framerate = 60
+autosens = 1
+overshoot = 20
+bars = 0            # 0 = auto-fit the terminal width
+bar_width = 2
+bar_spacing = 1
+
+[input]
+method = pulse
+source = auto
+
+[output]
+method = ncurses
+channels = stereo
+mono_option = average
+
+[color]
+background = '#0e1a20'      # dusk (ground)
+gradient = 1
+gradient_count = 6
+gradient_color_1 = '#f6c870'    # readout — quiet (the hoodie, lit)
+gradient_color_2 = '#f6c870'    # readout
+gradient_color_3 = '#f27c35'    # warn    — rising (the lamplit pavement)
+gradient_color_4 = '#f27c35'    # warn
+gradient_color_5 = '#eb4030'    # urgent  — loud (the hair's red)
+gradient_color_6 = '#eb4030'    # urgent
+
+[smoothing]
+noise_reduction = 45

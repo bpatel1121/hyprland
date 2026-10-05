@@ -60,5 +60,5 @@
 
 /* Rounded corners on GTK popovers/menus, to sit with Hyprland's rounding = 12. */
 popover, menu, .context-menu {
-    border-radius: 10px;
+    border-radius: 12px;
 }

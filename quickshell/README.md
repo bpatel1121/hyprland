@@ -31,7 +31,7 @@ inode `current` resolved to, not the symlink), so `theme-apply.sh` ends with
 `qs ipc … call theme reload`.
 
 ```
-shell.qml               ShellRoot; one Bar per screen via Variants, then Launcher, Osd, SessionMenu; the `theme` IPC target
+shell.qml               ShellRoot; one Bar per screen via Variants, then Launcher, Osd, SessionMenu, Flash; the `theme` IPC target
 config/
   Paths.qml             repo root + scripts dir, derived from Quickshell.shellDir
   Theme.qml             themes/current/palette.json -> color roles, effects, per-surface geometry
@@ -47,11 +47,13 @@ osd/
   Osd.qml               the volume/brightness pill, on the focused monitor
 session/
   SessionMenu.qml       the power menu: one dimmed surface per monitor, tiles on the focused one
+fx/
+  Flash.qml             the screenshot flash: one full-screen sheet per monitor, snaps to 0.55 and fades in 180ms
 components/
   Chip.qml              the one repeated shape: glyph + label + state color + hover + tooltip
   ScriptChip.qml        runs a waybar-*.sh emitter, parses its JSON line
   GlowText.qml          Text with the theme's text-shadow glow; a plain Text when Theme.glow is off
-  Scanlines.qml         gruvbox's CRT stripes, clipped to a rounded rect; paints nothing when off
+  Texture.qml           the theme's panel texture (scanlines, hatch, grain, sheen, horizon), clipped to a rounded rect; paints nothing when off
 modules/                one file per bar module, named after its settings key
 ```
 
@@ -65,6 +67,7 @@ qs ipc -p ~/.config/hypr/quickshell call <target> <function> [args]
 |---|---|---|
 | `launcher` | `toggle`, `open`, `close`, `themes` | `SUPER+R` (`toggle`), `SUPER+T` (`themes`), the Arch chip |
 | `session` | `toggle`, `open`, `close` | `SUPER+ESCAPE`, the power chip |
+| `fx` | `flash` | the screenshot binds, right after grim has read the pixels |
 | `osd` | `volumeRaise`, `volumeLower`, `volumeMute`, `brightnessRaise`, `brightnessLower`, `display <volume\|brightness>` | `SUPER+F1..F3`, `SUPER+F5/F6` |
 | `theme` | `reload` | `scripts/theme-apply.sh`, last line |
 
@@ -132,7 +135,7 @@ directory and names its one type.)
 ```
 qmllint -I /usr/lib/qt6/qml -I quickshell \
   --uncreatable-type disable --unresolved-type disable \
-  quickshell/shell.qml quickshell/{config,bar,components,modules,launcher,osd,session}/*.qml
+  quickshell/shell.qml quickshell/{config,bar,components,modules,launcher,osd,session,fx}/*.qml
 ```
 
 Those two categories are off because qmllint cannot see through Quickshell's

@@ -23,10 +23,11 @@ near-white. What changes is the identity: where cyberpunk is rounded neon
 glass and gruvbox a CRT, inkwash is a **sketchbook page** — opaque-ish white
 paper islands (`bar.island.opacity` 0.88, the fill is `surface` rather than
 `ground`, because the painting frosted through a light fill goes muddy),
-small 6px corners (5 on the chips and the launcher's rows, 8 on the launcher
-window and the power tiles), 1px rims everywhere like brush edges, no glow
-and no scanlines (`effects` both off: ink doesn't emit and paper has no
-raster), and the active workspace drawn as an **olive-ink lozenge** with a
+small 6px corners everywhere a panel has one (5 on the chips and the
+launcher's rows), 1px rims everywhere like brush edges, no glow
+(ink doesn't emit) but **paper grain** on every panel fill (`effects.texture`
+`grain`: a seeded speckle of `text` ink at 10%, drawn by `Texture.qml` —
+the tooth of the sheet, and seeded so a repaint never crawls), and the active workspace drawn as an **olive-ink lozenge** with a
 paper digit and an ink rim: `readoutBright` (a lifted olive) *is* declared,
 unlike graphite, because the alternative — the solid-`frame` block
 `Workspaces.qml` draws when it is absent — would put a paper digit on gold at

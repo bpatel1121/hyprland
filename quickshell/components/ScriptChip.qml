@@ -63,19 +63,36 @@ Chip {
     // Re-run the emitter now, ahead of its interval. This is the replacement
     // for waybar's `signal` mechanism (`pkill -RTMIN+8 waybar` after a pacman
     // run): Updates.qml and Aur.qml call it when their upgrade terminal exits.
-    // A no-op for a streaming chip, whose process is already running.
+    // On a streaming chip whose process is still up it queues one restart for
+    // when that process exits.
     function refresh() {
         if (!root.runnable)
             return;
         proc.running = true;
     }
 
+    // Streaming chips are started once here and brought back by the restart
+    // Timer below if their emitter dies. Not a `running:` binding on purpose:
+    // Quickshell's Process consumes the requested state when it starts, so a
+    // binding that stays `true` never restarts a process that exited on its
+    // own — which is how the soundwave went missing for a whole session when
+    // cava came up at login before PipeWire had a sink to listen to.
+    Component.onCompleted: {
+        if (root.streaming)
+            root.refresh();
+    }
+
     Process {
         id: proc
         command: root.resolvedCommand
-        // Streaming chips run for the life of the shell; polled ones are
-        // restarted by the Timer below.
-        running: root.streaming && root.runnable
+
+        onExited: function (exitCode, exitStatus) {
+            if (!root.streaming)
+                return;
+            console.warn("ScriptChip(" + root.describe() + "): stream ended (exit code "
+                         + exitCode + "), restarting in " + restart.interval / 1000 + "s");
+            restart.start();
+        }
 
         stdout: SplitParser {
             splitMarker: "\n"
@@ -122,6 +139,16 @@ Chip {
         interval: root.intervalSec * 1000
         repeat: true
         triggeredOnStart: true
+        onTriggered: root.refresh()
+    }
+
+    // Streaming chips only: a dead emitter comes back after a pause. 5s is long
+    // enough that a script failing instantly (binary missing, audio server not
+    // up yet) cannot spin, and short enough that the wave appears within a few
+    // seconds of sound becoming available.
+    Timer {
+        id: restart
+        interval: 5000
         onTriggered: root.refresh()
     }
 }

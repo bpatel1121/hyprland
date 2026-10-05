@@ -52,11 +52,11 @@
         "sizeAccent": 16
     },
 
-    "//effects": "Matte CRT: no glow anywhere (the red alert pulse is the one exception, and it is hardcoded), scanlines ride every panel.",
+    "//effects": "Matte CRT: no glow anywhere (the red alert pulse is the one exception, and it is hardcoded); scanlines ride every panel.",
     "effects": {
         "glow":       false,
         "glowRadius": 0,
-        "scanlines":  true
+        "texture":    "scanlines"
     },
 
     "//bar": "Bar identity. CRT terminal: near-sharp 4px corners, chunky 2px frame, no accent hairline.",

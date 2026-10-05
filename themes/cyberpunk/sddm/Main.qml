@@ -103,10 +103,10 @@ Rectangle {
             }
         }
 
-        // password — 320x52, radius 12, 2px pink border: hyprlock's numbers
+        // password — 320x52, radius 14, 2px pink border: hyprlock's numbers
         Rectangle {
             id: passBox
-            width: 320; height: 52; radius: 12
+            width: 320; height: 52; radius: 14
             color: root.cInner
             border.width: 2
             border.color: failText.visible ? root.cRed : root.cPink

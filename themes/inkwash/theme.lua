@@ -17,6 +17,13 @@ return {
     -- over light paper need less shadow than dark ones, not more — 0x33 is a
     -- paper edge, where gruvbox's 0x59 is a lamp.
     shadow = { enabled = true, range = 12, render_power = 3, color = 0x33000000 },
+    -- The wallpaper sweep on switch (swww): a short dissolve, a sheet laid
+    -- over the last one. `simple` is step-based; no duration applies.
+    transition = "simple --transition-step 12",
+    -- Tab-group titles (SUPER+G): `text` on the active tab, `dormant` on the rest;
+    -- the strip itself wears active_border / inactive_border (hyprland.lua).
+    tab_text = "rgba(1c1b14ff)",
+    tab_text_inactive = "rgba(7d7d74ff)",
     cursor = "Bibata-Modern-Classic",                -- dark pointer for a light desktop (AUR: bibata-cursor-theme-bin)
     polarity = "light",                              -- theme-apply.sh flips GTK/icons/prefers-color-scheme on this
     dim_strength = 0.08,                             -- unfocused windows step back, lightly — dimming paper goes grey fast

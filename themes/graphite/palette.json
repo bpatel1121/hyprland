@@ -62,11 +62,11 @@
         "sizeAccent": 16
     },
 
-    "//effects": "Flat sketch: no glow (ink does not emit), no scanlines (paper has no raster).",
+    "//effects": "Flat sketch: no glow (ink does not emit); pencil hatching rides every panel — 45° ink lines, one every 5px, faint enough to read as the tooth of the paper rather than a pattern.",
     "effects": {
         "glow":       false,
         "glowRadius": 0,
-        "scanlines":  false
+        "texture":    "hatch"
     },
 
     "//bar": "Bar identity. Paper islands: near-opaque sheet, a 1px ink rim at 70%, 8px corners. Opaque-ish on purpose — a grey sketch frosted through a light fill just goes grey, so the fill is paper and the drawing stays outside it.",
@@ -87,10 +87,10 @@
         }
     },
 
-    "//launcher": "Launcher identity: a 1px violet rim around a paper sheet (the one surface drawn in the hue — you act on it), 10px window, 6px input + rows.",
+    "//launcher": "Launcher identity: a 1px violet rim around a paper sheet (the one surface drawn in the hue — you act on it), 8px window (the one corner), 6px input + rows.",
     "launcher": {
         "opacity":       0.95,
-        "radius":        10,
+        "radius":        8,
         "borderWidth":   1,
         "inputRadius":   6,
         "entryRadius":   6,
@@ -105,11 +105,11 @@
         "trackRadius": 4
     },
 
-    "//session": "Power-menu identity: paper tiles with 10px corners and a 1px ink edge at 70%, over a light scrim.",
+    "//session": "Power-menu identity: paper tiles with 8px corners (the one corner) and a 1px ink edge at 70%, over a light scrim.",
     "session": {
         "windowOpacity": 0.8,
         "tileOpacity":   0.97,
-        "radius":        10,
+        "radius":        8,
         "borderWidth":   1,
         "borderOpacity": 0.7,
         "fontSize":      18

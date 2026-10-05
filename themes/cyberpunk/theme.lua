@@ -7,7 +7,7 @@ return {
     gaps_in = 5, gaps_out = 14, border_size = 2,
     active_border  = { colors = { "rgba(f2d230ff)", "rgba(f230b2ff)" }, angle = 45 },
     inactive_border = "rgba(212638ff)",              -- me1
-    rounding = 12, rounding_power = 2,
+    rounding = 14, rounding_power = 2,   -- the islands' radius: one corner for the whole desktop
     active_opacity = 1.0, inactive_opacity = 0.92,
     blur   = { enabled = true, size = 8, passes = 3, vibrancy = 0.20 },
     -- Glow is pi0 pink. Amber leads the window border gradient (amber -> pink);
@@ -16,6 +16,13 @@ return {
     -- gradient that read as cotton candy. Pink is much less searing than amber
     -- at the same alpha, so it can carry a wide, generous range.
     shadow = { enabled = true, range = 22, render_power = 3, color = 0xc4f230b2 }, -- pi0 glow
+    -- The wallpaper sweep on switch (swww): a wipe along the border angle, a
+    -- neon sign being switched on. Everything after the type is passed through.
+    transition = "wipe --transition-angle 45 --transition-duration 1.2",
+    -- Tab-group titles (SUPER+G): `text` on the active tab, `dormant` on the rest;
+    -- the strip itself wears active_border / inactive_border (hyprland.lua).
+    tab_text = "rgba(c8d0e0ff)",
+    tab_text_inactive = "rgba(898d99ff)",
     cursor = "Bibata-Modern-Ice",                    -- cold white-blue pointer
     -- Stage-1 ricing: the amber->pink border sweeps like a cycling neon sign.
     dim_strength = 0.15,                             -- unfocused windows step back

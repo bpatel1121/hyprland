@@ -11,8 +11,8 @@ identity: where cyberpunk is rounded neon glass, gruvbox is a **CRT
 terminal** — near-sharp 4px corners everywhere (the bar's islands and chips,
 the launcher, the OSD, the power tiles, tooltips, the lock input), chunky 2px
 orange frames like TUI boxes, faint **scanlines** riding every panel fill
-(`Scanlines.qml`, a canvas clipped inside the frame, exactly where the old
-repeating background-image sat), and the active workspace drawn as a solid
+(`effects.texture` `scanlines`, drawn by `Texture.qml`: a canvas clipped
+inside the frame, exactly where the old repeating background-image sat), and the active workspace drawn as a solid
 orange **block cursor**. No glow anywhere; the red alert pulse is the only
 one, and it is the one glow both themes draw. Cyberpunk glows; gruvbox scans —
 and all of it is a few radii, frame widths and two booleans in `palette.json` (`effects`,

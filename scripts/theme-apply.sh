@@ -12,6 +12,34 @@ set -uo pipefail
 # have it. Create it on first run so the repo works out of the box.
 [ -e "$CUR" ] || ln -sfn cyberpunk "$CUR"
 
+# --- First: the two surfaces that recolor instantly -----------------------------
+# The shell and open terminals both re-read their colors in well under a second,
+# so they go before anything that can block (the wallpaper daemon handshake and
+# the transition below). Nothing after this point depends on either of them.
+
+# --- WezTerm (recolor open terminals) ---
+# WezTerm reloads when a WATCHED file's contents change. Its config dofile()s
+# the theme colors and watches that path — but a watch resolves the `current`
+# symlink once, to the file it pointed at then, and repointing the symlink
+# changes nothing about that file. A touch on wezterm.lua was the old nudge and
+# did not reliably fire either. So the colors are RENDERED to a stable path
+# whose contents really do change on every switch (same idea as hyprlock.conf);
+# wezterm.lua reads and watches $HYPR/wezterm-colors.lua. Gitignored.
+if [ -f "$CUR/wezterm/colors.lua" ]; then
+    cp -f "$CUR/wezterm/colors.lua" "$HYPR/wezterm-colors.lua"
+fi
+
+# --- The shell (quickshell/) --------------------------------------------------
+# Nothing to restart. The shell reads themes/current/palette.json and
+# quickshell/settings.json itself, but its file watchers follow the file the
+# symlink RESOLVED to when it started, so repointing `current` is invisible
+# to them until asked. One IPC call re-reads both; every surface rebinds live.
+# Guarded: this script also runs at login, when the shell may not be up yet —
+# it reads the right theme on its own first start anyway.
+if command -v qs >/dev/null 2>&1; then
+    qs ipc -p "$HYPR/quickshell" call theme reload >/dev/null 2>&1 || true
+fi
+
 # --- Polarity (dark|light) ---------------------------------------------------
 # Themes may declare `polarity = "light"` in theme.lua; anything else (or
 # nothing) means dark. See theme_key() for why this is sed and not Lua.
@@ -90,11 +118,15 @@ if [ -n "${wall:-}" ]; then
         # Start the daemon if it isn't up, then wait for it to answer.
         "$SWWW" query >/dev/null 2>&1 || { "${SWWW}-daemon" >/dev/null 2>&1 & disown; }
         for _ in 1 2 3 4 5 6; do "$SWWW" query >/dev/null 2>&1 && break; sleep 0.3; done
-        # `wave` sweeps the new wallpaper in behind a moving wavy edge — the
-        # most cinematic transition swww has. Angle keeps it off-axis.
+        # The sweep is the theme's own: theme.lua `transition` holds the swww
+        # type and every flag after it in one string ("wipe --transition-angle
+        # 45 --transition-duration 1.2"), word-split on purpose, so a theme can
+        # pick wave or wipe or a plain dissolve and tune it without this script
+        # knowing. A theme that omits it gets the old wave.
+        read -r -a sweep <<<"$(theme_key transition)"
+        [ "${#sweep[@]}" -gt 0 ] || sweep=(wave --transition-angle 30 --transition-duration 1.8)
         "$SWWW" img "$wall" \
-            --transition-type wave --transition-angle 30 \
-            --transition-duration 1.8 --transition-fps 60 >/dev/null 2>&1 || true
+            --transition-fps 60 --transition-type "${sweep[@]}" >/dev/null 2>&1 || true
     else
         for _ in 1 2 3 4 5 6; do hyprctl hyprpaper listloaded >/dev/null 2>&1 && break; sleep 0.3; done
         hyprctl hyprpaper unload all         >/dev/null 2>&1 || true
@@ -102,13 +134,6 @@ if [ -n "${wall:-}" ]; then
         hyprctl hyprpaper wallpaper ",$wall" >/dev/null 2>&1 || true
     fi
 fi
-
-# --- WezTerm (recolor open terminals) ---
-# WezTerm auto-reloads when its main config file changes. The theme colors are
-# pulled in via dofile behind the `current` symlink, and repointing a symlink
-# doesn't reliably trip the file watcher — so nudge wezterm.lua's mtime.
-# (It's a symlink into linux-setup; touch follows it. mtime doesn't dirty git.)
-touch -c "$HOME/.config/wezterm/wezterm.lua" 2>/dev/null || true
 
 # --- swaync (notification center) --------------------------------------------
 # Behavior (the layout json) is shared repo-wide at swaync/config.json; only
@@ -131,7 +156,13 @@ if [ -f "$CUR/cava/config" ]; then
     mkdir -p "$HOME/.config/cava"
     ln -sfn "$CUR/cava/config" "$HOME/.config/cava/config"
     # cava reloads its config on SIGUSR1 — no need to restart a running one.
-    pkill -SIGUSR1 -x cava 2>/dev/null || true
+    # Only the standalone visualizer, though: the bar's soundwave runs its own
+    # cava from a temp config that scripts/waybar-cava.sh deletes after the
+    # first frame, so a reload there finds no file and cava exits — which is
+    # how the wave used to die on every theme switch.
+    while read -r pid; do
+        grep -qz "waybar-cava" "/proc/$pid/cmdline" 2>/dev/null || kill -USR1 "$pid" 2>/dev/null || true
+    done < <(pgrep -x cava)
 fi
 
 if [ -f "$CUR/fastfetch/config.jsonc" ]; then
@@ -216,15 +247,4 @@ fi
 if [ -f "$CUR/hyprlock.conf" ]; then
     sed "/^[[:space:]]*path[[:space:]]*=/ s|@WALLPAPER@|${wall:-}|g" \
         "$CUR/hyprlock.conf" > "$HYPR/hyprlock.conf"
-fi
-
-# --- The shell (quickshell/) --------------------------------------------------
-# Nothing to restart. The shell reads themes/current/palette.json and
-# quickshell/settings.json itself, but its file watchers follow the file the
-# symlink RESOLVED to when it started, so repointing `current` is invisible
-# to them until asked. One IPC call re-reads both; every surface rebinds live.
-# Guarded: this script also runs at login, when the shell may not be up yet —
-# it reads the right theme on its own first start anyway.
-if command -v qs >/dev/null 2>&1; then
-    qs ipc -p "$HYPR/quickshell" call theme reload >/dev/null 2>&1 || true
 fi

@@ -71,11 +71,11 @@
         "sizeAccent": 16
     },
 
-    "//effects": "Flat ink: no glow (nothing is lit on paper but the burst, and that is a fill, not a halo), no scanlines (paper has no raster).",
+    "//effects": "Flat ink: no glow (nothing is lit on paper but the burst, and that is a fill, not a halo); paper grain rides every panel — a seeded speckle of ink, the tooth of the sheet.",
     "effects": {
         "glow":       false,
         "glowRadius": 0,
-        "scanlines":  false
+        "texture":    "grain"
     },
 
     "//bar": "Bar identity. Paper islands: near-opaque white paper, a 1px gold rim at 80%, small 6px corners — a brush edge, not glass. Opaque-ish on purpose: the painting frosted through a light fill goes muddy, so the fill is paper and the figure stays outside it.",
@@ -96,10 +96,10 @@
         }
     },
 
-    "//launcher": "Launcher identity: a 1px deep-water rim (the burst, printed) around a paper sheet, 8px window, 5px input + rows.",
+    "//launcher": "Launcher identity: a 1px deep-water rim (the burst, printed) around a paper sheet, 6px window (the one corner), 5px input + rows.",
     "launcher": {
         "opacity":       0.93,
-        "radius":        8,
+        "radius":        6,
         "borderWidth":   1,
         "inputRadius":   5,
         "entryRadius":   5,
@@ -114,11 +114,11 @@
         "trackRadius": 3
     },
 
-    "//session": "Power-menu identity: paper tiles with 8px corners and a 1px gold edge at 80%, over a light scrim.",
+    "//session": "Power-menu identity: paper tiles with 6px corners (the one corner) and a 1px gold edge at 80%, over a light scrim.",
     "session": {
         "windowOpacity": 0.8,
         "tileOpacity":   0.95,
-        "radius":        8,
+        "radius":        6,
         "borderWidth":   1,
         "borderOpacity": 0.8,
         "fontSize":      18

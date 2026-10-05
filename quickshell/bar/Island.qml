@@ -10,6 +10,7 @@ import "../components"
 //     padding: 2px 8px;
 //     box-shadow: inset 0 2px 0 rgba(<frame>, 0.85);    cyberpunk: the accent hairline
 //     background-image: repeating-linear-gradient(...)   gruvbox: the scanlines
+//                                                         (now the theme's texture)
 //
 // Geometry and color come from the ACTIVE theme's palette.json `bar.island`
 // block, which is why cyberpunk reads as rounded neon glass (radius 14, a 1px
@@ -66,8 +67,9 @@ Rectangle {
         }
     }
 
-    // gruvbox's CRT stripes, inside the frame (a no-op when the theme has none).
-    Scanlines {
+    // The theme's panel texture (gruvbox's stripes, graphite's hatching, ...),
+    // inside the frame. A no-op when the theme declares none.
+    Texture {
         anchors.margins: root.border.width
         radius: root.innerRadius
     }
@@ -75,7 +77,7 @@ Rectangle {
     // cyberpunk's `box-shadow: inset 0 2px 0`: a 2px line of `frame` along the
     // inside top edge, following the inner rounded corners. A Rectangle cannot
     // clip to a rounded rect, so this is a Canvas with a rounded clip — the same
-    // trick Scanlines uses. Alpha 0 (gruvbox) paints nothing.
+    // trick Texture uses. Alpha 0 (gruvbox) paints nothing.
     Canvas {
         id: accentLine
 

@@ -1,0 +1,132 @@
+/* Harbor · dusk over water — swaync (notifications + control center)
+ *
+ * Railing dialect: translucent teal-navy cards (the skyline) the swaync-blur
+ * rule frosts, a thin 1px amber edge at low alpha, 12px corners (the windows'
+ * rounding), and NO glow — this is lamplight, not neon, so titles are plain
+ * amber: the readout, the frame's hue at its lit weight. No cyan here; the
+ * smoke is the launcher's alone. The control center carries the theme's
+ * horizon: amber rising from its bottom edge, gone by mid-height, as on every
+ * shell panel (gruvbox puts its scanlines in the same place). Same layer-shell
+ * rules as the bar: NO outer box-shadow, no `transparent` keyword (GTK
+ * composites both as black halos).
+ */
+
+@define-color dusk    #0e1a20;
+@define-color skyline #172730;
+@define-color clouds  #243a44;
+@define-color frame   #e0ab5a;
+@define-color readout #f6c870;
+@define-color halo    #ffdf9c;
+@define-color red     #eb4030;
+@define-color gray    #62939f;
+@define-color fg      #efe6d3;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  /* GtkListBoxRow ships default padding — the last few off-grid pixels. */
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+.notification {
+  background-color: rgba(23, 39, 48, 0.85);    /* skyline teal-navy, frosted by swaync-blur rule */
+  border: 1px solid rgba(224, 171, 90, 0.45);  /* a thin amber edge — a railing, not a neon tube */
+  border-radius: 12px;
+  margin: 8px 14px;                            /* the same grid as gaps_out and the bar */
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @fg; font-weight: bold; }
+.notification-content .body    { color: @gray; }
+.notification-content .time    { color: @gray; font-size: 11px; }
+.notification.critical { border-color: @red; }
+/* No X, anywhere. Dismissal is click-the-notification (default action +
+ * hide-on-action in swaync/config.json) and the control center's "clear"
+ * button. An element that does not exist cannot be misaligned. */
+.close-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  box-shadow: none;
+}
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @fg;
+  border-radius: 8px;
+}
+.notification-action:hover { color: @readout; background-color: @skyline; }
+
+/* ---- control center: the harbor at night, lamplight at its foot ---- */
+.control-center {
+  background-color: rgba(14, 26, 32, 0.80);    /* dusk, the sky's teal-black, frosted */
+  /* the horizon: frame at the panel texture's 0.28, gone by mid-height */
+  background-image: linear-gradient(to top,
+      rgba(224, 171, 90, 0.28) 0%, rgba(224, 171, 90, 0) 50%);
+  border: 1px solid rgba(224, 171, 90, 0.60);
+  border-radius: 12px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(224, 171, 90, 0.30); }
+
+/* amber type, no bloom — the bar's readout, at card scale */
+.widget-title { color: @readout; font-weight: bold; }
+.widget-title > button {
+  background-color: @skyline;
+  color: @gray;
+  border: 1px solid rgba(224, 171, 90, 0.35);
+  border-radius: 8px;
+}
+.widget-title > button:hover { color: @red; border-color: @red; }
+
+.widget-dnd { color: @fg; }
+.widget-dnd > switch {
+  background-color: @skyline;
+  border: 1px solid @clouds;
+  border-radius: 8px;
+}
+.widget-dnd > switch:checked { background-color: @frame; }
+.widget-dnd > switch slider { background-color: @gray; border-radius: 7px; }
+.widget-dnd > switch:checked slider { background-color: @dusk; }
+
+/* ---- now playing: a teal-navy pane. Keeps swaync's blurred-art backdrop
+ * (content-derived); frame, type, and controls speak the theme. ---- */
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(23, 39, 48, 0.60);
+  border: 1px solid rgba(224, 171, 90, 0.35);
+  border-radius: 8px;
+  padding: 10px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-album-art { border-radius: 6px; }
+.widget-mpris .widget-mpris-title { color: @readout; font-weight: bold; }
+.widget-mpris .widget-mpris-subtitle { color: @gray; }
+/* controls + carousel arrows — amber at rest, the lamp's halo (readoutBright)
+ * when touched: the same lift the active workspace gets */
+.widget-mpris button {
+  color: @readout;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+}
+.widget-mpris button:hover { color: @halo; }
+
+progressbar progress { background-color: @readout; border-radius: 4px; }
+progressbar trough   { background-color: @clouds; border-radius: 4px; }

@@ -35,9 +35,14 @@ wallpaper thumbnail and palette swatches; nothing applies until Enter), or
 | `SUPER+A` | calendar — ikhal's month grid, floating (see "The calendar") |
 | `SUPER+SHIFT+A` | todos — todoman's list, floating (see "The calendar") |
 | `SUPER+F1..F3 / F5,F6` | volume / brightness, with the shell's OSD pill (bare `wpctl`/`brightnessctl` if the shell is down) |
+| `Print` / `SUPER+Print` | screenshot the screen / a region to the clipboard, with a camera flash from the shell |
+| `SUPER+SHIFT+Print` | screenshot a region and annotate it in satty (arrows, boxes, blur); Enter copies and saves to `~/Pictures/Screenshots` |
+| `SUPER+G` / `SUPER+SHIFT+G` | fold the window into a tab group / pull it back out |
+| `SUPER+TAB` / `SUPER+SHIFT+TAB` | next / previous tab in the group |
 
 Idle is handled by `hypridle`, started at login: backlight dims at 5 min, the
-session locks at 10, the screen sleeps at 15.
+session locks at 10, the screen sleeps at 15. `hyprsunset` warms the screen to
+4200K from 21:00 to 07:30 (`hyprsunset.conf`).
 
 ## Docs
 
@@ -51,7 +56,7 @@ session locks at 10, the screen sleeps at 15.
 | [Login screen](docs/sddm.md) | the SDDM greeter, and installing it |
 | [Plugins](docs/plugins.md) | the hyprpm steps, done by hand on purpose |
 | [QML migration](docs/qml-migration.md) | the Quickshell shell: what was moved, what deliberately was not |
-| **Themes** | [cyberpunk](docs/themes/cyberpunk.md) · [gruvbox](docs/themes/gruvbox.md) · [glacier](docs/themes/glacier.md) · [graphite](docs/themes/graphite.md) (light) · [inkwash](docs/themes/inkwash.md) (light) |
+| **Themes** | [cyberpunk](docs/themes/cyberpunk.md) · [gruvbox](docs/themes/gruvbox.md) · [glacier](docs/themes/glacier.md) · [harbor](docs/themes/harbor.md) · [graphite](docs/themes/graphite.md) (light) · [inkwash](docs/themes/inkwash.md) (light) |
 
 ## The shell
 

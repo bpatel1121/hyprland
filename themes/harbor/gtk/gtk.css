@@ -1,0 +1,65 @@
+/* Harbor · dusk over water — GTK
+ *
+ * Symlinked by theme-apply.sh to BOTH ~/.config/gtk-3.0/gtk.css and
+ * ~/.config/gtk-4.0/gtk.css; each toolkit reads its own color names and
+ * ignores the other's. Amber is the accent, matching the bar's frame and
+ * the window border, so file dialogs look like they belong to this desktop.
+ * Accent text is teal-black on the amber (8.5:1) — cream on it would vanish.
+ *
+ * Selection is the frame too, not the smoke: cyan belongs to the launcher
+ * alone (and the top of the window border), and a cyan highlight in every
+ * file dialog would put glacier back on the screen. Amber on teal is the
+ * picture's own pairing, the hoodie against the sky.
+ *
+ * Palette: dusk #0e1a20 · skyline #172730 · clouds #243a44 · sky #4f7a84
+ *          hoodie #e0ab5a · hoodieLit #f6c870 · ok #7dd3a6 · pavement #f27c35
+ *          hair #eb4030 · skyLit #62939f · cream #efe6d3 · smoke #82e0fa
+ */
+
+/* ---- GTK4 / libadwaita ----------------------------------------------------- */
+@define-color accent_color        #e0ab5a;
+@define-color accent_bg_color     #e0ab5a;
+@define-color accent_fg_color     #0e1a20;
+
+@define-color window_bg_color     #0e1a20;
+@define-color window_fg_color     #efe6d3;
+@define-color view_bg_color       #172730;
+@define-color view_fg_color       #efe6d3;
+@define-color headerbar_bg_color  #172730;
+@define-color headerbar_fg_color  #efe6d3;
+@define-color sidebar_bg_color    #172730;
+@define-color sidebar_fg_color    #efe6d3;
+@define-color card_bg_color       #172730;
+@define-color card_fg_color       #efe6d3;
+@define-color popover_bg_color    #172730;
+@define-color popover_fg_color    #efe6d3;
+@define-color dialog_bg_color     #0e1a20;
+@define-color dialog_fg_color     #efe6d3;
+
+@define-color destructive_color    #eb4030;
+@define-color destructive_bg_color #eb4030;
+@define-color destructive_fg_color #0e1a20;
+@define-color success_color        #7dd3a6;
+@define-color success_bg_color     #7dd3a6;
+@define-color warning_color        #f27c35;
+@define-color warning_bg_color     #f27c35;
+@define-color error_color          #eb4030;
+@define-color error_bg_color       #eb4030;
+
+/* ---- GTK3 / adw-gtk3 ------------------------------------------------------- */
+@define-color theme_bg_color            #0e1a20;
+@define-color theme_fg_color            #efe6d3;
+@define-color theme_base_color          #172730;
+@define-color theme_text_color          #efe6d3;
+@define-color theme_selected_bg_color   #e0ab5a;
+@define-color theme_selected_fg_color   #0e1a20;
+@define-color insensitive_bg_color      #172730;
+@define-color insensitive_fg_color      #4f7a84;
+@define-color borders                   #243a44;
+@define-color unfocused_borders         #243a44;
+@define-color warning_color_gtk3        #f27c35;
+
+/* Rounded corners on GTK popovers/menus, to sit with Hyprland's rounding = 12. */
+popover, menu, .context-menu {
+    border-radius: 10px;
+}

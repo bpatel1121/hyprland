@@ -21,6 +21,13 @@ return {
     -- the bar's (palette.json bar.island.glow) and text's; windows stay on the
     -- ice, they don't light it.
     shadow = { enabled = true, range = 18, render_power = 3, color = 0x59000000 },
+    -- The wallpaper sweep on switch (swww): a long crossfade. Ice does not
+    -- move; it changes. Flags after the type pass through.
+    transition = "fade --transition-duration 2.4",
+    -- Tab-group titles (SUPER+G): `text` on the active tab, `dormant` on the rest;
+    -- the strip itself wears active_border / inactive_border (hyprland.lua).
+    tab_text = "rgba(e6eefcff)",
+    tab_text_inactive = "rgba(7f8fbfff)",
     cursor = "Bibata-Modern-Ice",                    -- cold white-blue pointer
     polarity = "dark",
     dim_strength = 0.12,                             -- unfocused windows step back

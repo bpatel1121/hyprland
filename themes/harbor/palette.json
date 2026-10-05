@@ -1,0 +1,134 @@
+{
+    "$schema": "../../schema/palette.schema.json",
+
+    "//": "Harbor · DUSK OVER WATER. A flat, cel-shaded night scene: a figure in a",
+    "//1": "cream-amber hoodie leaning on a waterfront railing, cigarette smoke curling",
+    "//2": "pale cyan, a teal-slate sky over the harbor, a lit skyline across the water,",
+    "//3": "a full moon, a street lamp, orange lamplit pavement in the foreground.",
+    "//4": "No upstream palette — every role is sampled from the picture, and `tokens`",
+    "//5": "names each after what it is there so the mapping stays traceable. THE",
+    "//6": "source for every shell surface (quickshell/: bar, launcher, OSD, power",
+    "//7": "menu); theme.lua still owns WINDOW chrome and CI cross-checks it against this.",
+    "//8": "Two-tone rule, dusk edition: AMBER (the hoodie) is the frame AND the readout,",
+    "//9": "one hue at two weights, the way graphite is ink and one violet; the SMOKE is",
+    "//10": "the launcher, the one cool thing (and the top edge of the window border);",
+    "//11": "the ground is the sky's own teal-black, not glacier's navy. That is what",
+    "//12": "separates harbor from glacier: glacier reads white and ice cyan on navy,",
+    "//13": "harbor reads lamplight on teal, and the bar text is where you look.",
+    "//14": "warn (the lamplit pavement — a lit stretch of ground: something pending)",
+    "//15": "and urgent (the hair's red, pushed redder than the pavement so pending-",
+    "//16": "orange and alert-red never read as one hue) are state; `ok` is state only —",
+    "//17": "there is no green in the picture, so it is a sea-glass green chosen to sit",
+    "//18": "with the teal, as glacier's was. readoutBright is the lamp's halo, so the",
+    "//19": "active workspace is an emissive amber lozenge (modules/Workspaces.qml).",
+    "//20": "The sky (#385c64, the picture's dominant color) is the quiet family — `dim`",
+    "//21": "and `dormant` — printed UP for contrast: as painted it reads 2.1:1 on",
+    "//22": "`surface`, and every surface that carries it is teal-black.",
+
+    "name": "harbor",
+    "polarity": "dark",
+
+    "roles": {
+        "ground":   "#0e1a20",
+        "surface":  "#172730",
+        "hairline": "#243a44",
+        "dim":      "#4f7a84",
+        "frame":    "#e0ab5a",
+        "readout":  "#f6c870",
+        "warn":     "#f27c35",
+        "ok":       "#7dd3a6",
+        "urgent":   "#eb4030",
+        "dormant":  "#62939f",
+        "text":     "#efe6d3",
+        "launcher": "#82e0fa",
+
+        "readoutBright": "#ffdf9c",
+        "surfaceAlt":    "#1f3540"
+    },
+
+    "//tokens": "What in the picture -> role, so a palette bump stays traceable. `ok` has no token: there is no green in the picture, it is state. `pavement` and `hair` are scenery that became state because they already sit where state needs to be: a lit stretch of ground is something pending, and red is an alert.",
+    "tokens": {
+        "dusk":       "ground",
+        "skyline":    "surface",
+        "skylineLit": "surfaceAlt",
+        "clouds":     "hairline",
+        "sky":        "dim",
+        "skyLit":     "dormant",
+        "hoodie":     "frame",
+        "hoodieLit":  "readout",
+        "lampHalo":   "readoutBright",
+        "pavement":   "warn",
+        "hair":       "urgent",
+        "cream":      "text",
+        "smoke":      "launcher"
+    },
+
+    "//contrast": "Measured on the three surfaces that carry type (WCAG, sRGB blend): `surface`; the bar island — fill #0b1519 at 0.78 over the teal strip of sky the bar covers (#375a62, composite ~#152429); the launcher window — `ground` at 0.8 over the picture's centre (~#1a2125). dim 3.25 / 3.38 / 3.45, dormant 4.52 / 4.71 / 4.81, frame 7.4 / 7.7 / 7.9, readout 9.8 / 10.2 / 10.4, readoutBright 11.9 / 12.4 / 12.6, warn 5.6 / 5.9 / 6.0, ok 8.6 / 8.9 / 9.1, urgent 3.9 / 4.0 / 4.1, text 12.4 / 12.9 / 13.1, launcher 10.2 / 10.6 / 10.9. `ground` on `readout` (the lozenge's digit) 11.3:1, `ground` on `frame` 8.5:1; the launcher's selected row (launcher on its own 18% tint) holds 6.9:1.",
+
+    "font": {
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 13,
+        "sizeAccent": 16
+    },
+
+    "//effects": "Lamplight, not neon: no text glow. The panel texture is the horizon — `frame` (amber) rising from the bottom edge of every pane, gone by mid-height — lit pavement under a dark sky, and it is the signature. 0.28 rather than the kind's 0.18 resting value: the island fill is teal-black at 0.78 over a teal-blurred sky, and at 0.22 the horizon was too shy to read as the signature.",
+    "effects": {
+        "glow":         false,
+        "glowRadius":   0,
+        "texture":      "horizon",
+        "textureAlpha": 0.28
+    },
+
+    "//bar": "Bar identity. A railing at dusk: teal-black islands at 0.78 — a railing is a silhouette, not frost (glacier's islands are the frost) — with the teal sky showing through, blurred by the layer rule; a thin 1px amber hairline at 40% — a railing, not a neon tube — 12px corners, no bloom, no accent line. The fill (#0b1519) is a shade UNDER `ground`: the strip the bar covers is the teal sky, the brightest band of the picture, and at 22% show-through the darker fill lands the composite at ~#152429 — `dim` 3.4:1, `dormant` 4.7:1, `urgent` 4.0:1, `readout` 10.2:1, `text` 12.9:1 — where `ground` itself would have put `dim` at 3.2:1.",
+    "bar": {
+        "island": {
+            "color":         "#0b1519",
+            "opacity":       0.78,
+            "radius":        12,
+            "borderWidth":   1,
+            "borderOpacity": 0.4,
+            "accentLine":    0,
+            "glow":          0,
+            "glowRange":     0
+        },
+        "chip": {
+            "radius":  8,
+            "opacity": 0.08
+        }
+    },
+
+    "//launcher": "Launcher identity: a 1px smoke-cyan frame around teal-black glass (0.82), 12px window, 8px input + rows. The smoke is the one lit cool thing in the picture and the launcher the one surface that covers the bar, so it is the one shell surface that wears cyan: its frame and its selected row.",
+    "launcher": {
+        "opacity":       0.82,
+        "radius":        12,
+        "borderWidth":   1,
+        "inputRadius":   8,
+        "entryRadius":   8,
+        "fontSize":      15
+    },
+
+    "//osd": "OSD identity: a full pill — 1px amber frame, amber track (the readout: the frame's hue at its lit weight), 0.8 so the sky still shows under it.",
+    "osd": {
+        "opacity":     0.8,
+        "radius":      999,
+        "borderWidth": 1,
+        "trackRadius": 4
+    },
+
+    "//session": "Power-menu identity: 12px tiles with a 1px amber edge at 40%, over a 0.7 teal-black scrim — the harbor stays visible behind the menu, dimmed to night.",
+    "session": {
+        "windowOpacity": 0.7,
+        "tileOpacity":   0.8,
+        "radius":        12,
+        "borderWidth":   1,
+        "borderOpacity": 0.4,
+        "fontSize":      18
+    },
+
+    "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim). 0.55 with an 8px blur, the dark themes' resting numbers: the picture is already dusk, and the lock stack sits over dark water, so it needs no extra dimming.",
+    "wallpaper": {
+        "brightness": 0.55,
+        "contrast":   1.05,
+        "blurSize":   8
+    }
+}

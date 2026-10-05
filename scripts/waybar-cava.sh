@@ -50,7 +50,7 @@ cat > "$cfg" <<CFG
 bars = $bars
 framerate = 12
 [input]
-method = pulse
+method = pipewire
 source = auto
 [output]
 method = raw

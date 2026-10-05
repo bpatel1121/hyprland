@@ -78,12 +78,13 @@
 
         "effects": {
             "type": "object",
-            "description": "Which structural tricks this theme uses. Glow is cyberpunk's signature, scanlines are gruvbox's; a theme turns each on or off rather than every surface guessing from the colors.",
-            "required": ["glow", "scanlines"],
+            "description": "Which structural tricks this theme uses. Glow is cyberpunk's signature; the panel texture is each other theme's (gruvbox's scanlines, graphite's hatching, inkwash's grain, glacier's sheen, harbor's horizon). A theme declares them rather than every surface guessing from the colors.",
+            "required": ["glow", "texture"],
             "properties": {
-                "glow":       { "type": "boolean", "description": "Draw a soft text glow in the accent color on lit elements (the clock, chips, hovered tiles, the OSD readout)." },
-                "glowRadius": { "type": "number", "minimum": 0, "maximum": 32, "description": "Blur radius of that glow, in px. The old CSS used `text-shadow: 0 0 <radius>px`." },
-                "scanlines":  { "type": "boolean", "description": "Overlay 1px dark lines every 3px on every panel fill (the old `repeating-linear-gradient`)." }
+                "glow":         { "type": "boolean", "description": "Draw a soft text glow in the accent color on lit elements (the clock, chips, hovered tiles, the OSD readout)." },
+                "glowRadius":   { "type": "number", "minimum": 0, "maximum": 32, "description": "Blur radius of that glow, in px. The old CSS used `text-shadow: 0 0 <radius>px`." },
+                "texture":      { "type": "string", "enum": ["none", "scanlines", "hatch", "grain", "sheen", "horizon"], "description": "The overlay drawn on every panel fill, clipped to its corners (components/Texture.qml): `scanlines` 1px black every 3px; `hatch` 45° lines of `frame`; `grain` a seeded speckle of `text`; `sheen` white light from the top edge; `horizon` `frame` rising from the bottom edge." },
+                "textureAlpha": { "type": "number", "minimum": 0, "maximum": 1, "description": "Override the texture's resting strength (scanlines 0.14, hatch 0.07, grain 0.10, sheen 0.12, horizon 0.18)." }
             },
             "additionalProperties": false
         },

@@ -6,10 +6,12 @@ quickshell/                     THE shell: bar, launcher, OSD, power menu (one p
 ├── settings.json               behavior: bar layout, modules, intervals, surface settings, power-menu buttons
 ├── shell.qml                   `qs -p ~/.config/hypr/quickshell -d -n`
 ├── bar/ launcher/ osd/ session/   one directory per surface, each owning its IPC target
+├── fx/                         the screenshot flash (`fx flash`)
 └── README.md                   file map, IPC table, module map
 schema/                         JSON Schemas for palette.json + settings.json
 swaync/config.json              notification-center layout (shared; styles are per-theme)
 hypridle.conf                   dim 5m -> lock 10m -> screen off 15m
+hyprsunset.conf                 night light: 4200K from 21:00, neutral from 07:30
 scripts/
 ├── theme-switch.sh <name>      repoint themes/current → <name>, reload, apply
 ├── theme-apply.sh              sync wallpaper/swaync/GTK/wezterm to current; poke the shell
@@ -31,6 +33,7 @@ themes/
 │                               state; theme-apply creates it if missing)
 ├── gruvbox/                    dark · pixel alley (see "The gruvbox theme")
 ├── glacier/                    dark · frost, ice throne (see "The glacier theme")
+├── harbor/                     dark · dusk over water, amber on teal (see "The harbor theme")
 ├── graphite/                   LIGHT · grey ink on paper, one violet (see "The graphite theme")
 ├── inkwash/                    LIGHT · ink-wash painting, gold and cyan (see "The inkwash theme")
 └── cyberpunk/

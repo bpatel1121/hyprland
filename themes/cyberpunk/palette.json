@@ -51,11 +51,11 @@
         "sizeAccent": 16
     },
 
-    "//effects": "Neon: text glows (the one halo-safe glow primitive), no scanlines.",
+    "//effects": "Neon: text glows (the one halo-safe glow primitive); no panel texture — the glow is the signature.",
     "effects": {
         "glow":       true,
         "glowRadius": 8,
-        "scanlines":  false
+        "texture":    "none"
     },
 
     "//bar": "Bar identity. Rounded neon glass: generous radius, a lit pink edge, and a soft pink bloom around each island — the window shadow in theme.lua at bar scale. accentLine (the old inset top hairline) is off: at 1.5x it read as a pink bar sitting on the islands.",
@@ -76,10 +76,10 @@
         }
     },
 
-    "//launcher": "Launcher identity (was wofi/style.css): violet 2px frame, 12px window, 8px input + rows.",
+    "//launcher": "Launcher identity (was wofi/style.css): violet 2px frame, 14px window (the islands' and the windows' corner), 8px input + rows.",
     "launcher": {
         "opacity":       0.80,
-        "radius":        12,
+        "radius":        14,
         "borderWidth":   2,
         "inputRadius":   8,
         "entryRadius":   8,
@@ -94,11 +94,11 @@
         "trackRadius": 4
     },
 
-    "//session": "Power-menu identity (was wlogout/style.css): 16px tiles, 1px pink edge at 35%.",
+    "//session": "Power-menu identity (was wlogout/style.css): 14px tiles (the one corner), 1px pink edge at 35%.",
     "session": {
         "windowOpacity": 0.85,
         "tileOpacity":   0.92,
-        "radius":        16,
+        "radius":        14,
         "borderWidth":   1,
         "borderOpacity": 0.35,
         "fontSize":      18

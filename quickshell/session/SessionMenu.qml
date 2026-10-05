@@ -391,7 +391,7 @@ Scope {
                                 // cyberpunk. The old wlogout CSS left these off
                                 // (`background-image: none`) — delete this line
                                 // to match that stylesheet to the pixel.
-                                Scanlines { radius: tile.radius }
+                                Texture { radius: tile.radius }
 
                                 // The layout's `text`: glyph, two spaces, word —
                                 // one GTK label, centered in the button.

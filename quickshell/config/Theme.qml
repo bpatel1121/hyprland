@@ -41,23 +41,23 @@ Singleton {
     // palette looks deliberate rather than broken.
     readonly property var roles: root.obj(root.data, "roles")
 
-    readonly property color ground:   root.role("ground",   "#2e3440")
-    readonly property color surface:  root.role("surface",  "#3b4252")
-    readonly property color hairline: root.role("hairline", "#434c5e")
-    readonly property color dim:      root.role("dim",      "#4c566a")
-    readonly property color frame:    root.role("frame",    "#88c0d0")
-    readonly property color readout:  root.role("readout",  "#88c0d0")
-    readonly property color warn:     root.role("warn",     "#ebcb8b")
-    readonly property color ok:       root.role("ok",       "#a3be8c")
-    readonly property color urgent:   root.role("urgent",   "#bf616a")
-    readonly property color dormant:  root.role("dormant",  "#616e88")
-    readonly property color text:     root.role("text",     "#eceff4")
-    readonly property color launcher: root.role("launcher", "#b48ead")
+    property color ground:   root.role("ground",   "#2e3440")
+    property color surface:  root.role("surface",  "#3b4252")
+    property color hairline: root.role("hairline", "#434c5e")
+    property color dim:      root.role("dim",      "#4c566a")
+    property color frame:    root.role("frame",    "#88c0d0")
+    property color readout:  root.role("readout",  "#88c0d0")
+    property color warn:     root.role("warn",     "#ebcb8b")
+    property color ok:       root.role("ok",       "#a3be8c")
+    property color urgent:   root.role("urgent",   "#bf616a")
+    property color dormant:  root.role("dormant",  "#616e88")
+    property color text:     root.role("text",     "#eceff4")
+    property color launcher: root.role("launcher", "#b48ead")
 
     // Optional roles fall back to their required neighbour rather than to a
     // literal, so a theme that omits them stays internally consistent.
-    readonly property color readoutBright: root.role("readoutBright", root.readout)
-    readonly property color surfaceAlt:    root.role("surfaceAlt",    root.surface)
+    property color readoutBright: root.role("readoutBright", root.readout)
+    property color surfaceAlt:    root.role("surfaceAlt",    root.surface)
 
     // --- font ----------------------------------------------------------------
     readonly property var fontData: root.obj(root.data, "font")
@@ -73,21 +73,21 @@ Singleton {
     readonly property var islandData: root.obj(root.barData, "island")
     readonly property var chipData: root.obj(root.barData, "chip")
 
-    readonly property color islandColor: root.num_or(root.islandData, "color", root.ground)
-    readonly property real islandOpacity: root.num_or(root.islandData, "opacity", 0.75)
-    readonly property real islandRadius: root.num_or(root.islandData, "radius", 12)
-    readonly property real islandBorderWidth: root.num_or(root.islandData, "borderWidth", 1)
-    readonly property real islandBorderOpacity: root.num_or(root.islandData, "borderOpacity", 0.2)
+    property color islandColor: root.num_or(root.islandData, "color", root.ground)
+    property real islandOpacity: root.num_or(root.islandData, "opacity", 0.75)
+    property real islandRadius: root.num_or(root.islandData, "radius", 12)
+    property real islandBorderWidth: root.num_or(root.islandData, "borderWidth", 1)
+    property real islandBorderOpacity: root.num_or(root.islandData, "borderOpacity", 0.2)
 
     // The 2px `frame` hairline along the inside top edge of each island — the
     // old `box-shadow: inset 0 2px 0`. 0 draws none (gruvbox).
     readonly property real islandAccentLine: root.num_or(root.islandData, "accentLine", 0)
     // Outer bloom in `frame`: alpha and blur radius. 0 alpha draws nothing.
-    readonly property real islandGlow: root.num_or(root.islandData, "glow", 0)
-    readonly property real islandGlowRange: root.num_or(root.islandData, "glowRange", 18)
+    property real islandGlow: root.num_or(root.islandData, "glow", 0)
+    property real islandGlowRange: root.num_or(root.islandData, "glowRange", 18)
 
-    readonly property real chipRadius: root.num_or(root.chipData, "radius", 8)
-    readonly property real chipOpacity: root.num_or(root.chipData, "opacity", 0.08)
+    property real chipRadius: root.num_or(root.chipData, "radius", 8)
+    property real chipOpacity: root.num_or(root.chipData, "opacity", 0.08)
 
     // The island fill, alpha already applied.
     readonly property color islandFill: root.withAlpha(root.islandColor, root.islandOpacity)
@@ -96,13 +96,16 @@ Singleton {
 
     // --- effects -------------------------------------------------------------
     // The structural tricks a theme uses. Glow is cyberpunk's signature (the
-    // old `text-shadow: 0 0 Npx`), scanlines are gruvbox's (the old repeating
-    // gradient). Every surface asks these two flags rather than guessing from
-    // the colors — see components/GlowText.qml and components/Scanlines.qml.
+    // old `text-shadow: 0 0 Npx`); the panel texture is every other theme's —
+    // gruvbox's scanlines, graphite's hatching, inkwash's grain, glacier's
+    // sheen, harbor's horizon. Every surface asks these rather than guessing
+    // from the colors — see components/GlowText.qml and components/Texture.qml.
     readonly property var effectsData: root.obj(root.data, "effects")
     readonly property bool glow: root.num_or(root.effectsData, "glow", false) === true
     readonly property real glowRadius: root.num_or(root.effectsData, "glowRadius", 8)
-    readonly property bool scanlines: root.num_or(root.effectsData, "scanlines", false) === true
+    readonly property string texture: root.num_or(root.effectsData, "texture", "none")
+    // -1: use the kind's resting strength (Texture.qml knows it).
+    readonly property real textureAlpha: root.num_or(root.effectsData, "textureAlpha", -1)
 
     // --- launcher identity ---------------------------------------------------
     // What used to be wofi/style.css. Colors are roles; only geometry varies.
@@ -139,6 +142,44 @@ Singleton {
     function reload() {
         paletteFile.reload();
     }
+
+    // --- the crossfade -------------------------------------------------------
+    // SUPER+T repoints themes/current and theme-apply.sh pokes reload() first,
+    // before the wallpaper starts its sweep. Without these every surface
+    // snapped to the new palette in one frame while the picture behind it took
+    // two seconds to arrive. With them the bar, launcher, OSD and tiles fade
+    // between palettes and the islands morph between the two themes' corners
+    // and weights, in step with the wallpaper. The roles and the island
+    // identity above are plain (not readonly) properties for exactly this:
+    // a Behavior cannot ride a readonly property, and it leaves the binding
+    // intact, so the next reload still re-reads palette.json. 600ms, a literal
+    // in each line: qmllint cannot see this file's id through Quickshell's
+    // Singleton type, and the wallpaper sweep this keeps step with is 1.8s.
+
+    Behavior on ground   { ColorAnimation { duration: 600 } }
+    Behavior on surface  { ColorAnimation { duration: 600 } }
+    Behavior on hairline { ColorAnimation { duration: 600 } }
+    Behavior on dim      { ColorAnimation { duration: 600 } }
+    Behavior on frame    { ColorAnimation { duration: 600 } }
+    Behavior on readout  { ColorAnimation { duration: 600 } }
+    Behavior on warn     { ColorAnimation { duration: 600 } }
+    Behavior on ok       { ColorAnimation { duration: 600 } }
+    Behavior on urgent   { ColorAnimation { duration: 600 } }
+    Behavior on dormant  { ColorAnimation { duration: 600 } }
+    Behavior on text     { ColorAnimation { duration: 600 } }
+    Behavior on launcher { ColorAnimation { duration: 600 } }
+    Behavior on readoutBright { ColorAnimation { duration: 600 } }
+    Behavior on surfaceAlt    { ColorAnimation { duration: 600 } }
+
+    Behavior on islandColor         { ColorAnimation  { duration: 600 } }
+    Behavior on islandOpacity       { NumberAnimation { duration: 600 } }
+    Behavior on islandRadius        { NumberAnimation { duration: 600 } }
+    Behavior on islandBorderWidth   { NumberAnimation { duration: 600 } }
+    Behavior on islandBorderOpacity { NumberAnimation { duration: 600 } }
+    Behavior on islandGlow          { NumberAnimation { duration: 600 } }
+    Behavior on islandGlowRange     { NumberAnimation { duration: 600 } }
+    Behavior on chipRadius          { NumberAnimation { duration: 600 } }
+    Behavior on chipOpacity         { NumberAnimation { duration: 600 } }
 
     // --- helpers -------------------------------------------------------------
 

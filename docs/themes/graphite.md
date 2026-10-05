@@ -26,10 +26,11 @@ What is structurally different: it is light, and it is still. Where cyberpunk
 is rounded neon glass and gruvbox a CRT, graphite is a **drawn card** —
 near-opaque paper islands (`bar.island.opacity` 0.92, the fill is `surface`
 rather than `ground`, because a grey sketch frosted through a light fill just
-goes grey), 8px corners (6 on the chips and inputs, 10 on the launcher and
-the power tiles), **1px ink rims** at 70% on the islands, tiles, cards and
-greeter, no glow and no scanlines (`effects` both off: ink doesn't emit and
-paper has no raster), and the active workspace drawn as a solid **black
+goes grey), 8px corners everywhere a panel has one (6 on the chips and inputs), **1px ink rims** at 70% on the islands, tiles, cards and
+greeter, no glow (ink doesn't emit) but **pencil hatching** on every panel
+fill (`effects.texture` `hatch`: 45° lines of `frame`, one every 5px at 7%,
+drawn by `Texture.qml` inside the rim — the tooth of the paper, faint enough
+to read as texture rather than pattern), and the active workspace drawn as a solid **black
 pill** with its digit in `ground` (`readoutBright` is deliberately not
 declared, which is what makes `Workspaces.qml` pick the solid-frame block over
 the emissive lozenge). The window border runs ink → violet and does **not**

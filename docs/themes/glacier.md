@@ -29,8 +29,10 @@ photo. The edges are thin — 1px everywhere the dark themes used 2 — at 35% o
 the islands and 50% on the tiles, ice-cyan hairlines at low alpha. Glow is on,
 the one cold one (cyberpunk's is the other): `effects.glowRadius` 10 with a
 faint cyan bloom around each island (`bar.island.glow` 0.22 over 20px), a
-white clock in an ice-cyan halo on the lock screen, and nothing louder. No
-scanlines; the window shadow is neutral (`0x59000000`, the same hueless
+white clock in an ice-cyan halo on the lock screen, and nothing louder. The
+panel texture is a **sheen** (`effects.texture` `sheen`, at 0.2): a bright
+catch light along the top edge of every pane and a white wash under it, gone
+by mid-height — light on ice, drawn by `Texture.qml`. The window shadow is neutral (`0x59000000`, the same hueless
 exemption gruvbox uses) because the cyan is the bar's and the text's, not the
 windows'. The border runs ice cyan → pale cyan, a sword's edge, and drifts at
 `border_motion = 140` — slower than gruvbox's lantern, like light moving

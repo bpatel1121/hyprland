@@ -80,6 +80,9 @@ hl.on("hyprland.start", function()
     -- It reads themes/current/palette.json itself; theme-apply.sh only pokes it.
     hl.exec_cmd("qs -p " .. shell .. " -d -n")
     hl.exec_cmd("hypridle") -- dim -> lock -> dpms off
+    -- Night light on a schedule (hyprsunset.conf next to this file): warm
+    -- after 21:00, neutral again at 07:30. Silent when it isn't installed.
+    hl.exec_cmd(first_of({ "hyprsunset" }))
     -- Battery/charger events through the themed notifications (laptops; a
     -- desktop simply never triggers them). -s skips the startup replay.
     hl.exec_cmd(first_of({ "poweralertd -s" }))
@@ -141,6 +144,15 @@ end
 -- `hyprctl setcursor` + gsettings handle the live switch.
 hl.env("XCURSOR_THEME", (type(theme.cursor) == "string" and theme.cursor) or "capitaine-cursors")
 
+-- App popups (right-click menus, dropdowns, tooltips) take the same frost as
+-- the shell's surfaces. Without this they are the one flat, opaque thing on a
+-- frosted desktop. Set on the theme's own blur table so the size, passes and
+-- vibrancy the theme chose carry over; 0.6 skips the fully transparent
+-- shadow margins GTK draws around a menu.
+theme.blur = theme.blur or { enabled = true }
+theme.blur.popups = true
+theme.blur.popups_ignorealpha = 0.6
+
 hl.config({
     general = {
         gaps_in = theme.gaps_in,
@@ -170,6 +182,43 @@ hl.config({
 
     animations = {
         enabled = true,
+    },
+
+    -- Tab groups (SUPER+G): the one window decoration Hyprland draws itself.
+    -- Left alone it is a yellow bar in a default font. Here the group's border
+    -- IS the theme's window border, the tab strip wears the frame on the
+    -- active tab and the hairline on the rest, and the titles use the theme's
+    -- text colors (theme.lua `tab_text` / `tab_text_inactive`). No gradient
+    -- blocks behind the titles — a thin indicator under each, like the bar's
+    -- own understatement.
+    group = {
+        col = {
+            border_active = theme.active_border,
+            border_inactive = theme.inactive_border,
+            border_locked_active = theme.active_border,
+            border_locked_inactive = theme.inactive_border,
+        },
+        groupbar = {
+            enabled = true,
+            gradients = false,
+            render_titles = true,
+            font_family = "JetBrainsMono Nerd Font",
+            font_size = 11,
+            height = 20,
+            indicator_height = 2,
+            indicator_gap = 2,
+            text_padding = 8,
+            rounding = math.min(theme.rounding or 8, 20),
+            blur = true,
+            col = {
+                active = theme.active_border,
+                inactive = theme.inactive_border,
+                locked_active = theme.active_border,
+                locked_inactive = theme.inactive_border,
+            },
+            text_color = theme.tab_text or "rgba(ffffffff)",
+            text_color_inactive = theme.tab_text_inactive or theme.tab_text or "rgba(ffffffff)",
+        },
     },
 })
 
@@ -288,16 +337,35 @@ hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(scripts .. "todo-menu.sh"))
 hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd(qs("session", "toggle")))
 
--- Screenshots (grim + slurp + wl-clipboard — all installed)
+-- Screenshots (grim + slurp + wl-clipboard + satty)
 -- Screenshots confirm themselves: clipboard captures are invisible actions,
--- and invisible actions breed double-takes. The toast is the receipt.
+-- and invisible actions breed double-takes. The shell flashes the screen the
+-- instant the capture lands (after grim has read the pixels, so the flash is
+-- never in the picture) and the toast is the receipt. If the shell is down
+-- the flash is skipped and the toast still fires.
+local flash = qs("fx", "flash") .. " 2>/dev/null; "
 hl.bind(
     "Print",
-    hl.dsp.exec_cmd("grim - | wl-copy && notify-send -t 2500 'Screenshot' 'full screen copied to clipboard'")
+    hl.dsp.exec_cmd(
+        "grim - | wl-copy && " .. flash .. "notify-send -t 2500 'Screenshot' 'full screen copied to clipboard'"
+    )
 )
 hl.bind(
     mainMod .. " + Print",
-    hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy && notify-send -t 2500 "Screenshot" "region copied to clipboard"')
+    hl.dsp.exec_cmd(
+        'grim -g "$(slurp)" - | wl-copy && ' .. flash .. 'notify-send -t 2500 "Screenshot" "region copied to clipboard"'
+    )
+)
+-- SUPER+SHIFT+Print: pick a region, then annotate it in satty (arrows, boxes,
+-- blur, text). satty copies the result to the clipboard on Enter and saves a
+-- dated copy under ~/Pictures/Screenshots; it floats centered (rule below).
+hl.bind(
+    mainMod .. " + SHIFT + Print",
+    hl.dsp.exec_cmd(
+        'mkdir -p ~/Pictures/Screenshots && grim -g "$(slurp)" - | '
+            .. "satty --filename - --copy-command wl-copy --early-exit "
+            .. '--output-filename ~/Pictures/Screenshots/$(date "+%Y-%m-%d_%H-%M-%S").png'
+    )
 )
 
 -- Focus (arrows + vim HJKL)
@@ -315,6 +383,14 @@ hl.bind(mainMod .. " + SHIFT + H", hl.dsp.window.swap({ direction = "left" }))
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.window.swap({ direction = "right" }))
 hl.bind(mainMod .. " + SHIFT + K", hl.dsp.window.swap({ direction = "up" }))
 hl.bind(mainMod .. " + SHIFT + J", hl.dsp.window.swap({ direction = "down" }))
+
+-- Tab groups: SUPER+G folds the focused window into a tabbed group (press it
+-- again on a group to dissolve it), SUPER+TAB / SUPER+SHIFT+TAB walk the tabs,
+-- SUPER+SHIFT+G pulls the active tab back out as its own window.
+hl.bind(mainMod .. " + G", hl.dsp.group.toggle())
+hl.bind(mainMod .. " + TAB", hl.dsp.group.next())
+hl.bind(mainMod .. " + SHIFT + TAB", hl.dsp.group.prev())
+hl.bind(mainMod .. " + SHIFT + G", hl.dsp.window.move({ out_of_group = true }))
 
 -- Workspaces: SUPER + [0-9] to focus, SUPER + SHIFT + [0-9] to move window
 for i = 1, 10 do
@@ -404,10 +480,11 @@ hl.layer_rule({
 -- The launcher and the power menu animate themselves (a fade and an 8px rise,
 -- a backdrop fade); the compositor's layersIn slide on top of that read as two
 -- motions fighting. The OSD keeps the slide — a pill rising from the bottom
--- edge is the right motion for it, and it has none of its own.
+-- edge is the right motion for it, and it has none of its own. The screenshot
+-- flash is a snap by definition: a compositor fade-in would turn it to mush.
 hl.layer_rule({
     name = "qs-surfaces-self-animated",
-    match = { namespace = "^qs-hypr-(launcher|session)$" },
+    match = { namespace = "^qs-hypr-(launcher|session|fx)$" },
     no_anim = true,
 })
 hl.layer_rule({
@@ -434,6 +511,16 @@ hl.window_rule({
     match = { class = "^todos$" },
     float = true,
     size = { 900, 520 },
+    center = true,
+})
+
+-- satty (annotate a screenshot) floats centered: it is a one-shot editor
+-- over whatever you just captured, not a tiling citizen.
+hl.window_rule({
+    name = "satty-float",
+    match = { class = "^com\\.gabm\\.satty$" },
+    float = true,
+    size = { 1400, 900 },
     center = true,
 })
 
