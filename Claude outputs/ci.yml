@@ -278,6 +278,18 @@ jobs:
           sys.exit(1 if bad else 0)
           PY
 
+      # The picker's cards are the themes' thumb.webp files (1280px copies of
+      # the wallpaper). Without one it falls back to the full wallpaper, which
+      # works and stutters — exactly the regression the thumbs exist to prevent.
+      - name: Every wallpaper has a picker thumbnail
+        run: |
+          bad=0
+          for w in themes/*/wallpaper.*; do
+            d=$(dirname "$w"); [ -L "$d" ] && continue
+            [ -f "$d/thumb.webp" ] || { echo "FAIL $d: wallpaper but no thumb.webp (1280px copy for the picker)"; bad=1; }
+          done
+          exit $bad
+
       # palette.json is CANONICAL for color, but theme.lua keeps its own literals
       # (it is read by Hyprland directly, and by theme-lib.sh's sed). Nothing
       # stops the two drifting except this: every color theme.lua names must be a
@@ -365,7 +377,8 @@ jobs:
             -I quickshell \
             quickshell/shell.qml quickshell/config/*.qml quickshell/bar/*.qml \
             quickshell/components/*.qml quickshell/modules/*.qml \
-            quickshell/launcher/*.qml quickshell/osd/*.qml quickshell/session/*.qml quickshell/fx/*.qml
+            quickshell/launcher/*.qml quickshell/osd/*.qml quickshell/session/*.qml \
+            quickshell/themes/*.qml quickshell/fx/*.qml
           # The greeters' globals (config, sddm, userModel, sessionModel) are
           # injected by SDDM at runtime and cannot be resolved statically.
           "$QMLLINT" --unqualified disable themes/*/sddm/Main.qml
@@ -379,7 +392,7 @@ jobs:
           bad=0
           grep -q 'exec_cmd("qs -p " .. shell .. " -d -n")' hyprland.lua \
             || { echo "FAIL hyprland.lua no longer autostarts the shell"; bad=1; }
-          for t in launcher session osd theme fx; do
+          for t in launcher session osd themes theme fx; do
             grep -rqE "target: *\"$t\"" quickshell/ \
               || { echo "FAIL quickshell/ has no IpcHandler target \"$t\""; bad=1; }
           done

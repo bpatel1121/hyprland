@@ -4,7 +4,7 @@ Moving this desktop's shell surfaces from five separate GTK programs to one QML
 shell, and where that has actually got to.
 
 **Status: done for everything that was going to move.** `quickshell/` is the
-bar, the launcher (and theme picker), the volume/brightness OSD and the power
+bar, the launcher, the theme picker, the volume/brightness OSD and the power
 menu. `hyprland.lua` autostarts it, every bind that used to launch wofi,
 wlogout or swayosd now asks it over IPC, and waybar, wofi, swayosd and wlogout
 are gone from the tree along with their stylesheets. Notifications (swaync) and
@@ -44,7 +44,8 @@ scanlines, 14px glass versus 4px CRT — and not only in color.
 | surface | was | is | Quickshell provides |
 |---|---|---|---|
 | bar | waybar | `quickshell/bar/` | `PanelWindow`, `Hyprland`, `Mpris`, `Pipewire`, `UPower`, `SystemTray`, `PopupWindow` (tooltips) |
-| launcher + theme picker | wofi, `scripts/theme-menu.sh` | `quickshell/launcher/` | `DesktopEntries`, `HyprlandFocusGrab`, `IconImage` |
+| launcher | wofi | `quickshell/launcher/` | `DesktopEntries`, `HyprlandFocusGrab`, `IconImage` |
+| theme picker | `scripts/theme-menu.sh` (then a mode of the launcher) | `quickshell/themes/` | `ClippingRectangle`, `HyprlandFocusGrab`, `FileView`, `Process` |
 | OSD | swayosd | `quickshell/osd/` | `Pipewire` + a timed `PanelWindow`; `brightnessctl` via `Process` |
 | power menu | wlogout | `quickshell/session/` | plain QML + `Quickshell.execDetached` |
 | notifications | swaync | *keep* | `NotificationServer` exists, but swaync's center, DND and sliders are a lot of surface to rebuild for one fewer stylesheet |
@@ -70,7 +71,7 @@ Kept as a record, because each step was a place the old setup bit:
 3. **Autostart.** One `qs -p … -d -n` in `hyprland.start`. `-n` refuses a second
    copy, so a config reload does not stack shells.
 4. **Binds.** `SUPER+R`, `SUPER+T` and `SUPER+ESCAPE` call `launcher toggle`,
-   `launcher themes` and `session toggle`. The F-keys call the `osd` target with
+   `themes toggle` and `session toggle`. The F-keys call the `osd` target with
    a `|| wpctl …` / `|| brightnessctl …` fallback, so a keypress still lands
    when the shell is down — same action, silent.
 5. **Theme switch.** `theme-apply.sh` lost the whole kill-waybar / wait / reap
@@ -81,7 +82,7 @@ Kept as a record, because each step was a place the old setup bit:
 6. **CI.** The "nothing may autostart the scaffold" guard inverted into "the
    shell is autostarted and every IPC function the binds name is declared".
    The waybar/wofi/wlogout/swayosd CSS and JSON checks went with the files;
-   qmllint now covers `launcher/`, `osd/` and `session/`.
+   qmllint now covers `launcher/`, `osd/`, `session/` and `themes/`.
 7. **Delete.** `waybar/`, `wlogout/`, `scripts/theme-menu.sh`, and every theme's
    `waybar/`, `wofi/`, `wlogout/` and `swayosd/` directory. The stylesheets were
    the spec the QML was matched against, rule by rule; the matching is cited

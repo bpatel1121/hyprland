@@ -2,10 +2,10 @@
 
 ```
 hyprland.lua                    behavior + binds; dofiles the active theme; autostarts the shell
-quickshell/                     THE shell: bar, launcher, OSD, power menu (one process)
+quickshell/                     THE shell: bar, launcher, OSD, power menu, theme picker (one process)
 ├── settings.json               behavior: bar layout, modules, intervals, surface settings, power-menu buttons
 ├── shell.qml                   `qs -p ~/.config/hypr/quickshell -d -n`
-├── bar/ launcher/ osd/ session/   one directory per surface, each owning its IPC target
+├── bar/ launcher/ osd/ session/ themes/   one directory per surface, each owning its IPC target
 ├── fx/                         the screenshot flash (`fx flash`)
 └── README.md                   file map, IPC table, module map
 schema/                         JSON Schemas for palette.json + settings.json
@@ -42,6 +42,7 @@ themes/
     ├── theme.lua               borders, gaps, blur, shadow (read by hyprland.lua)
     ├── palette.json            color roles + the look of every shell surface (read by quickshell/)
     ├── wallpaper.webp
+    ├── thumb.webp              1280px copy of it for the picker (CI: every wallpaper has one)
     ├── swaync/style.css        notifications + control center (SUPER+SHIFT+N)
     ├── hyprlock.conf           TEMPLATE — rendered, not symlinked (see below)
     ├── cava/config             visualizer, VU-meter gradient

@@ -21,9 +21,8 @@ SUPER+T          theme picker        SUPER+A    calendar
 SUPER+ESCAPE     power menu          SUPER+CTRL+L  lock
 ```
 
-Switch theme: `SUPER+T` (the launcher in themes mode — one row per theme,
-wallpaper thumbnail and palette swatches; nothing applies until Enter), or
-`scripts/theme-switch.sh <name>`.
+Switch theme: `SUPER+T` (theme picker — full screen, ←/→ or h/l, type to
+filter, Enter applies), or `scripts/theme-switch.sh <name>`.
 
 ## Session keys
 
@@ -61,7 +60,7 @@ session locks at 10, the screen sleeps at 15. `hyprsunset` warms the screen to
 ## The shell
 
 `quickshell/` is the desktop's shell layer: one Quickshell process holding the
-bar, the launcher (and theme picker), the OSD and the power menu. It replaced
+bar, the launcher, the theme picker, the OSD and the power menu. It replaced
 waybar, wofi, swayosd and wlogout; `hyprland.lua` autostarts it and every bind
 above that used to launch one of those now asks the shell over IPC:
 

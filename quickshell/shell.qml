@@ -7,6 +7,7 @@ import "bar"
 import "launcher"
 import "osd"
 import "session"
+import "themes"
 import "fx"
 
 // Entry point for the QML shell — THE desktop's shell layer.
@@ -15,11 +16,11 @@ import "fx"
 // Talk to it:               qs ipc -p ~/.config/hypr/quickshell call <target> <fn>
 // Stop it:                  pkill -x quickshell
 //
-// Four surfaces live in this one process, each owning its own windows and IPC
+// Five surfaces live in this one process, each owning its own windows and IPC
 // target: the bar (one per screen), the launcher (`launcher`), the volume and
-// brightness OSD (`osd`) and the power menu (`session`), plus one effect, the
-// screenshot flash (`fx`). Notifications stay with swaync and the lock screen
-// with hyprlock — see docs/qml-migration.md.
+// brightness OSD (`osd`), the power menu (`session`) and the theme picker
+// (`themes`), plus one effect, the screenshot flash (`fx`). Notifications stay
+// with swaync and the lock screen with hyprlock — see docs/qml-migration.md.
 //
 // Read next: quickshell/README.md  (what each file is, module-by-module map)
 ShellRoot {
@@ -37,6 +38,7 @@ ShellRoot {
     Launcher {}
     Osd {}
     SessionMenu {}
+    ThemePicker {}
     Flash {}
 
     // theme-switch.sh calls `theme reload` after repointing themes/current.

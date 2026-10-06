@@ -1,6 +1,6 @@
 # quickshell/ — the shell
 
-One Quickshell process that is this desktop's bar, launcher (and theme picker),
+One Quickshell process that is this desktop's bar, launcher, theme picker,
 volume/brightness OSD and power menu. `hyprland.lua` starts it at login; the
 binds and the bar's own chips drive it over IPC.
 
@@ -12,10 +12,10 @@ pkill -x quickshell                      # stop a daemonized one; the first line
 
 > `pkill -f 'qs -p'` also matches the shell you typed it in. Use `pkill -x quickshell`.
 
-It owns four layer-shell namespaces — `qs-hypr-bar`, `qs-hypr-launcher`,
-`qs-hypr-osd`, `qs-hypr-session` — and `hyprland.lua` blurs each by name. The
-bar reserves its strip (height plus top margin); the other three reserve
-nothing and exist only while shown.
+It owns five layer-shell namespaces — `qs-hypr-bar`, `qs-hypr-launcher`,
+`qs-hypr-osd`, `qs-hypr-session`, `qs-hypr-themes` — and `hyprland.lua` blurs
+each by name. The bar reserves its strip (height plus top margin); the other
+four reserve nothing and exist only while shown.
 
 ## What reads what
 
@@ -31,7 +31,7 @@ inode `current` resolved to, not the symlink), so `theme-apply.sh` ends with
 `qs ipc … call theme reload`.
 
 ```
-shell.qml               ShellRoot; one Bar per screen via Variants, then Launcher, Osd, SessionMenu, Flash; the `theme` IPC target
+shell.qml               ShellRoot; one Bar per screen via Variants, then Launcher, Osd, SessionMenu, ThemePicker, Flash; the `theme` IPC target
 config/
   Paths.qml             repo root + scripts dir, derived from Quickshell.shellDir
   Theme.qml             themes/current/palette.json -> color roles, effects, per-surface geometry
@@ -42,11 +42,13 @@ bar/
   Island.qml            one island: fill, radius, hairline, scanlines, accent line — all from the palette
   ModuleLoader.qml      "agenda" -> ../modules/Agenda.qml
 launcher/
-  Launcher.qml          the drun grid, and the theme picker as a second mode of the same window
+  Launcher.qml          the drun grid: frecent card when empty, wofi's two columns when typed
 osd/
   Osd.qml               the volume/brightness pill, on the focused monitor
 session/
   SessionMenu.qml       the power menu: one dimmed surface per monitor, tiles on the focused one
+themes/
+  ThemePicker.qml       the theme picker: full screen, a wallpaper carousel with each palette under it, search at the bottom
 fx/
   Flash.qml             the screenshot flash: one full-screen sheet per monitor, snaps to 0.55 and fades in 180ms
 components/
@@ -65,8 +67,9 @@ qs ipc -p ~/.config/hypr/quickshell call <target> <function> [args]
 
 | target | functions | who calls it |
 |---|---|---|
-| `launcher` | `toggle`, `open`, `close`, `themes` | `SUPER+R` (`toggle`), `SUPER+T` (`themes`), the Arch chip |
+| `launcher` | `toggle`, `open`, `close` | `SUPER+R` (`toggle`), the Arch chip |
 | `session` | `toggle`, `open`, `close` | `SUPER+ESCAPE`, the power chip |
+| `themes` | `toggle`, `open`, `close` | `SUPER+T` |
 | `fx` | `flash` | the screenshot binds, right after grim has read the pixels |
 | `osd` | `volumeRaise`, `volumeLower`, `volumeMute`, `brightnessRaise`, `brightnessLower`, `display <volume\|brightness>` | `SUPER+F1..F3`, `SUPER+F5/F6` |
 | `theme` | `reload` | `scripts/theme-apply.sh`, last line |
@@ -127,15 +130,15 @@ every color silently reading as undefined.
 synthesizes a qmldir for directories that lack one, and the synthesized version
 did not register the plain (non-singleton) components — every module failed with
 `Chip is not a type`. Declaring them by hand fixes that and also satisfies
-qmllint. (`launcher/`, `osd/` and `session/` need none: `shell.qml` imports each
-directory and names its one type.)
+qmllint. (`launcher/`, `osd/`, `session/` and `themes/` need none: `shell.qml`
+imports each directory and names its one type.)
 
 ## Checking it
 
 ```
 qmllint -I /usr/lib/qt6/qml -I quickshell \
   --uncreatable-type disable --unresolved-type disable \
-  quickshell/shell.qml quickshell/{config,bar,components,modules,launcher,osd,session,fx}/*.qml
+  quickshell/shell.qml quickshell/{config,bar,components,modules,launcher,osd,session,themes,fx}/*.qml
 ```
 
 Those two categories are off because qmllint cannot see through Quickshell's

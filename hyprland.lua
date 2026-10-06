@@ -52,8 +52,9 @@ local terminal = "wezterm start" -- main terminal (SUPER+Q)
 local fileManager = "wezterm start -- yazi"
 
 -- The shell: one Quickshell process (quickshell/) owns the bar, the launcher,
--- the volume/brightness OSD and the power menu. Each is driven over its IPC
--- target, so a bind is "ask the shell", never "start a program".
+-- the volume/brightness OSD, the power menu and the theme picker. Each is
+-- driven over its IPC target, so a bind is "ask the shell", never "start a
+-- program".
 local shell = home .. "/.config/hypr/quickshell"
 local function qs(target, fn)
     return "qs ipc -p " .. shell .. " call " .. target .. " " .. fn
@@ -324,8 +325,10 @@ hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + N", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "1" }))
 
--- Theme switcher: the launcher in themes mode (wallpaper + palette per row).
-hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(qs("launcher", "themes")))
+-- Theme picker: full screen, the wallpapers in a carousel with each theme's
+-- palette under it. Left/Right or h/l to browse, type to filter, Enter
+-- applies (theme-switch.sh), Escape leaves everything as it was.
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(qs("themes", "toggle")))
 
 -- Calendar: ikhal's month grid in a floating themed terminal (float rule below).
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd(scripts .. "calendar-menu.sh"))
@@ -469,25 +472,29 @@ hl.layer_rule({
     ignore_alpha = 0.35,
 })
 
--- The shell's other three surfaces, and swaync, get the same treatment, or
--- they sit flat and opaque next to a frosted bar. Lower ignore_alpha than the
--- bar's because these are solid panels rather than islands floating on a
--- transparent sheet. Each QML surface draws its panel on a fully transparent
--- window, which is what gives ignore_alpha an edge to find.
+-- The shell's launcher, OSD and power menu, and swaync, get the same
+-- treatment, or they sit flat and opaque next to a frosted bar. Lower
+-- ignore_alpha than the bar's because these are solid panels rather than
+-- islands floating on a transparent sheet. Each QML surface draws its panel
+-- on a fully transparent window, which is what gives ignore_alpha an edge to
+-- find. The theme picker is deliberately NOT here: a full-screen blur
+-- recomputed on every frame of its fade-in stuttered, so its backdrop covers
+-- the desktop by opacity alone (0.9, in ThemePicker.qml).
 hl.layer_rule({
     name = "qs-surfaces-blur",
     match = { namespace = "^qs-hypr-(launcher|osd|session)$" },
     blur = true,
     ignore_alpha = 0.2,
 })
--- The launcher and the power menu animate themselves (a fade and an 8px rise,
--- a backdrop fade); the compositor's layersIn slide on top of that read as two
--- motions fighting. The OSD keeps the slide — a pill rising from the bottom
--- edge is the right motion for it, and it has none of its own. The screenshot
--- flash is a snap by definition: a compositor fade-in would turn it to mush.
+-- The launcher, the power menu and the theme picker animate themselves (a
+-- fade and a short rise, a backdrop fade); the compositor's layersIn slide on
+-- top of that read as two motions fighting. The OSD keeps the slide — a pill
+-- rising from the bottom edge is the right motion for it, and it has none of
+-- its own. The screenshot flash is a snap by definition: a compositor fade-in
+-- would turn it to mush.
 hl.layer_rule({
     name = "qs-surfaces-self-animated",
-    match = { namespace = "^qs-hypr-(launcher|session|fx)$" },
+    match = { namespace = "^qs-hypr-(launcher|session|themes|fx)$" },
     no_anim = true,
 })
 hl.layer_rule({

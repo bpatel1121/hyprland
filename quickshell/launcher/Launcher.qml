@@ -33,26 +33,16 @@ import "../components"
 // Launches are counted into launcher-history.json in Quickshell's per-shell
 // state dir; nothing else reads it and deleting it just resets the ranking.
 //
-// Two modes share one window:
-//
-//   apps    the above.
-//   themes  what scripts/theme-menu.sh used to pipe through `wofi --dmenu`:
-//           one row per directory in themes/, with the theme's wallpaper as its
-//           icon and its twelve palette roles as a swatch strip. Enter runs
-//           theme-switch.sh; nothing applies until then. Themes mode keeps the
-//           configured height.
-//
-// Opened by IPC (`qs ipc call launcher toggle|open|close|themes`) — the bar
-// chip and the SUPER+R bind both go through that, so the launcher behaves
-// identically however it was summoned. While closed the window does not exist
-// and holds no keyboard focus.
+// Opened by IPC (`qs ipc call launcher toggle|open|close`) — the bar chip and
+// the SUPER+R bind both go through that, so the launcher behaves identically
+// however it was summoned. While closed the window does not exist and holds
+// no keyboard focus. (The theme picker, once a second mode of this window, is
+// themes/ThemePicker.qml now.)
 Scope {
     id: root
 
     // --- state ---------------------------------------------------------------
     property bool shown: false
-    property string mode: "apps"
-    readonly property bool themesMode: root.mode === "themes"
 
     // The screen the launcher was opened on. Frozen at open rather than bound
     // to Hyprland.focusedMonitor: with exclusive keyboard focus the pointer is
@@ -105,41 +95,22 @@ Scope {
     // The open slide: content rises this far while it fades in.
     readonly property int slideDistance: 8
 
-    // Theme-row artwork: a wallpaper thumbnail where the app icon would be.
-    readonly property int thumbWidth: 48
-    readonly property int thumbHeight: 30
-    readonly property int swatchSize: 10
-
-    // The twelve roles, in the order palette.json declares them, so a swatch
-    // strip reads the same way the @define-color block does.
-    readonly property var roleOrder: [
-        "ground", "surface", "hairline", "dim", "frame", "readout",
-        "warn", "ok", "urgent", "dormant", "text", "launcher"
-    ]
-
     // --- data ----------------------------------------------------------------
     property string query: ""
 
-    // Themes mode: [{ name, dir, wallpaper }], filled by the lister below.
-    property var themes: []
-
-    // Apps mode with nothing typed. Themes mode never collapses: a theme list
-    // is short and the picker is rarer than the launcher, so it keeps wofi's
-    // full height.
-    readonly property bool recentMode: !root.themesMode && root.query.trim() === ""
+    // Nothing typed.
+    readonly property bool recentMode: root.query.trim() === ""
 
     // The frecent list, computed once per open (see show()) rather than bound:
     // the decay depends on the clock, and a binding would only re-rank when
     // something it reads changed, not when the launcher is next summoned.
     property var recentList: []
 
-    // What the grid shows. Recomputed whenever the query, the mode, the
-    // desktop-entry model, the recent list or the theme list changes.
-    readonly property var results: root.themesMode
-        ? root.filter(root.themes, root.query)
-        : root.recentMode
-            ? root.recentList
-            : root.filter(DesktopEntries.applications.values, root.query)
+    // What the grid shows. Recomputed whenever the query, the desktop-entry
+    // model or the recent list changes.
+    readonly property var results: root.recentMode
+        ? root.recentList
+        : root.filter(DesktopEntries.applications.values, root.query)
 
     // Ranked substring match, case-insensitive. wofi's own matching is a plain
     // `contains`; the tiering is what makes "fire" put Firefox above an entry
@@ -260,15 +231,11 @@ Scope {
     }
 
     // --- open / close --------------------------------------------------------
-    function show(which) {
-        root.mode = which;
+    function show() {
         root.query = "";
         input.text = "";
         root.targetScreen = root.focusedScreen();
-        if (which === "themes")
-            themeLister.running = true;
-        else
-            root.recentList = root.frecent();
+        root.recentList = root.frecent();
         root.shown = true;
         input.forceActiveFocus();
     }
@@ -294,13 +261,8 @@ Scope {
         const item = root.results[index];
         if (item === undefined)
             return;
-        if (root.themesMode) {
-            // Through bash so a synced copy without its executable bit still runs.
-            Quickshell.execDetached(["bash", Paths.script("theme-switch.sh"), item.name]);
-        } else {
-            root.launch(item);
-            root.remember(item);
-        }
+        root.launch(item);
+        root.remember(item);
         root.hide();
     }
 
@@ -331,43 +293,10 @@ Scope {
             if (root.shown)
                 root.hide();
             else
-                root.show("apps");
+                root.show();
         }
-        function open(): void { root.show("apps"); }
+        function open(): void { root.show(); }
         function close(): void { root.hide(); }
-        function themes(): void { root.show("themes"); }
-    }
-
-    // --- themes/ listing -----------------------------------------------------
-    // One line per theme directory, `name<TAB>wallpaper`, skipping the
-    // `current` symlink. The wallpaper glob mirrors theme_wallpaper() in
-    // scripts/theme-lib.sh: first wallpaper.* in the directory, empty if none.
-    // Re-run on every themes-mode open so a freshly copied theme shows up.
-    Process {
-        id: themeLister
-        command: ["sh", "-c",
-            "for d in \"$1\"/*/; do n=${d%/}; n=${n##*/}; [ \"$n\" = current ] && continue; "
-            + "w=; for f in \"$d\"wallpaper.*; do [ -e \"$f\" ] && { w=$f; break; }; done; "
-            + "printf '%s\\t%s\\n' \"$n\" \"$w\"; done",
-            "_", Paths.themes]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const out = [];
-                const lines = this.text.split("\n");
-                for (let i = 0; i < lines.length; i++) {
-                    const parts = lines[i].split("\t");
-                    if (parts[0] === "")
-                        continue;
-                    out.push({
-                        name: parts[0],
-                        dir: Paths.themes + "/" + parts[0],
-                        wallpaper: parts[1] ?? ""
-                    });
-                }
-                root.themes = out;
-            }
-        }
     }
 
     // Click anywhere outside the window and the compositor clears the grab.
@@ -616,9 +545,9 @@ Scope {
                 clip: true
                 model: root.results
 
-                // One column for the frecent card and for themes (the list
-                // `wofi --dmenu` was); a typed query gets wofi's --columns 2.
-                readonly property int columns: (root.themesMode || root.recentMode) ? 1 : root.columns
+                // One column for the frecent card; a typed query gets wofi's
+                // --columns 2.
+                readonly property int columns: root.recentMode ? 1 : root.columns
                 cellWidth: Math.floor(grid.width / grid.columns)
                 cellHeight: root.cellHeight
 
@@ -660,7 +589,7 @@ Scope {
                     // iconPath's check form returns empty rather than the
                     // broken-image placeholder, and the monogram takes over.
                     readonly property string iconSource:
-                        (!root.themesMode && (entry.modelData.icon ?? "") !== "")
+                        (entry.modelData.icon ?? "") !== ""
                             ? Quickshell.iconPath(entry.modelData.icon, true) : ""
 
                     // The generic name, or "" when there is none or it only
@@ -701,17 +630,16 @@ Scope {
                         border.width: 1
                         border.color: entry.edge
 
-                        // The icon slot: the app icon, or its monogram, or a
-                        // wallpaper thumbnail in themes mode. Fixed width in
-                        // each mode, so the text column starts at the same x
-                        // on every row whether or not an icon was found.
+                        // The icon slot: the app icon, or its monogram. Fixed
+                        // width, so the text column starts at the same x on
+                        // every row whether or not an icon was found.
                         Item {
                             id: iconSlot
 
                             anchors.left: parent.left
                             anchors.leftMargin: root.entryPadding
                             anchors.verticalCenter: parent.verticalCenter
-                            width: root.themesMode ? root.thumbWidth : root.iconSize
+                            width: root.iconSize
                             height: root.iconSize
 
                             IconImage {
@@ -728,7 +656,7 @@ Scope {
                             // in the family instead of flagging it as broken.
                             Rectangle {
                                 anchors.centerIn: parent
-                                visible: !root.themesMode && entry.iconSource === ""
+                                visible: entry.iconSource === ""
                                 width: root.iconSize
                                 height: root.iconSize
                                 radius: root.iconSize / 2
@@ -743,65 +671,14 @@ Scope {
                                     font.bold: true
                                 }
                             }
-
-                            Image {
-                                anchors.centerIn: parent
-                                visible: root.themesMode
-                                width: root.thumbWidth
-                                height: root.thumbHeight
-                                fillMode: Image.PreserveAspectCrop
-                                asynchronous: true
-                                // Decode small: these are full-screen wallpapers.
-                                sourceSize.width: root.thumbWidth * 4
-                                source: (root.themesMode && (entry.modelData.wallpaper ?? "") !== "")
-                                    ? "file://" + entry.modelData.wallpaper : ""
-                            }
-                        }
-
-                        // The twelve roles of THAT theme, read from its own
-                        // palette.json — a swatch strip at the row's right edge.
-                        // Empty (zero width) in apps mode, so the text column's
-                        // right edge is the same expression in both modes.
-                        Row {
-                            id: swatches
-
-                            anchors.right: parent.right
-                            anchors.rightMargin: root.entryPadding
-                            anchors.verticalCenter: parent.verticalCenter
-                            spacing: 2
-
-                            property var colors: []
-
-                            Repeater {
-                                model: swatches.colors
-
-                                Rectangle {
-                                    required property string modelData
-                                    width: root.swatchSize
-                                    height: root.swatchSize
-                                    radius: 2
-                                    color: modelData
-                                }
-                            }
-                        }
-
-                        FileView {
-                            path: root.themesMode ? entry.modelData.dir + "/palette.json" : ""
-                            onLoaded: {
-                                try {
-                                    const roles = JSON.parse(this.text()).roles ?? {};
-                                    swatches.colors = root.roleOrder.map(r => roles[r] ?? "#00000000");
-                                } catch (e) {
-                                    console.warn("Launcher: " + entry.modelData.name
-                                                 + "/palette.json is not valid JSON:", e);
-                                }
-                            }
                         }
 
                         // The name: `text` at rest, `launcher` when selected,
                         // and on cyberpunk the selected one glows (a no-op on
                         // gruvbox, which declares no glow). `#text { margin:
-                        // 0 6px }` still sets the gap after the icon.
+                        // 0 6px }` still sets the gap after the icon, and the
+                        // same 6px plus the row padding ends the text column
+                        // at the right.
                         //
                         // Never elided while the generic name has room to give:
                         // it takes its natural width up to the whole column and
@@ -813,7 +690,7 @@ Scope {
                             anchors.leftMargin: root.iconGap + root.textMargin
                             anchors.verticalCenter: parent.verticalCenter
                             width: Math.min(name.implicitWidth,
-                                            Math.max(0, swatches.x - root.textMargin - name.x))
+                                            Math.max(0, row.width - root.entryPadding - root.textMargin - name.x))
                             baselineOffset: nameMetrics.ascent
 
                             text: entry.modelData.name ?? ""
@@ -830,8 +707,8 @@ Scope {
                         // to give way when the row is tight.
                         Text {
                             anchors.left: name.right
-                            anchors.right: swatches.left
-                            anchors.rightMargin: root.textMargin
+                            anchors.right: parent.right
+                            anchors.rightMargin: root.entryPadding + root.textMargin
                             anchors.baseline: name.baseline
                             visible: entry.genericName !== ""
 

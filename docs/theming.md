@@ -5,10 +5,12 @@ and adding one of your own.
 
 ## Switching
 
-`SUPER+T` opens the shell's launcher in **themes mode**: one row per directory
-in `themes/`, each with its wallpaper as the thumbnail and its twelve palette
-roles as a swatch strip, so you see what you are about to get. Nothing applies
-until Enter; Escape leaves everything as it was. Or, from a shell:
+`SUPER+T` opens the shell's **theme picker** over the whole screen: one card
+per directory in `themes/`, each its wallpaper, in a carousel with the centre
+theme's name, polarity and twelve palette roles under it, so you see what you
+are about to get. Left/Right or h/l browse, typing filters the carousel by
+name, Enter applies. Nothing applies until then; Escape leaves everything as
+it was. Or, from a shell:
 
 ```
 ~/.config/hypr/scripts/theme-switch.sh cyberpunk
@@ -24,7 +26,10 @@ config reload.
 ## Adding a theme
 
 Copy `themes/cyberpunk` to `themes/<name>`, swap the palette and wallpaper,
-and it appears in the picker automatically. Only `theme.lua` is required —
+and it appears in the picker automatically. Ship a `thumb.webp` beside the
+wallpaper, 1280px wide (`magick wallpaper.webp -resize 1280x thumb.webp`, or
+any tool): the picker draws its cards from that, so opening it never decodes
+eight 4K images; CI fails a theme that has a wallpaper and no thumb. Only `theme.lua` is required —
 every other file degrades gracefully if absent. A new theme inherits the shell's
 behavior (bar modules, launcher grid, power-menu buttons) and the notification
 layout for free, so in practice it needs a `palette.json` and a wallpaper. The
