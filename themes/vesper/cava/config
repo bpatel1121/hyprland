@@ -1,0 +1,41 @@
+# Vesper · rim light on cobalt — cava
+#
+# Not a VU meter, as glacier's and verdigris's are not. The other dark themes
+# climb readout -> warn -> urgent because color means state; vesper keeps the
+# meaning (quiet is the readout color, loud is the frame color) but stays on
+# the picture's own warm run: quiet is the horizon's peach, rising goes the
+# lit skin of the rim (the launcher's color, the glow on her legs), loud is
+# the rim itself — peach to rim, the light moving in from the horizon to her
+# edge. Light rising, not an alert. The only reason the crimson would appear
+# is an alarm, and a loud song is not one.
+
+[general]
+framerate = 60
+autosens = 1
+overshoot = 20
+bars = 0            # 0 = auto-fit the terminal width
+bar_width = 2
+bar_spacing = 1
+
+[input]
+method = pulse
+source = auto
+
+[output]
+method = ncurses
+channels = stereo
+mono_option = average
+
+[color]
+background = '#0a1c36'      # night (ground)
+gradient = 1
+gradient_count = 6
+gradient_color_1 = '#eebfa6'    # readout  — quiet (the horizon, peach)
+gradient_color_2 = '#eebfa6'    # readout
+gradient_color_3 = '#e48c74'    # launcher — rising (the lit skin of the rim)
+gradient_color_4 = '#e48c74'    # launcher
+gradient_color_5 = '#f25a3c'    # frame    — loud (the rim)
+gradient_color_6 = '#f25a3c'    # frame
+
+[smoothing]
+noise_reduction = 45

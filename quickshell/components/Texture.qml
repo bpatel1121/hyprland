@@ -28,6 +28,9 @@ import "../config"
 //                        gone by mid-height — lit pavement under a dark sky.
 //   vignette   verdigris black closing in from the corners, clear at the
 //                        centre — a stone panel lit from the middle.
+//   rim        vesper    `frame` catching the right edge of every panel and
+//                        fading in, with a hairline of it on the edge — the
+//                        picture's rim light, from the sun behind her.
 Canvas {
     id: root
 
@@ -58,6 +61,7 @@ Canvas {
         case "sheen":     return 0.12;
         case "horizon":   return 0.18;
         case "vignette":  return 0.35;
+        case "rim":       return 0.30;
         default:          return 0;
         }
     }
@@ -130,6 +134,18 @@ Canvas {
             g.addColorStop(1, root.css(root.ink, 0));
             ctx.fillStyle = g;
             ctx.fillRect(0, 0, w, h);
+            break;
+        }
+        case "rim": {
+            // Lit from the right: a band of `frame` fading in over the last
+            // 18% of the width, and one bright pixel on the edge itself.
+            const g = ctx.createLinearGradient(w * 0.82, 0, w, 0);
+            g.addColorStop(0, root.css(root.ink, 0));
+            g.addColorStop(1, root.css(root.ink, root.alpha));
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = root.css(root.ink, Math.min(1, root.alpha * 2.5));
+            ctx.fillRect(w - 1, 0, 1, h);
             break;
         }
         case "vignette": {

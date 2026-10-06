@@ -1,0 +1,20 @@
+# lazygit — vesper. Rim frame, peach readouts, cobalt everywhere else: the
+# active panel border is the frame color, selection is a raised surface, and
+# the rim's gold and crimson appear only as state (searching, a marked base,
+# unstaged work).
+gui:
+  nerdFontsVersion: "3"
+  showRandomTip: false
+  theme:
+    activeBorderColor: ["#f25a3c", "bold"]
+    inactiveBorderColor: ["#4d87b5"]
+    searchingActiveBorderColor: ["#f2c96b", "bold"]
+    selectedLineBgColor: ["#1d3d66"]
+    optionsTextColor: ["#eebfa6"]
+    cherryPickedCommitFgColor: ["#eebfa6"]
+    cherryPickedCommitBgColor: ["#163a63"]
+    # night on the rim's gold (10.8:1), not peach-white: that on #f2c96b is 1.3:1
+    markedBaseCommitFgColor: ["#0a1c36"]
+    markedBaseCommitBgColor: ["#f2c96b"]
+    unstagedChangesColor: ["#ee4068"]
+    defaultFgColor: ["#f3e6dd"]

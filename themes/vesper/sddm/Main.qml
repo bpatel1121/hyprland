@@ -1,0 +1,265 @@
+// Vesper · rim light on cobalt — SDDM greeter
+//
+// The login half of the theme system: same wallpaper, same palette discipline
+// as hyprlock (themes/vesper/hyprlock.conf) — RIM RED is the frame, PEACH is
+// the content, crimson appears only on failure. (The sky lit is hyprlock's
+// checking flash; a greeter has no checking state, so it never shows here.)
+// Colors are copied verbatim from the hyprlock input-field so boot -> login
+// -> lock reads as one design.
+//
+// Same left-of-centre, slightly low layout as hyprlock, for the same reason:
+// the figure hangs right of centre (x 67..88 % of the crop, head at the top
+// edge), so the centred stack of the other dark greeters would cross her
+// skirt; at x ~30 % and y ~55 % the stack crosses only open sky and the
+// horizon haze — see the LAYOUT NOTE in hyprlock.conf for the measurements.
+// Both offsets are fractions of the screen, not pixel counts, so the stack
+// lands on the same patch of sky at any resolution or Qt scale SDDM happens
+// to run the greeter at.
+//
+// Deliberately plain Qt Quick: no Qt5Compat.GraphicalEffects (blur/glow),
+// which would add a package dependency and a Qt-version headache for one
+// visual flourish. The "glow" here is a raised rim-red text style under the
+// peach clock — cheap, safe, and quiet: a sun below the horizon, not neon.
+//
+// Installed system-wide by scripts/sddm-apply.sh (SDDM runs as its own user
+// and cannot read ~/.config). Preview without logging out:
+//   sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/hypr-vesper
+
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+
+Rectangle {
+    id: root
+    width: 1920
+    height: 1080          // greeter resizes the root item to the real screen
+    color: "#0a1c36"      // night — ground, in case the wallpaper fails to load
+
+    // Vesper roles, same names as palette.json
+    readonly property color cFrame:   "#f25a3c"  // frame — the rim, softened one step
+    readonly property color cReadout: "#eebfa6"  // readout — the horizon, peach
+    readonly property color cRed:     "#ee4068"  // urgent — failure only
+    readonly property color cGray:    "#839aab"  // dormant — quiet type (the fog)
+    readonly property color cFg:      "#f3e6dd"  // text — peach-white
+    readonly property color cInner:   "#102a4e"  // surface — the cobalt, the inputs
+    readonly property color cSeam:    "#1d3d66"  // hairline — resting input edges (twilight)
+    readonly property string mono:   "JetBrainsMono Nerd Font"
+
+    // Centre of the whole stack: left of centre, a little low. -384/1920 is
+    // the hyprlock x offset as a fraction, and hyprlock moves its stack 60px
+    // down a 1200-high layout, so 0.05 of the height keeps the two screens
+    // lined up.
+    readonly property real stackX: -root.width * 0.2
+    readonly property real stackY: root.height * 0.05
+
+    // --- wallpaper, dimmed like hyprlock (brightness 0.35) ------------------
+    Image {
+        anchors.fill: parent
+        source: config.background
+        fillMode: Image.PreserveAspectCrop
+    }
+    // (1 - 0.35) = 0.65: the scrim that brightness 0.35 is in hyprlock —
+    // deeper than the night themes' 0.45 because this picture is a lit dusk
+    // and the stack sits over the horizon haze. Night rather than black so
+    // the dim stays in the picture's own cobalt.
+    Rectangle { anchors.fill: parent; color: "#0a1c36"; opacity: 0.65 }  // night scrim
+
+    // --- clock — peach glyphs, rim undertone, same as the lock screen -------
+    Column {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: root.stackX
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -140 + root.stackY
+        spacing: 8
+
+        Text {
+            id: clockText
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: root.cReadout
+            font.family: root.mono
+            font.pixelSize: 96
+            font.bold: true
+            style: Text.Raised
+            styleColor: "#80f25a3c"   // frame at ~50% — the budget glow, red
+            text: Qt.formatTime(new Date(), "HH:mm")
+        }
+        // No outline, unlike harbor's: the greeter cannot blur, but under the
+        // 0.65 night scrim the haze under the date is quiet enough — dormant
+        // straight on it holds 3.2:1 at its brightest pixel (the clock 4.3:1
+        // there, 5.6:1 over 95 % of its box).
+        Text {
+            id: dateText
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: root.cGray
+            font.family: root.mono
+            font.pixelSize: 16
+            text: Qt.formatDate(new Date(), "dddd, dd MMMM")
+        }
+    }
+    Timer {
+        interval: 1000; running: true; repeat: true
+        onTriggered: {
+            clockText.text = Qt.formatTime(new Date(), "HH:mm")
+            dateText.text  = Qt.formatDate(new Date(), "dddd, dd MMMM")
+        }
+    }
+
+    // --- login panel — mirrors hyprlock's input-field ------------------------
+    Column {
+        id: panel
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: root.stackX
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: 60 + root.stackY
+        spacing: 10
+
+        // username — prefilled with the last user; small and quiet. 7px
+        // corners: the launcher's inputRadius, the same object as its input.
+        Rectangle {
+            width: 320; height: 34; radius: 7
+            color: root.cInner
+            border.width: 1
+            border.color: userInput.activeFocus ? root.cFrame : root.cSeam
+            anchors.horizontalCenter: parent.horizontalCenter
+            TextInput {
+                id: userInput
+                anchors.fill: parent
+                anchors.leftMargin: 14; anchors.rightMargin: 14
+                verticalAlignment: TextInput.AlignVCenter
+                color: root.cGray
+                font.family: root.mono
+                font.pixelSize: 13
+                text: userModel.lastUser
+                selectByMouse: true
+                onAccepted: passInput.forceActiveFocus()
+            }
+        }
+
+        // password — 320x52, radius 10, 2px rim border: hyprlock's numbers
+        Rectangle {
+            id: passBox
+            width: 320; height: 52; radius: 10
+            color: root.cInner
+            border.width: 2
+            border.color: failText.visible ? root.cRed : root.cFrame
+            anchors.horizontalCenter: parent.horizontalCenter
+            TextInput {
+                id: passInput
+                anchors.fill: parent
+                anchors.leftMargin: 16; anchors.rightMargin: 16
+                verticalAlignment: TextInput.AlignVCenter
+                color: root.cReadout
+                font.family: root.mono
+                font.pixelSize: 15
+                echoMode: TextInput.Password
+                passwordCharacter: "•"
+                focus: true
+                selectByMouse: true
+                onTextChanged: failText.visible = false
+                onAccepted: sddm.login(userInput.text, passInput.text, sessionBox.currentIndex)
+            }
+            Text {
+                anchors.centerIn: parent
+                visible: passInput.text.length === 0
+                text: "enter password"
+                color: root.cGray
+                font.family: root.mono
+                font.pixelSize: 13
+                opacity: 0.7
+            }
+        }
+
+        // Outlined in the ground: the crimson is the one role that dips under
+        // the stack unblurred — 2.3:1 on the haze's brightest pixel — and a
+        // 1px night outline keeps every glyph edge at 4.5:1 at no cost.
+        Text {
+            id: failText
+            visible: false
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "authentication failed"
+            color: root.cRed
+            font.family: root.mono
+            font.pixelSize: 13
+            style: Text.Outline
+            styleColor: root.color
+        }
+    }
+
+    // --- session picker, bottom-left ----------------------------------------
+    ComboBox {
+        id: sessionBox
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.margins: 28
+        width: 200
+        model: sessionModel
+        textRole: "name"
+        currentIndex: sessionModel.lastIndex
+        font.family: root.mono
+        font.pixelSize: 12
+
+        background: Rectangle {
+            color: root.cInner; radius: 7
+            border.width: 1; border.color: root.cSeam
+        }
+        contentItem: Text {
+            leftPadding: 12
+            verticalAlignment: Text.AlignVCenter
+            text: sessionBox.displayText
+            color: root.cGray
+            font: sessionBox.font
+        }
+    }
+
+    // --- power row, bottom-right (glyphs need the Nerd Font) ----------------
+    // Dormant at rest, rim red when touched — the frame hue is the lift here,
+    // as it is on the bar's chips — and crimson only for power off.
+    //
+    // Straight on the picture, as verdigris's is, not on a pane like harbor's:
+    // this corner is the blue-grey fog under the cloud sea, and under the
+    // 0.65 night scrim the row reads at 4.5:1 resting, 3.9:1 touched, 3.5:1
+    // for crimson on its brightest pixel.
+    Row {
+        id: powerRow
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: 28
+        spacing: 22
+
+        Text {
+            visible: sddm.canSuspend
+            text: "⏾"          // fallback-safe glyph; nerd font shows it fine
+            color: powerSuspend.containsMouse ? root.cFrame : root.cGray
+            font.family: root.mono; font.pixelSize: 20
+            MouseArea { id: powerSuspend; anchors.fill: parent; hoverEnabled: true; onClicked: sddm.suspend() }
+        }
+        Text {
+            visible: sddm.canReboot
+            text: "↻"
+            color: powerReboot.containsMouse ? root.cFrame : root.cGray
+            font.family: root.mono; font.pixelSize: 20
+            MouseArea { id: powerReboot; anchors.fill: parent; hoverEnabled: true; onClicked: sddm.reboot() }
+        }
+        Text {
+            visible: sddm.canPowerOff
+            text: "⏻"
+            color: powerOff.containsMouse ? root.cRed : root.cGray
+            font.family: root.mono; font.pixelSize: 20
+            MouseArea { id: powerOff; anchors.fill: parent; hoverEnabled: true; onClicked: sddm.powerOff() }
+        }
+    }
+
+    // --- sddm signals --------------------------------------------------------
+    Connections {
+        target: sddm
+        // Clear FIRST, then show: clearing fires onTextChanged, which hides
+        // the message — in the other order it is wiped the instant it appears.
+        function onLoginFailed() {
+            passInput.text = ""
+            failText.visible = true
+            passInput.forceActiveFocus()
+        }
+        function onLoginSucceeded() { }
+    }
+
+    Component.onCompleted: passInput.forceActiveFocus()
+}

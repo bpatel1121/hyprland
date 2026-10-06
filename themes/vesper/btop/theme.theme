@@ -1,0 +1,65 @@
+# Vesper · rim light on cobalt — btop
+#
+# Linked in as ~/.config/btop/themes/current.theme by theme-apply.sh (btop.conf
+# says color_theme = "current" once and never changes).
+#
+# Same role assignments as the rest of the desktop: the rim frames the boxes,
+# peach is the live readout, and the ramps climb peach -> rim gold -> crimson
+# (readout -> warn -> urgent: the horizon, the rim's highlight, the alert) so
+# a hot CPU reads like a critical bar module. At rest the whole screen is
+# night, peach and the rim's red: the horizon seen from above the clouds.
+
+theme[main_bg]="#0a1c36"
+theme[main_fg]="#f3e6dd"
+theme[title]="#f25a3c"
+theme[hi_fg]="#eebfa6"
+theme[selected_bg]="#102a4e"
+theme[selected_fg]="#f25a3c"
+theme[inactive_fg]="#4d87b5"
+theme[graph_text]="#839aab"
+theme[meter_bg]="#1d3d66"
+theme[proc_misc]="#7fbdea"
+
+# Box outlines — the rim is the frame color everywhere in this desktop.
+theme[cpu_box]="#f25a3c"
+theme[mem_box]="#f25a3c"
+theme[net_box]="#f25a3c"
+theme[proc_box]="#f25a3c"
+theme[div_line]="#1d3d66"
+
+# Temperature: peach -> rim gold -> crimson at the top.
+theme[temp_start]="#eebfa6"
+theme[temp_mid]="#f2c96b"
+theme[temp_end]="#ee4068"
+
+# CPU load.
+theme[cpu_start]="#eebfa6"
+theme[cpu_mid]="#f2c96b"
+theme[cpu_end]="#ee4068"
+
+# Free / cached / available / used memory.
+theme[free_start]="#1d3d66"
+theme[free_mid]="#7fbdea"
+theme[free_end]="#7fbdea"
+theme[cached_start]="#1d3d66"
+theme[cached_mid]="#eebfa6"
+theme[cached_end]="#eebfa6"
+theme[available_start]="#1d3d66"
+theme[available_mid]="#f2c96b"
+theme[available_end]="#f2c96b"
+theme[used_start]="#1d3d66"
+theme[used_mid]="#f25a3c"
+theme[used_end]="#ee4068"
+
+# Disk io.
+theme[download_start]="#1d3d66"
+theme[download_mid]="#eebfa6"
+theme[download_end]="#eebfa6"
+theme[upload_start]="#1d3d66"
+theme[upload_mid]="#f25a3c"
+theme[upload_end]="#f25a3c"
+
+# Process box gradient.
+theme[process_start]="#eebfa6"
+theme[process_mid]="#f2c96b"
+theme[process_end]="#ee4068"

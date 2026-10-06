@@ -1,0 +1,68 @@
+/* Vesper · rim light on cobalt — GTK
+ *
+ * Symlinked by theme-apply.sh to BOTH ~/.config/gtk-3.0/gtk.css and
+ * ~/.config/gtk-4.0/gtk.css; each toolkit reads its own color names and
+ * ignores the other's. The rim is the accent, matching the bar's frame and
+ * the window border, so file dialogs look like they belong to this desktop.
+ * Accent text is night on the rim (5.1:1) — peach-white on it is 2.7:1 and
+ * would vanish.
+ *
+ * Selection is the frame too, not the launcher's lit skin: that belongs to
+ * the launcher alone, and the two are close enough in hue that a salmon
+ * highlight in every file dialog would blur the one place it is meant to be
+ * seen. Rim red on cobalt is the picture's own pairing, her edge against
+ * the sky.
+ *
+ * Palette: night #0a1c36 · cobalt #102a4e · twilight #1d3d66 · sky #4d87b5
+ *          rim #f25a3c · horizon #eebfa6 · skyLit (ok) #7fbdea · rimGold #f2c96b
+ *          crimson #ee4068 · fog #839aab · cloud #f3e6dd · rimShadow #e48c74
+ */
+
+/* ---- GTK4 / libadwaita ----------------------------------------------------- */
+@define-color accent_color        #f25a3c;
+@define-color accent_bg_color     #f25a3c;
+@define-color accent_fg_color     #0a1c36;
+
+@define-color window_bg_color     #0a1c36;
+@define-color window_fg_color     #f3e6dd;
+@define-color view_bg_color       #102a4e;
+@define-color view_fg_color       #f3e6dd;
+@define-color headerbar_bg_color  #102a4e;
+@define-color headerbar_fg_color  #f3e6dd;
+@define-color sidebar_bg_color    #102a4e;
+@define-color sidebar_fg_color    #f3e6dd;
+@define-color card_bg_color       #102a4e;
+@define-color card_fg_color       #f3e6dd;
+@define-color popover_bg_color    #102a4e;
+@define-color popover_fg_color    #f3e6dd;
+@define-color dialog_bg_color     #0a1c36;
+@define-color dialog_fg_color     #f3e6dd;
+
+@define-color destructive_color    #ee4068;
+@define-color destructive_bg_color #ee4068;
+@define-color destructive_fg_color #0a1c36;
+@define-color success_color        #7fbdea;
+@define-color success_bg_color     #7fbdea;
+@define-color warning_color        #f2c96b;
+@define-color warning_bg_color     #f2c96b;
+@define-color error_color          #ee4068;
+@define-color error_bg_color       #ee4068;
+
+/* ---- GTK3 / adw-gtk3 ------------------------------------------------------- */
+@define-color theme_bg_color            #0a1c36;
+@define-color theme_fg_color            #f3e6dd;
+@define-color theme_base_color          #102a4e;
+@define-color theme_text_color          #f3e6dd;
+@define-color theme_selected_bg_color   #f25a3c;
+@define-color theme_selected_fg_color   #0a1c36;
+@define-color insensitive_bg_color      #102a4e;
+@define-color insensitive_fg_color      #4d87b5;
+@define-color borders                   #1d3d66;
+@define-color unfocused_borders         #1d3d66;
+@define-color warning_color_gtk3        #f2c96b;
+
+/* Rounded corners on GTK popovers/menus, to sit with Hyprland's rounding = 10
+ * (a menu is a chip-sized thing, not a window: a step under the one radius). */
+popover, menu, .context-menu {
+    border-radius: 8px;
+}

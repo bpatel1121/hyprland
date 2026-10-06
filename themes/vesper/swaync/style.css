@@ -1,0 +1,133 @@
+/* Vesper · rim light on cobalt — swaync (notifications + control center)
+ *
+ * Dusk dialect: translucent cobalt cards (the surface) the swaync-blur rule
+ * frosts, a thin 1px rim edge at low alpha, 10px corners (the windows'
+ * rounding — the one radius), and NO glow — this is a sun below the horizon,
+ * not neon, so titles are plain peach: the readout. Nothing amber, nothing
+ * teal; the rim's lit skin is the launcher's alone. The control center
+ * carries the theme's rim: `frame` catching its right edge and fading in over
+ * the last 18 %, as on every shell panel (harbor puts its horizon in the same
+ * place). Same layer-shell rules as the bar: NO outer box-shadow, no
+ * `transparent` keyword (GTK composites both as black halos).
+ */
+
+@define-color night    #0a1c36;
+@define-color cobalt   #102a4e;
+@define-color twilight #1d3d66;
+@define-color frame    #f25a3c;
+@define-color readout  #eebfa6;
+@define-color lit      #ffe589;
+@define-color red      #ee4068;
+@define-color gray     #839aab;
+@define-color fg       #f3e6dd;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  /* GtkListBoxRow ships default padding — the last few off-grid pixels. */
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+.notification {
+  background-color: rgba(16, 42, 78, 0.85);    /* cobalt, frosted by swaync-blur rule */
+  border: 1px solid rgba(242, 90, 60, 0.45);   /* a thin rim edge — a lit edge, not a neon tube */
+  border-radius: 10px;
+  margin: 8px 14px;                            /* the same grid as gaps_out and the bar */
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @fg; font-weight: bold; }
+.notification-content .body    { color: @gray; }
+.notification-content .time    { color: @gray; font-size: 11px; }
+.notification.critical { border-color: @red; }
+/* No X, anywhere. Dismissal is click-the-notification (default action +
+ * hide-on-action in swaync/config.json) and the control center's "clear"
+ * button. An element that does not exist cannot be misaligned. */
+.close-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  box-shadow: none;
+}
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @fg;
+  border-radius: 7px;
+}
+.notification-action:hover { color: @readout; background-color: @cobalt; }
+
+/* ---- control center: the night sky, lit along its right edge ---- */
+.control-center {
+  background-color: rgba(10, 28, 54, 0.80);    /* night, frosted */
+  /* the rim: frame fading in over the last 18 % of the width at the panel
+   * texture's 0.35 — light catching the right edge, as on every panel */
+  background-image: linear-gradient(to right,
+      rgba(242, 90, 60, 0) 82%, rgba(242, 90, 60, 0.35) 100%);
+  border: 1px solid rgba(242, 90, 60, 0.60);
+  border-radius: 10px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(242, 90, 60, 0.30); }
+
+/* peach type, no bloom — the bar's readout, at card scale */
+.widget-title { color: @readout; font-weight: bold; }
+.widget-title > button {
+  background-color: @cobalt;
+  color: @gray;
+  border: 1px solid rgba(242, 90, 60, 0.35);
+  border-radius: 7px;
+}
+.widget-title > button:hover { color: @red; border-color: @red; }
+
+.widget-dnd { color: @fg; }
+.widget-dnd > switch {
+  background-color: @cobalt;
+  border: 1px solid @twilight;
+  border-radius: 7px;
+}
+.widget-dnd > switch:checked { background-color: @frame; }
+.widget-dnd > switch slider { background-color: @gray; border-radius: 6px; }
+.widget-dnd > switch:checked slider { background-color: @night; }
+
+/* ---- now playing: a cobalt pane. Keeps swaync's blurred-art backdrop
+ * (content-derived); frame, type, and controls speak the theme. ---- */
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(16, 42, 78, 0.60);
+  border: 1px solid rgba(242, 90, 60, 0.35);
+  border-radius: 7px;
+  padding: 10px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-album-art { border-radius: 6px; }
+.widget-mpris .widget-mpris-title { color: @readout; font-weight: bold; }
+.widget-mpris .widget-mpris-subtitle { color: @gray; }
+/* controls + carousel arrows — peach at rest, the rim's yellow highlight
+ * (readoutBright) when touched: the same lift the active workspace gets */
+.widget-mpris button {
+  color: @readout;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+}
+.widget-mpris button:hover { color: @lit; }
+
+progressbar progress { background-color: @readout; border-radius: 4px; }
+progressbar trough   { background-color: @twilight; border-radius: 4px; }

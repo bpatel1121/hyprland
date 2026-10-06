@@ -1,0 +1,137 @@
+{
+    "$schema": "../../schema/palette.schema.json",
+
+    "//": "Vesper · RIM LIGHT ON COBALT. A painted dusk: a girl in a black uniform",
+    "//1": "floating above a cloud sea, seen from behind, lit from behind by a sun below",
+    "//2": "the horizon so every edge of her burns red-orange; a cobalt sky above, peach",
+    "//3": "and rose at the horizon, blue-grey fog below. No upstream palette — every",
+    "//4": "role is sampled from the picture, and `tokens` names each after what it is",
+    "//5": "there so the mapping stays traceable. THE source for every shell surface",
+    "//6": "(quickshell/: bar, launcher, OSD, power menu); theme.lua still owns WINDOW",
+    "//7": "chrome and CI cross-checks it against this.",
+    "//8": "Two-tone rule, dusk edition two: RIM RED is the frame — island rims, window",
+    "//9": "border, lock ring, btop boxes — PEACH (the horizon) is every readout, and",
+    "//10": "the lit skin of the rim (the glow on her legs) is the launcher. This is the",
+    "//11": "second dusk after harbor, and what separates them: harbor is amber on teal,",
+    "//12": "vesper is red and peach on COBALT, and the bar sits on a clean cobalt sky",
+    "//13": "where harbor's sits on teal. Nothing here is amber and nothing is teal.",
+    "//14": "The rim is softened one step from the picture's #ff2f1f so a 1px edge is",
+    "//15": "not searing. warn is the rim's yellow highlight saturated; urgent is a",
+    "//16": "crimson shifted toward pink so it never reads as the frame's orange-red;",
+    "//17": "`ok` is state in the GROUND's hue, as glacier's is lit ice: the sky lit —",
+    "//18": "there is no green in the picture. readoutBright is the rim's yellow",
+    "//19": "highlight, so the active workspace is an emissive gold lozenge",
+    "//20": "(modules/Workspaces.qml). The upper sky and the fog are the quiet family —",
+    "//21": "`dim` and `dormant` — the sky printed UP for contrast (as painted it reads",
+    "//22": "2.7:1 on `surface`), the fog as it is; every surface that carries them is",
+    "//23": "cobalt. The ground is the night side of the sky, darker than the deepest",
+    "//24": "cobalt in the picture; surface, hairline and surfaceAlt are that cobalt",
+    "//25": "lifted in steps, kept blue, not navy-grey.",
+
+    "name": "vesper",
+    "polarity": "dark",
+
+    "roles": {
+        "ground":   "#0a1c36",
+        "surface":  "#102a4e",
+        "hairline": "#1d3d66",
+        "dim":      "#4d87b5",
+        "frame":    "#f25a3c",
+        "readout":  "#eebfa6",
+        "warn":     "#f2c96b",
+        "ok":       "#7fbdea",
+        "urgent":   "#ee4068",
+        "dormant":  "#839aab",
+        "text":     "#f3e6dd",
+        "launcher": "#e48c74",
+
+        "readoutBright": "#ffe589",
+        "surfaceAlt":    "#163a63"
+    },
+
+    "//tokens": "What in the picture -> role, so a palette bump stays traceable. `urgent` has no token: nothing in the picture is crimson, it is state. `rimGold` is scenery that became state because it already sits where state needs to be: the one yellow thing in a red-and-blue picture is something pending. The rose of the low clouds (#b87c82) has no role; it informs nothing but the horizon's warmth.",
+    "tokens": {
+        "night":     "ground",
+        "cobalt":    "surface",
+        "twilight":  "hairline",
+        "cobaltLit": "surfaceAlt",
+        "sky":       "dim",
+        "fog":       "dormant",
+        "rim":       "frame",
+        "rimShadow": "launcher",
+        "horizon":   "readout",
+        "highlight": "readoutBright",
+        "rimGold":   "warn",
+        "skyLit":    "ok",
+        "cloud":     "text"
+    },
+
+    "//contrast": "Measured on the three surfaces that carry type (WCAG, sRGB blend): `surface`; the bar island — fill #081a33 at 0.80 over the cobalt strip the bar covers (#0c4277, a MID blue, brighter than most bar strips; composite ~#092241); the launcher window — `ground` at 0.84 over the picture's centre (#7b8998 → ~#1c2d46). dim 3.7 / 4.1 / 3.6, dormant 4.9 / 5.5 / 4.7, frame 4.3 / 4.8 / 4.2, readout 8.6 / 9.6 / 8.4, readoutBright 11.5 / 12.8 / 11.1, warn 9.1 / 10.1 / 8.8, ok 7.1 / 7.9 / 6.9, urgent 3.8 / 4.2 / 3.7, text 11.7 / 13.0 / 11.4, launcher 5.7 / 6.3 / 5.5. `ground` on `readout` (the lozenge's digit) 10.3:1, `ground` on `frame` 5.1:1; the launcher's selected row (launcher on its own 18% tint) holds 4.1:1.",
+
+    "font": {
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 13,
+        "sizeAccent": 16
+    },
+
+    "//effects": "Rim light, not neon: no text glow. The panel texture is the rim — `frame` catching the RIGHT edge of every pane and fading in over the last 18% of its width, with a hairline of it on the edge itself — the picture's rim light, from the sun behind her, and it is the signature. 0.35 over the kind's resting 0.30: the island fill is near-opaque over a mid-blue sky, and the band has to read as light on an edge, not a tint.",
+    "effects": {
+        "glow":         false,
+        "glowRadius":   0,
+        "texture":      "rim",
+        "textureAlpha": 0.35
+    },
+
+    "//bar": "Bar identity. Night panels over a dusk sky: islands a shade UNDER `ground` (#081a33) at 0.80 — the strip the bar covers is the cobalt at the very top of the picture (#0c4277), a MID blue, brighter than most bar strips, so the fill has to be fairly opaque where harbor's could be a silhouette — with a 1px rim at 35%, 10px corners (the one radius), no accent line, and a FAINT red bloom (0.16 over 18px): the rim's halo, the one bloom the theme allows. At 20% show-through the composite lands at ~#092241 — `dim` 4.1:1, `dormant` 5.5:1, `urgent` 4.2:1, `readout` 9.6:1, `text` 13.0:1.",
+    "bar": {
+        "island": {
+            "color":         "#081a33",
+            "opacity":       0.80,
+            "radius":        10,
+            "borderWidth":   1,
+            "borderOpacity": 0.35,
+            "accentLine":    0,
+            "glow":          0.16,
+            "glowRange":     18
+        },
+        "chip": {
+            "radius":  7,
+            "opacity": 0.08
+        }
+    },
+
+    "//launcher": "Launcher identity: a 1px frame in the lit skin of the rim (the glow on her legs and skirt — the rim's shadow side) around night glass (0.84), 10px window, 7px input + rows — the chips' corner. The launcher is the one surface that covers the bar, so it is the one shell surface that wears the rim's skin: its frame and its selected row.",
+    "launcher": {
+        "opacity":       0.84,
+        "radius":        10,
+        "borderWidth":   1,
+        "inputRadius":   7,
+        "entryRadius":   7,
+        "fontSize":      15
+    },
+
+    "//osd": "OSD identity: a full pill — 1px rim frame, a peach track (the readout), 0.8 so the sky still shows under it.",
+    "osd": {
+        "opacity":     0.8,
+        "radius":      999,
+        "borderWidth": 1,
+        "trackRadius": 4
+    },
+
+    "//session": "Power-menu identity: 10px tiles with a 1px rim edge at 40%, over a 0.72 night scrim — the dusk stays visible behind the menu, gone to night.",
+    "session": {
+        "windowOpacity": 0.72,
+        "tileOpacity":   0.8,
+        "radius":        10,
+        "borderWidth":   1,
+        "borderOpacity": 0.4,
+        "fontSize":      18
+    },
+
+    "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim). 0.35 with an 8px blur, deeper than the night themes' resting 0.55: this picture is a lit dusk, not a night, and the lock stack sits over the horizon haze, the brightest band of the sky — at 0.55 dormant type there is 2.6:1; at 0.35 every role under the stack clears its target (hyprlock.conf, LAYOUT NOTE). Dusk going to night, which is what the name says.",
+    "wallpaper": {
+        "brightness": 0.35,
+        "contrast":   1.05,
+        "blurSize":   8
+    }
+}
