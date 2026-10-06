@@ -1,0 +1,133 @@
+/* Verdigris · candlelit stone — swaync (notifications + control center)
+ *
+ * Stone dialect: near-opaque green-grey cards (the shadowed stone) the
+ * swaync-blur rule frosts, a thin 1px witchlight edge at low alpha, 6px
+ * corners (the windows' rounding — the one radius), and NO glow — this is
+ * candlelight, not neon, so titles are plain bone: the readout. Nothing warm
+ * here; the sun is the launcher's alone. The control center carries the
+ * theme's vignette: black closing in from its corners, clear at the centre,
+ * as on every shell panel (harbor puts its horizon in the same place). Same
+ * layer-shell rules as the bar: NO outer box-shadow, no `transparent`
+ * keyword (GTK composites both as black halos).
+ */
+
+@define-color rock    #151712;
+@define-color stone   #202928;
+@define-color cliff   #2b372f;
+@define-color frame   #7ea763;
+@define-color readout #cfdcc3;
+@define-color lit     #eef3e6;
+@define-color red     #d05f51;
+@define-color gray    #8c9a74;
+@define-color fg      #d9dcc8;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  /* GtkListBoxRow ships default padding — the last few off-grid pixels. */
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+.notification {
+  background-color: rgba(32, 41, 40, 0.88);    /* stone, frosted by swaync-blur rule — the islands' 0.82 plus a notch, a card is read not seen through */
+  border: 1px solid rgba(126, 167, 99, 0.45);  /* a thin witchlight edge — a seam of light, not a neon tube */
+  border-radius: 6px;
+  margin: 8px 14px;                            /* the same grid as gaps_out and the bar */
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @fg; font-weight: bold; }
+.notification-content .body    { color: @gray; }
+.notification-content .time    { color: @gray; font-size: 11px; }
+.notification.critical { border-color: @red; }
+/* No X, anywhere. Dismissal is click-the-notification (default action +
+ * hide-on-action in swaync/config.json) and the control center's "clear"
+ * button. An element that does not exist cannot be misaligned. */
+.close-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  box-shadow: none;
+}
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @fg;
+  border-radius: 4px;
+}
+.notification-action:hover { color: @readout; background-color: @stone; }
+
+/* ---- control center: a stone panel, lit from the middle ---- */
+.control-center {
+  background-color: rgba(21, 23, 18, 0.85);    /* rock, frosted */
+  /* the vignette: black closing in from the corners at the panel texture's
+   * 0.5, clear to 45 % of the way out — stone lit from the centre */
+  background-image: radial-gradient(ellipse at center,
+      rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.5) 100%);
+  border: 1px solid rgba(126, 167, 99, 0.60);
+  border-radius: 6px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(126, 167, 99, 0.30); }
+
+/* bone type, no bloom — the bar's readout, at card scale */
+.widget-title { color: @readout; font-weight: bold; }
+.widget-title > button {
+  background-color: @stone;
+  color: @gray;
+  border: 1px solid rgba(126, 167, 99, 0.35);
+  border-radius: 4px;
+}
+.widget-title > button:hover { color: @red; border-color: @red; }
+
+.widget-dnd { color: @fg; }
+.widget-dnd > switch {
+  background-color: @stone;
+  border: 1px solid @cliff;
+  border-radius: 4px;
+}
+.widget-dnd > switch:checked { background-color: @frame; }
+.widget-dnd > switch slider { background-color: @gray; border-radius: 3px; }
+.widget-dnd > switch:checked slider { background-color: @rock; }
+
+/* ---- now playing: a stone pane. Keeps swaync's blurred-art backdrop
+ * (content-derived); frame, type, and controls speak the theme. ---- */
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(32, 41, 40, 0.60);
+  border: 1px solid rgba(126, 167, 99, 0.35);
+  border-radius: 6px;
+  padding: 10px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-album-art { border-radius: 4px; }
+.widget-mpris .widget-mpris-title { color: @readout; font-weight: bold; }
+.widget-mpris .widget-mpris-subtitle { color: @gray; }
+/* controls + carousel arrows — bone at rest, the lit windows' white
+ * (readoutBright) when touched: the same lift the active workspace gets */
+.widget-mpris button {
+  color: @readout;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+}
+.widget-mpris button:hover { color: @lit; }
+
+progressbar progress { background-color: @readout; border-radius: 3px; }
+progressbar trough   { background-color: @cliff; border-radius: 3px; }

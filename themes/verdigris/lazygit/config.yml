@@ -1,0 +1,20 @@
+# lazygit — verdigris. Witchlight frame, bone readouts, stone everywhere else:
+# the active panel border is the frame color, selection is a raised surface,
+# and olive gold and the ember appear only as state (searching, a marked base,
+# unstaged work).
+gui:
+  nerdFontsVersion: "3"
+  showRandomTip: false
+  theme:
+    activeBorderColor: ["#7ea763", "bold"]
+    inactiveBorderColor: ["#6a8460"]
+    searchingActiveBorderColor: ["#c9b85a", "bold"]
+    selectedLineBgColor: ["#2b372f"]
+    optionsTextColor: ["#cfdcc3"]
+    cherryPickedCommitFgColor: ["#cfdcc3"]
+    cherryPickedCommitBgColor: ["#3e5648"]
+    # rock on the olive gold (9.0:1), not bone: bone on #c9b85a is 1.4:1
+    markedBaseCommitFgColor: ["#151712"]
+    markedBaseCommitBgColor: ["#c9b85a"]
+    unstagedChangesColor: ["#d05f51"]
+    defaultFgColor: ["#d9dcc8"]

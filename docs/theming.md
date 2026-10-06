@@ -82,27 +82,27 @@ had independently converged on (those stylesheets are gone from the tree; the
 roles are what survived them). Graphite, the light monochrome one, was written
 straight into the vocabulary:
 
-| role | what it is | cyberpunk | gruvbox | glacier | harbor | graphite | inkwash |
-|---|---|---|---|---|---|---|---|
-| `ground` | the desktop floor | `#030408` | `#1d2021` | `#0b1838` | `#0e1a20` | `#e9e4e8` | `#ebe9e5` |
-| `surface` | raised panels, popovers, inputs | `#0A0E1A` | `#282828` | `#15295a` | `#172730` | `#f6f3f5` | `#f6f5f2` |
-| `hairline` | separators, unfocused borders | `#212638` | `#3c3836` | `#223b6e` | `#243a44` | `#cfc8cf` | `#d6d3cb` |
-| `dim` | de-emphasised text and glyphs | `#4D5A80` | `#665c54` | `#51578c` | `#4f7a84` | `#8f8181` | `#8a8a7a` |
-| `frame` | **the identity color** | `#F230B2` | `#fe8019` | `#5bd7fa` | `#e0ab5a` | `#2b2427` | `#c89a3e` |
-| `readout` | every telemetry value | `#29BECC` | `#83a598` | `#e8f4ff` | `#f6c870` | `#8a4f96` | `#3f4d2a` |
-| `warn` | do-not-disturb; the warning step in the terminal-side ramps | `#F2D230` | `#fabd2f` | `#c3b1f0` | `#f27c35` | `#c0862a` | `#b8641e` |
-| `ok` | a charging battery | `#30F291` | `#98971a` | `#8de6ff` | `#7dd3a6` | `#4f8a5a` | `#6f9a3a` |
-| `urgent` | low battery, overdue, offline | `#F24848` | `#fb4934` | `#ff6b81` | `#eb4030` | `#c4475c` | `#c0392b` |
-| `dormant` | empty workspaces, zeroed counters | `#898D99` | `#928374` | `#7f8fbf` | `#62939f` | `#877c82` | `#7d7d74` |
-| `text` | default foreground | `#C8D0E0` | `#ebdbb2` | `#e6eefc` | `#efe6d3` | `#1d1719` | `#1c1b14` |
-| `launcher` | the one hue the bar never uses | `#A130F2` | `#d3869b` | `#b6ecf9` | `#82e0fa` | `#92589e` | `#286884` |
+| role | what it is | cyberpunk | gruvbox | glacier | harbor | verdigris | graphite | inkwash |
+|---|---|---|---|---|---|---|---|---|
+| `ground` | the desktop floor | `#030408` | `#1d2021` | `#0b1838` | `#0e1a20` | `#151712` | `#e9e4e8` | `#ebe9e5` |
+| `surface` | raised panels, popovers, inputs | `#0A0E1A` | `#282828` | `#15295a` | `#172730` | `#202928` | `#f6f3f5` | `#f6f5f2` |
+| `hairline` | separators, unfocused borders | `#212638` | `#3c3836` | `#223b6e` | `#243a44` | `#2b372f` | `#cfc8cf` | `#d6d3cb` |
+| `dim` | de-emphasised text and glyphs | `#4D5A80` | `#665c54` | `#51578c` | `#4f7a84` | `#6a8460` | `#8f8181` | `#8a8a7a` |
+| `frame` | **the identity color** | `#F230B2` | `#fe8019` | `#5bd7fa` | `#e0ab5a` | `#7ea763` | `#2b2427` | `#c89a3e` |
+| `readout` | every telemetry value | `#29BECC` | `#83a598` | `#e8f4ff` | `#f6c870` | `#cfdcc3` | `#8a4f96` | `#3f4d2a` |
+| `warn` | do-not-disturb; the warning step in the terminal-side ramps | `#F2D230` | `#fabd2f` | `#c3b1f0` | `#f27c35` | `#c9b85a` | `#c0862a` | `#b8641e` |
+| `ok` | a charging battery | `#30F291` | `#98971a` | `#8de6ff` | `#7dd3a6` | `#a6d98a` | `#4f8a5a` | `#6f9a3a` |
+| `urgent` | low battery, overdue, offline | `#F24848` | `#fb4934` | `#ff6b81` | `#eb4030` | `#d05f51` | `#c4475c` | `#c0392b` |
+| `dormant` | empty workspaces, zeroed counters | `#898D99` | `#928374` | `#7f8fbf` | `#62939f` | `#8c9a74` | `#877c82` | `#7d7d74` |
+| `text` | default foreground | `#C8D0E0` | `#ebdbb2` | `#e6eefc` | `#efe6d3` | `#d9dcc8` | `#1d1719` | `#1c1b14` |
+| `launcher` | the one hue the bar never uses | `#A130F2` | `#d3869b` | `#b6ecf9` | `#82e0fa` | `#e3e894` | `#92589e` | `#286884` |
 
 Alongside them, the per-surface identity — the structural differences between
 the themes, which used to be scattered across four stylesheets:
 
 | block | what it holds |
 |---|---|
-| `effects` | `glow` (cyberpunk's `text-shadow`, drawn by `GlowText.qml`), `glowRadius`, and `texture` — the overlay every panel fill carries, drawn by `Texture.qml` and clipped to the panel's corners: `scanlines` (gruvbox), `hatch` (graphite's pencil lines), `grain` (inkwash's paper speckle), `sheen` (glacier's light on ice), `horizon` (harbor's lamplight from the bottom edge) or `none` (cyberpunk, whose glow is the signature). `textureAlpha` overrides a kind's resting strength. A theme declares these; no surface guesses from the colors. |
+| `effects` | `glow` (cyberpunk's `text-shadow`, drawn by `GlowText.qml`), `glowRadius`, and `texture` — the overlay every panel fill carries, drawn by `Texture.qml` and clipped to the panel's corners: `scanlines` (gruvbox), `hatch` (graphite's pencil lines), `grain` (inkwash's paper speckle), `sheen` (glacier's light on ice), `horizon` (harbor's lamplight from the bottom edge), `vignette` (verdigris's stone lit from the middle) or `none` (cyberpunk, whose glow is the signature). `textureAlpha` overrides a kind's resting strength. A theme declares these; no surface guesses from the colors. |
 | `bar.island` / `bar.chip` | island fill, opacity, radius, frame weight and alpha, chip radius and tint; `accentLine` is cyberpunk's 2px lit hairline along the inside top edge (0 draws none) |
 | `launcher` | window opacity, radius, frame weight, input and row radii, font size |
 | `osd` | pill opacity, radius (999 is a full pill), frame weight, track radius |
@@ -130,6 +130,12 @@ sky, amber as both the frame and the readout, the smoke's cyan kept for the
 launcher, and the `horizon` texture — lamplight in `frame` rising from the
 bottom edge of every panel — with the window border turned to 90° so sky
 sits over ground on every window.
+
+[verdigris](themes/verdigris.md) is candlelit stone: a near-black fill at
+0.82 under an olive sky, a witchlight-green frame and bone readouts, the
+sun's pale yellow-green kept for the launcher, one 6px radius everywhere, and
+the `vignette` texture — black closing in from the corners of every panel,
+clear at the centre — with the slowest border drift in the set.
 
 `schema/palette.schema.json` describes all of it; the `$schema` key at the top of
 each palette gives editors completion and inline validation.

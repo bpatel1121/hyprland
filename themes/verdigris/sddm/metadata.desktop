@@ -1,0 +1,16 @@
+[SddmGreeterTheme]
+Name=hypr-verdigris
+Description=Verdigris candlelit-stone login greeter matching the hyprland repo's verdigris theme
+Author=Brij Patel
+Copyright=(c) Brij Patel
+License=GPL-3.0
+Type=sddm-theme
+Version=1.0
+Website=https://github.com/bpatel1121/hyprland
+Screenshot=
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=
+Theme-Id=hypr-verdigris
+Theme-API=2.0
+QtVersion=6

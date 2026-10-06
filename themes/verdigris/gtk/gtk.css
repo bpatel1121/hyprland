@@ -1,0 +1,68 @@
+/* Verdigris · candlelit stone — GTK
+ *
+ * Symlinked by theme-apply.sh to BOTH ~/.config/gtk-3.0/gtk.css and
+ * ~/.config/gtk-4.0/gtk.css; each toolkit reads its own color names and
+ * ignores the other's. The witchlight is the accent, matching the bar's
+ * frame and the window border, so file dialogs look like they belong to this
+ * desktop. Accent text is rock on the witchlight (6.5:1) — bone on it is
+ * 2.0:1 and would vanish.
+ *
+ * Selection is the frame too, not the sun: the sun belongs to the launcher
+ * alone, and a yellow highlight in every file dialog would be the one warm
+ * thing on a desktop that has none. Witchlight on stone is the picture's own
+ * pairing, the gate against the wall.
+ *
+ * Palette: rock #151712 · stone #202928 · cliff #2b372f · moss #6a8460
+ *          witchlight #7ea763 · window #cfdcc3 · ok (witchlight lit) #a6d98a
+ *          sky #c9b85a · ember #d05f51 · dragon #8c9a74 · bone #d9dcc8
+ *          sun #e3e894
+ */
+
+/* ---- GTK4 / libadwaita ----------------------------------------------------- */
+@define-color accent_color        #7ea763;
+@define-color accent_bg_color     #7ea763;
+@define-color accent_fg_color     #151712;
+
+@define-color window_bg_color     #151712;
+@define-color window_fg_color     #d9dcc8;
+@define-color view_bg_color       #202928;
+@define-color view_fg_color       #d9dcc8;
+@define-color headerbar_bg_color  #202928;
+@define-color headerbar_fg_color  #d9dcc8;
+@define-color sidebar_bg_color    #202928;
+@define-color sidebar_fg_color    #d9dcc8;
+@define-color card_bg_color       #202928;
+@define-color card_fg_color       #d9dcc8;
+@define-color popover_bg_color    #202928;
+@define-color popover_fg_color    #d9dcc8;
+@define-color dialog_bg_color     #151712;
+@define-color dialog_fg_color     #d9dcc8;
+
+@define-color destructive_color    #d05f51;
+@define-color destructive_bg_color #d05f51;
+@define-color destructive_fg_color #151712;
+@define-color success_color        #a6d98a;
+@define-color success_bg_color     #a6d98a;
+@define-color warning_color        #c9b85a;
+@define-color warning_bg_color     #c9b85a;
+@define-color error_color          #d05f51;
+@define-color error_bg_color       #d05f51;
+
+/* ---- GTK3 / adw-gtk3 ------------------------------------------------------- */
+@define-color theme_bg_color            #151712;
+@define-color theme_fg_color            #d9dcc8;
+@define-color theme_base_color          #202928;
+@define-color theme_text_color          #d9dcc8;
+@define-color theme_selected_bg_color   #7ea763;
+@define-color theme_selected_fg_color   #151712;
+@define-color insensitive_bg_color      #202928;
+@define-color insensitive_fg_color      #6a8460;
+@define-color borders                   #2b372f;
+@define-color unfocused_borders         #2b372f;
+@define-color warning_color_gtk3        #c9b85a;
+
+/* Small corners on GTK popovers/menus, to sit with Hyprland's rounding = 6
+ * (the chips' 4: a menu is a chip-sized thing, not a window). */
+popover, menu, .context-menu {
+    border-radius: 4px;
+}

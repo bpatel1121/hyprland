@@ -1,0 +1,66 @@
+# Verdigris · candlelit stone — btop
+#
+# Linked in as ~/.config/btop/themes/current.theme by theme-apply.sh (btop.conf
+# says color_theme = "current" once and never changes).
+#
+# Same role assignments as the rest of the desktop: the witchlight frames the
+# boxes, bone is the live readout, and the ramps climb bone -> lit witchlight
+# or olive gold -> ember (readout -> ok / warn -> urgent) so a hot CPU still
+# reads like a critical bar module — the one place the ember shows up as
+# level rather than alarm. At rest the whole screen is stone, bone and the
+# gate's green: a candlelit room.
+
+theme[main_bg]="#151712"
+theme[main_fg]="#d9dcc8"
+theme[title]="#7ea763"
+theme[hi_fg]="#cfdcc3"
+theme[selected_bg]="#202928"
+theme[selected_fg]="#7ea763"
+theme[inactive_fg]="#6a8460"
+theme[graph_text]="#8c9a74"
+theme[meter_bg]="#2b372f"
+theme[proc_misc]="#a6d98a"
+
+# Box outlines — the witchlight is the frame color everywhere in this desktop.
+theme[cpu_box]="#7ea763"
+theme[mem_box]="#7ea763"
+theme[net_box]="#7ea763"
+theme[proc_box]="#7ea763"
+theme[div_line]="#2b372f"
+
+# Temperature: bone -> olive gold -> ember at the top.
+theme[temp_start]="#cfdcc3"
+theme[temp_mid]="#c9b85a"
+theme[temp_end]="#d05f51"
+
+# CPU load: bone -> the witchlight lit -> ember.
+theme[cpu_start]="#cfdcc3"
+theme[cpu_mid]="#a6d98a"
+theme[cpu_end]="#d05f51"
+
+# Free / cached / available / used memory.
+theme[free_start]="#2b372f"
+theme[free_mid]="#a6d98a"
+theme[free_end]="#a6d98a"
+theme[cached_start]="#2b372f"
+theme[cached_mid]="#cfdcc3"
+theme[cached_end]="#cfdcc3"
+theme[available_start]="#2b372f"
+theme[available_mid]="#c9b85a"
+theme[available_end]="#c9b85a"
+theme[used_start]="#2b372f"
+theme[used_mid]="#7ea763"
+theme[used_end]="#d05f51"
+
+# Disk io.
+theme[download_start]="#2b372f"
+theme[download_mid]="#cfdcc3"
+theme[download_end]="#cfdcc3"
+theme[upload_start]="#2b372f"
+theme[upload_mid]="#7ea763"
+theme[upload_end]="#7ea763"
+
+# Process box gradient.
+theme[process_start]="#cfdcc3"
+theme[process_mid]="#c9b85a"
+theme[process_end]="#d05f51"

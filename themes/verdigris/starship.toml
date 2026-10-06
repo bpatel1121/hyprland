@@ -1,0 +1,103 @@
+# Verdigris · candlelit stone — starship
+#
+# theme-apply.sh symlinks this to ~/.config/starship.toml.
+#
+# COLORS ARE ANSI SLOT NAMES, NOT HEX. A prompt painted in 24-bit hex is baked
+# into the terminal cells, so after SUPER+T every prompt already on screen kept
+# the old theme's colors. Slot names (red, cyan, bright-purple...) resolve
+# through WezTerm's live palette, which theme-apply.sh recolors in place, so
+# old prompts flip with the rest of the screen. Which slot carries which role
+# is this theme's wezterm/colors.lua — read the two together.
+#
+# Same minimal one-line layout as cyberpunk, palette re-cast:
+#   path    bone       default fg   where you are
+#   branch  witchlight bright-purple   what you're on (the frame color)
+#   arrow   bone       cyan   where you type  (red when the last cmd failed)
+#   dirty ● olive sky  yellow   uncommitted work exists (warn — the one gold thing)
+#   venv 󰌠  bone       cyan   a virtualenv is active (glyph only, no name)
+#
+# Nothing warm: the branch is the gate's light, the arrow the window's, and
+# the dirty dot is the sky's olive gold — a state, the way the bar wears it.
+#
+# Glyph choices (󰘬 ● ❯ ❮ ↑ ↓ ×) are the JetBrainsMono-Nerd-Font-verified set
+# from the cyberpunk config — see its comments before "fixing" any of them.
+
+# The literal space before $character is load-bearing (see cyberpunk config).
+format = "$conda${custom.venv}$directory$git_branch${custom.git_dirty} $character"
+add_newline = true
+
+[directory]
+style = "bold"
+format = "[$path]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = true
+read_only = " ro"
+read_only_style = "fg:red"
+
+[git_branch]
+symbol = "󰘬 "
+style = "fg:bright-purple"
+format = "  [$symbol$branch]($style)"
+
+# Off in favour of the single dirty dot below (same reasoning as cyberpunk).
+[git_status]
+disabled = true
+
+# One olive-gold dot when the working tree has anything uncommitted, nothing
+# when clean — the sky's gold, the one thing in the picture that is not
+# green, and only as state. Do NOT add a `shell = [...]` key and keep the
+# `when` condition — see the cyberpunk config for why both matter.
+[custom.git_dirty]
+description = "one dot when there are uncommitted changes"
+when = 'test -n "$(git status --porcelain 2>/dev/null)"'
+command = "printf ●"
+style = "fg:yellow"
+format = " [$output]($style)"
+
+# Leading chip when a virtualenv is active, nothing when one isn't. Ahead of
+# $directory so a glance down the left edge says which shells are in an env,
+# without costing the path a character. Symbol only, no venv name. Takes the
+# readout color (the arrow's), not the frame color — "an env is live" is state
+# being reported, and the witchlight stays the branch's. See the cyberpunk
+# config for the full reasoning and the note on why there is no `shell` key.
+#
+# 󰌠 is nf-md-language_python (U+F0320) — same Material Design block as 󰘬.
+[custom.venv]
+description = "one glyph when a python virtualenv is active"
+when = 'test -n "$VIRTUAL_ENV"'
+command = "printf 󰌠"
+style = "fg:cyan"
+format = "[$output]($style) "
+
+# Bone on success — the readout color everywhere in this theme, and as far
+# from red as a prompt gets, so failure reads at a glance. Not the witchlight:
+# that is the branch's, and the arrow is a readout, not a frame.
+[character]
+success_symbol = "[❯](fg:cyan)"
+error_symbol = "[❯](fg:red)"
+vimcmd_symbol = "[❮](fg:bright-black)"
+
+# Everything else off — this is the "minimal" part.
+[cmd_duration]
+disabled = true
+[package]
+disabled = true
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[docker_context]
+disabled = true
+
+# The same glyph the other themes use (U+E715), written as an escape so the
+# file carries no raw private-use character.
+[conda]
+symbol = ""
+ignore_base = false
+style = "fg:green"
+format = "[$symbol]($style) "

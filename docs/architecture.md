@@ -34,6 +34,7 @@ themes/
 ├── gruvbox/                    dark · pixel alley (see "The gruvbox theme")
 ├── glacier/                    dark · frost, ice throne (see "The glacier theme")
 ├── harbor/                     dark · dusk over water, amber on teal (see "The harbor theme")
+├── verdigris/                  dark · candlelit stone, witchlight and bone (see "The verdigris theme")
 ├── graphite/                   LIGHT · grey ink on paper, one violet (see "The graphite theme")
 ├── inkwash/                    LIGHT · ink-wash painting, gold and cyan (see "The inkwash theme")
 └── cyberpunk/

@@ -26,6 +26,8 @@ import "../config"
 //                        of ice.
 //   horizon    harbor    `frame` (lamplight) rising from the bottom edge,
 //                        gone by mid-height — lit pavement under a dark sky.
+//   vignette   verdigris black closing in from the corners, clear at the
+//                        centre — a stone panel lit from the middle.
 Canvas {
     id: root
 
@@ -55,6 +57,7 @@ Canvas {
         case "grain":     return 0.10;
         case "sheen":     return 0.12;
         case "horizon":   return 0.18;
+        case "vignette":  return 0.35;
         default:          return 0;
         }
     }
@@ -125,6 +128,18 @@ Canvas {
             const g = ctx.createLinearGradient(0, h, 0, h * 0.5);
             g.addColorStop(0, root.css(root.ink, root.alpha));
             g.addColorStop(1, root.css(root.ink, 0));
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, w, h);
+            break;
+        }
+        case "vignette": {
+            // Radial, from clear at 45% of the way out to the corners' black:
+            // an ellipse on wide panels, so an island darkens at its ends and
+            // a tall window at its corners alike.
+            const r = Math.sqrt(w * w + h * h) / 2;
+            const g = ctx.createRadialGradient(w / 2, h / 2, r * 0.45, w / 2, h / 2, r);
+            g.addColorStop(0, "rgba(0,0,0,0)");
+            g.addColorStop(1, "rgba(0,0,0," + root.alpha + ")");
             ctx.fillStyle = g;
             ctx.fillRect(0, 0, w, h);
             break;

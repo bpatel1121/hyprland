@@ -1,0 +1,40 @@
+# Verdigris · candlelit stone — cava
+#
+# Not a VU meter, as glacier's is not. The other dark themes climb readout ->
+# warn -> urgent because color means state; verdigris keeps the meaning
+# (quiet is the readout color, loud is the frame color) but stays inside the
+# one hue: quiet is bone, rising goes the witchlight lit (ok — more light),
+# loud is the witchlight itself — the gate's green. Light rising, not an
+# alert. The only reason the ember would appear is an alarm, and a loud song
+# is not one.
+
+[general]
+framerate = 60
+autosens = 1
+overshoot = 20
+bars = 0            # 0 = auto-fit the terminal width
+bar_width = 2
+bar_spacing = 1
+
+[input]
+method = pulse
+source = auto
+
+[output]
+method = ncurses
+channels = stereo
+mono_option = average
+
+[color]
+background = '#151712'      # rock (ground)
+gradient = 1
+gradient_count = 6
+gradient_color_1 = '#cfdcc3'    # readout — quiet (the window light, bone)
+gradient_color_2 = '#cfdcc3'    # readout
+gradient_color_3 = '#a6d98a'    # ok      — rising (the witchlight lit)
+gradient_color_4 = '#a6d98a'    # ok
+gradient_color_5 = '#7ea763'    # frame   — loud (the gate's green)
+gradient_color_6 = '#7ea763'    # frame
+
+[smoothing]
+noise_reduction = 45
