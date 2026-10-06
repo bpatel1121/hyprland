@@ -16,7 +16,7 @@ one hue and spends it on readout and launcher both (`#8a4f96` as the readout,
 `#92589e`, the eye where the light catches it — one step lighter, no more, so
 the launcher's selected row still reads on its own tint — as the launcher);
 the frame is the thing that gives it up. State colors keep their meanings — brass for
-pending repo updates, tritium green for AUR/charging, laser red for alerts —
+do-not-disturb, tritium green for a charging battery, laser red for alerts —
 and are absent from the picture by design: they show only when something is
 true, and `dim`/`dormant` are the paper's own pencil greys for quiet type and
 empty workspaces — two pencil *weights*, both printed to ≥ 3:1 on the paper

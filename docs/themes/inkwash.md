@@ -15,7 +15,7 @@ because the launcher's selected row is the launcher color on an 18% tint of
 itself over paper, and the burst as painted stops reading there (2.4:1; the
 deep water holds 3.6:1). The raw burst survives as a fill: cava, btop's
 download ramp, the terminal's selection. State colors keep their meanings:
-bronze for pending repo updates, the cape's green for AUR/charging, the
+bronze for do-not-disturb, the cape's green for a charging battery, the
 sigil's red for alerts, `dim`/`dormant` are the smoke wash for quiet type and
 empty workspaces — two smoke *weights*, both printed to ≥ 3:1 on the paper
 surfaces, because a grey that is merely a tint reads as nothing on

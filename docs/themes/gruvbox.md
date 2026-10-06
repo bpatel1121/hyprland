@@ -4,9 +4,9 @@
 dusk — the same design language as cyberpunk with the temperament flipped from
 neon to matte. The role assignments carry over one-to-one: **orange** is the
 frame (islands' hairline, window border, notification edge, btop's boxes), **muted sky blue** (`#83a598`, the alley's twilight)
-is every readout, and state colors keep their meanings — yellow for pending
-repo updates (Pac-Man stays yellow in every theme), green for AUR/charging,
-red for alerts, purple reserved for the launcher. What changes is the
+is every readout, and state colors keep their meanings — yellow for
+do-not-disturb, green for a charging battery, red for alerts, purple
+reserved for the launcher; pending updates light up in the readout blue. What changes is the
 identity: where cyberpunk is rounded neon glass, gruvbox is a **CRT
 terminal** — near-sharp 4px corners everywhere (the bar's islands and chips,
 the launcher, the OSD, the power tiles, tooltips, the lock input), chunky 2px

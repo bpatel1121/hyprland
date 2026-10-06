@@ -8,9 +8,8 @@ Hyprland's window bloom just beneath. Cyan is every readout, and the OSD's
 track. The launcher is violet — the one surface that covers the bar rather
 than living in it, so it gets its own color. Every other color is
 state rather than decoration and shows up only
-when something is actually true — amber for pending repo updates (and nothing
-else), green for pending AUR updates or a charging battery, red for low and
-critical. Pink and cyan are kept apart by the island edge and never blended
+when something is actually true — amber for do-not-disturb (and nothing
+else), green for a charging battery, red for low and critical. Pink and cyan are kept apart by the island edge and never blended
 into one gradient: that blend is what made the original palette read as candy
 rather than cyberpunk.
 
@@ -28,9 +27,10 @@ hairline — is the `bar`, `launcher`, `osd` and `session` blocks of
 `palette.json`, not a line of QML.
 
 The right island carries two update counters: a **Pac-Man** for repo updates
-(`pacman` → Pac-Man, and Pac-Man is yellow anyway) and a **party popper** for
-the AUR (`yay` → yay). Both stay on screen at zero and gray out there, so the
-resting bar really is one color. They need `checkupdates` (`pacman-contrib`)
+(`pacman` → Pac-Man) and a **party popper** for the AUR (`yay` → yay). Both
+stay on screen at zero and gray out there, and light up in the readout color
+when there is something to install — the glyphs tell them apart, not a hue —
+so the bar really is one color at rest and still one color when busy. They need `checkupdates` (`pacman-contrib`)
 and `yay` respectively; icons want a Nerd Font (`ttf-jetbrains-mono-nerd`) —
 all provisioned by linux-setup. Clicking either opens the upgrade in a
 terminal, and the chip re-runs its script the moment that terminal exits —

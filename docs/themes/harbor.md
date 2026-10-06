@@ -17,11 +17,12 @@ lamp's halo, so the active workspace is an emissive **amber lozenge**. The
 places, the launcher's frame and selected row (the one surface that covers
 the bar) and the top of the window border. The ground is the sky's own
 **teal-black**, the raised surfaces the skyline's teal-navy. State keeps its
-meanings: the lamplit pavement's orange for pending repo updates (a lit
-stretch of ground), the hair's red for alerts (pushed redder than the
-pavement so the two never read as one hue), and a sea-glass green for
-AUR/charging — the picture has no green, so `ok` is chosen to sit with the
-teal, as glacier's was. The sky itself, the picture's dominant color, is the
+meanings: the lamplit pavement's orange for do-not-disturb (a lit stretch of
+ground), the hair's red for alerts (pushed redder than the pavement so the
+two never read as one hue), and a sea-glass green for a charging battery —
+the picture has no green, so `ok` is chosen to sit with the teal, as
+glacier's was. Pending updates light up in the readout amber like everything
+else. The sky itself, the picture's dominant color, is the
 quiet family (`dim`, `dormant`), printed up for contrast because every
 surface that carries it is teal-black. It is not glacier, which an earlier
 cut of it resembled: glacier's bar text is white and ice cyan on navy, and
