@@ -62,12 +62,20 @@ Chip {
 
     // Re-run the emitter now, ahead of its interval. This is the replacement
     // for waybar's `signal` mechanism (`pkill -RTMIN+8 waybar` after a pacman
-    // run): Updates.qml and Aur.qml call it when their upgrade terminal exits.
-    // On a streaming chip whose process is still up it queues one restart for
-    // when that process exits.
+    // run): Updates.qml and Aur.qml call it when their upgrade terminal exits
+    // and whenever pacman.log grows. A call that lands while the emitter is
+    // still running is honored once it exits rather than dropped — the result
+    // in flight was computed before whatever asked for the refresh happened.
+    // (Setting `running` on a live Process is a no-op, so this needs the flag.)
+    property bool rerunQueued: false
+
     function refresh() {
         if (!root.runnable)
             return;
+        if (proc.running) {
+            root.rerunQueued = true;
+            return;
+        }
         proc.running = true;
     }
 
@@ -87,6 +95,11 @@ Chip {
         command: root.resolvedCommand
 
         onExited: function (exitCode, exitStatus) {
+            if (root.rerunQueued) {
+                root.rerunQueued = false;
+                root.refresh();
+                return;
+            }
             if (!root.streaming)
                 return;
             console.warn("ScriptChip(" + root.describe() + "): stream ended (exit code "

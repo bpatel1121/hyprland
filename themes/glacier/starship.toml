@@ -2,12 +2,19 @@
 #
 # theme-apply.sh symlinks this to ~/.config/starship.toml.
 #
+# COLORS ARE ANSI SLOT NAMES, NOT HEX. A prompt painted in 24-bit hex is baked
+# into the terminal cells, so after SUPER+T every prompt already on screen kept
+# the old theme's colors. Slot names (red, cyan, bright-purple...) resolve
+# through WezTerm's live palette, which theme-apply.sh recolors in place, so
+# old prompts flip with the rest of the screen. Which slot carries which role
+# is this theme's wezterm/colors.lua — read the two together.
+#
 # Same minimal one-line layout as cyberpunk, palette re-cast:
-#   path    snow     #e6eefc   where you are
-#   branch  ice cyan #5bd7fa   what you're on (the frame color)
-#   arrow   white    #e8f4ff   where you type  (red when the last cmd failed)
-#   dirty ● warn     #c3b1f0   uncommitted work exists (the violet in the ice shadows)
-#   venv 󰌠  white    #e8f4ff   a virtualenv is active (glyph only, no name)
+#   path    snow     default fg   where you are
+#   branch  ice cyan bright-purple   what you're on (the frame color)
+#   arrow   white    cyan   where you type  (red when the last cmd failed)
+#   dirty ● warn     purple   uncommitted work exists (the violet in the ice shadows)
+#   venv 󰌠  white    cyan   a virtualenv is active (glyph only, no name)
 #
 # Glyph choices (󰘬 ● ❯ ❮ ↑ ↓ ×) are the JetBrainsMono-Nerd-Font-verified set
 # from the cyberpunk config — see its comments before "fixing" any of them.
@@ -17,17 +24,17 @@ format = "$conda${custom.venv}$directory$git_branch${custom.git_dirty} $characte
 add_newline = true
 
 [directory]
-style = "fg:#e6eefc bold"
+style = "bold"
 format = "[$path]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
 truncate_to_repo = true
 read_only = " ro"
-read_only_style = "fg:#ff6b81"
+read_only_style = "fg:red"
 
 [git_branch]
 symbol = "󰘬 "
-style = "fg:#5bd7fa"
+style = "fg:bright-purple"
 format = "  [$symbol$branch]($style)"
 
 # Off in favour of the single dirty dot below (same reasoning as cyberpunk).
@@ -42,7 +49,7 @@ disabled = true
 description = "one dot when there are uncommitted changes"
 when = 'test -n "$(git status --porcelain 2>/dev/null)"'
 command = "printf ●"
-style = "fg:#c3b1f0"
+style = "fg:purple"
 format = " [$output]($style)"
 
 # Leading chip when a virtualenv is active, nothing when one isn't. Ahead of
@@ -57,16 +64,16 @@ format = " [$output]($style)"
 description = "one glyph when a python virtualenv is active"
 when = 'test -n "$VIRTUAL_ENV"'
 command = "printf 󰌠"
-style = "fg:#e8f4ff"
+style = "fg:cyan"
 format = "[$output]($style) "
 
 # White on success — the readout color everywhere in this theme, and as far
 # from red as a prompt gets, so failure reads at a glance. Not cyan: cyan is
 # the branch's, and the arrow is a readout, not a frame.
 [character]
-success_symbol = "[❯](fg:#e8f4ff)"
-error_symbol = "[❯](fg:#ff6b81)"
-vimcmd_symbol = "[❮](fg:#7f8fbf)"
+success_symbol = "[❯](fg:cyan)"
+error_symbol = "[❯](fg:red)"
+vimcmd_symbol = "[❮](fg:bright-black)"
 
 # Everything else off — this is the "minimal" part.
 [cmd_duration]
@@ -89,5 +96,5 @@ disabled = true
 [conda]
 symbol = "\ue715"
 ignore_base = false
-style = "fg:#8de6ff"
+style = "fg:cyan"
 format = "[$symbol]($style) "

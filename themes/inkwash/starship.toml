@@ -2,20 +2,27 @@
 #
 # theme-apply.sh symlinks this to ~/.config/starship.toml.
 #
+# COLORS ARE ANSI SLOT NAMES, NOT HEX. A prompt painted in 24-bit hex is baked
+# into the terminal cells, so after SUPER+T every prompt already on screen kept
+# the old theme's colors. Slot names (red, cyan, bright-purple...) resolve
+# through WezTerm's live palette, which theme-apply.sh recolors in place, so
+# old prompts flip with the rest of the screen. Which slot carries which role
+# is this theme's wezterm/colors.lua — read the two together.
+#
 # Same minimal one-line layout as the other themes, palette re-cast for paper:
-#   path    ink       #1c1b14   where you are
-#   branch  gold ink  #8a6a2a   what you're on (the frame, printed — the raw
+#   path    ink       default fg   where you are
+#   branch  gold ink  yellow   what you're on (the frame, printed — the raw
 #                               filigree gold is 2.4:1 on paper, unreadable)
-#   arrow   burst     #286884   where you type  (red when the last cmd failed)
-#   dirty ● bronze    #b8641e   uncommitted work exists
-#   venv 󰌠  burst     #286884   a virtualenv is active (glyph only, no name)
+#   arrow   burst     cyan   where you type  (red when the last cmd failed)
+#   dirty ● bronze    bright-yellow   uncommitted work exists
+#   venv 󰌠  burst     cyan   a virtualenv is active (glyph only, no name)
 #
 # The arrow is NOT the readout color, unlike the dark themes: readout is the
 # olive ink here, which next to the black-ink path says nothing at a glance.
 # The cyan burst is the live color instead — the one lit thing in the
 # painting — and it is red's complement, the same reason cyberpunk picked
 # cyan: success and failure stay apart in peripheral vision. Printed down to
-# its deep water (#286884, 5.7:1) so a single glyph still reads on paper.
+# its deep water (cyan, 5.7:1) so a single glyph still reads on paper.
 #
 # Glyph choices (󰘬 ● ❯ ❮ ↑ ↓ ×) are the JetBrainsMono-Nerd-Font-verified set
 # from the cyberpunk config — see its comments before "fixing" any of them.
@@ -25,17 +32,17 @@ format = "$conda${custom.venv}$directory$git_branch${custom.git_dirty} $characte
 add_newline = true
 
 [directory]
-style = "fg:#1c1b14 bold"
+style = "bold"
 format = "[$path]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
 truncate_to_repo = true
 read_only = " ro"
-read_only_style = "fg:#c0392b"
+read_only_style = "fg:red"
 
 [git_branch]
 symbol = "󰘬 "
-style = "fg:#8a6a2a"
+style = "fg:yellow"
 format = "  [$symbol$branch]($style)"
 
 # Off in favour of the single dirty dot below (same reasoning as cyberpunk).
@@ -49,7 +56,7 @@ disabled = true
 description = "one dot when there are uncommitted changes"
 when = 'test -n "$(git status --porcelain 2>/dev/null)"'
 command = "printf ●"
-style = "fg:#b8641e"
+style = "fg:bright-yellow"
 format = " [$output]($style)"
 
 # Leading chip when a virtualenv is active, nothing when one isn't. Ahead of
@@ -64,15 +71,15 @@ format = " [$output]($style)"
 description = "one glyph when a python virtualenv is active"
 when = 'test -n "$VIRTUAL_ENV"'
 command = "printf 󰌠"
-style = "fg:#286884"
+style = "fg:cyan"
 format = "[$output]($style) "
 
 # The burst on success; far from the sigil red of failure so it reads at a
 # glance (see the header).
 [character]
-success_symbol = "[❯](fg:#286884)"
-error_symbol = "[❯](fg:#c0392b)"
-vimcmd_symbol = "[❮](fg:#8a8a7a)"
+success_symbol = "[❯](fg:cyan)"
+error_symbol = "[❯](fg:red)"
+vimcmd_symbol = "[❮](fg:bright-black)"
 
 # Everything else off — this is the "minimal" part.
 [cmd_duration]
@@ -95,5 +102,5 @@ disabled = true
 [conda]
 symbol = "\uE715"
 ignore_base = false
-style = "fg:#286884"
+style = "fg:cyan"
 format = "[$symbol]($style) "

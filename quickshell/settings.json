@@ -75,15 +75,15 @@
         },
 
         "updates": {
-            "//": "Repo updates via checkupdates (pacman-contrib). Cheap local diff, so polled often.",
+            "//": "Repo updates via checkupdates (pacman-contrib). Cheap local diff, so polled often; the chip also refreshes itself the moment pacman.log grows, so this only has to catch updates appearing upstream.",
             "enabled": true,
-            "intervalSec": 120
+            "intervalSec": 60
         },
 
         "aur": {
             "//": "AUR updates via yay. Longer interval than `updates`: every check is a live query to the AUR's public RPC rather than a local diff.",
             "enabled": true,
-            "intervalSec": 300
+            "intervalSec": 180
         },
 
         "temperature": {

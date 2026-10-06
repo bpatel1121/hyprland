@@ -2,12 +2,19 @@
 #
 # theme-apply.sh symlinks this to ~/.config/starship.toml.
 #
+# COLORS ARE ANSI SLOT NAMES, NOT HEX. A prompt painted in 24-bit hex is baked
+# into the terminal cells, so after SUPER+T every prompt already on screen kept
+# the old theme's colors. Slot names (red, cyan, bright-purple...) resolve
+# through WezTerm's live palette, which theme-apply.sh recolors in place, so
+# old prompts flip with the rest of the screen. Which slot carries which role
+# is this theme's wezterm/colors.lua — read the two together.
+#
 # Minimal: one line, no powerline chips, no backgrounds. Distinct colors so
 # nothing blurs together —
-#   path    bright fg  #C8D0E0   where you are
-#   branch  pink       #F230B2   what you're on
-#   arrow   cyan       #29BECC   where you type  (red when the last cmd failed)
-#   venv 󰌠  cyan       #29BECC   a virtualenv is active (glyph only, no name)
+#   path    bright fg  default fg   where you are
+#   branch  pink       bright-purple   what you're on
+#   arrow   cyan       cyan   where you type  (red when the last cmd failed)
+#   venv 󰌠  cyan       cyan   a virtualenv is active (glyph only, no name)
 #
 # Git state is the one place color carries meaning rather than identity:
 #   ✓  green   clean AND in sync with upstream — nothing to do
@@ -29,17 +36,17 @@ format = "$conda${custom.venv}$directory$git_branch${custom.git_dirty} $characte
 add_newline = true
 
 [directory]
-style = "fg:#C8D0E0 bold"
+style = "bold"
 format = "[$path]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
 truncate_to_repo = true
 read_only = " ro"
-read_only_style = "fg:#F24848"
+read_only_style = "fg:red"
 
 [git_branch]
 symbol = "󰘬 "
-style = "fg:#F230B2"
+style = "fg:bright-purple"
 format = "  [$symbol$branch]($style)"
 
 # Off in favour of the single dot below. This module gives per-category counts
@@ -68,7 +75,7 @@ disabled = true
 description = "one dot when there are uncommitted changes"
 when = 'test -n "$(git status --porcelain 2>/dev/null)"'
 command = "printf ●"
-style = "fg:#F2D230"
+style = "fg:yellow"
 format = " [$output]($style)"
 
 # Leading chip when a virtualenv is active, nothing at all when one isn't — so
@@ -94,7 +101,7 @@ format = " [$output]($style)"
 description = "one glyph when a python virtualenv is active"
 when = 'test -n "$VIRTUAL_ENV"'
 command = "printf 󰌠"
-style = "fg:#29BECC"
+style = "fg:cyan"
 format = "[$output]($style) "
 
 # Cyan rather than pink on success, specifically so failure reads at a glance.
@@ -103,9 +110,9 @@ format = "[$output]($style) "
 # over bl0 blue for the same job: blue only manages 4:1 contrast on this
 # background, cyan is roughly twice that, so the resting state stays legible.
 [character]
-success_symbol = "[❯](fg:#29BECC)"
-error_symbol = "[❯](fg:#F24848)"
-vimcmd_symbol = "[❮](fg:#898D99)"
+success_symbol = "[❯](fg:cyan)"
+error_symbol = "[❯](fg:red)"
+vimcmd_symbol = "[❮](fg:white)"
 
 # Everything else off — this is the "minimal" part.
 [cmd_duration]
@@ -126,5 +133,5 @@ disabled = true
 [conda]
 symbol = ""
 ignore_base = false
-style = "fg:#30F291"
+style = "fg:green"
 format = "[$symbol]($style) "

@@ -1,3 +1,4 @@
+import QtQuick
 import Quickshell.Io
 import "../config"
 import "../components"
@@ -40,6 +41,24 @@ ScriptChip {
     // pending: 0.10 / 0.12 in the CSS — the chip tint plus the "state" step
     // (0.10 / 0.11). zero: 0.06 in both themes.
     tintOpacity: root.pending ? Theme.chipOpacity + 0.03 : 0.06
+
+    // Instant after any pacman or yay run, wherever it happened: every
+    // transaction appends to pacman.log, and a FileView watches it without
+    // loading it (preload off — the log is megabytes). One transaction writes
+    // many lines, so the refresh waits for the log to go quiet for 3s. The
+    // interval poll below only has to catch updates appearing upstream.
+    FileView {
+        path: "/var/log/pacman.log"
+        preload: false
+        watchChanges: true
+        onFileChanged: settle.restart()
+    }
+
+    Timer {
+        id: settle
+        interval: 3000
+        onTriggered: root.refresh()
+    }
 
     Process {
         id: upgrade
