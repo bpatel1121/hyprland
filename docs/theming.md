@@ -90,8 +90,8 @@ straight into the vocabulary:
 | `dim` | de-emphasised text and glyphs | `#4D5A80` | `#665c54` | `#51578c` | `#4f7a84` | `#8f8181` | `#8a8a7a` |
 | `frame` | **the identity color** | `#F230B2` | `#fe8019` | `#5bd7fa` | `#e0ab5a` | `#2b2427` | `#c89a3e` |
 | `readout` | every telemetry value | `#29BECC` | `#83a598` | `#e8f4ff` | `#f6c870` | `#8a4f96` | `#3f4d2a` |
-| `warn` | do-not-disturb; the warning step in the terminal-side ramps | `#F2D230` | `#fabd2f` | `#e9c46a` | `#f27c35` | `#c0862a` | `#b8641e` |
-| `ok` | a charging battery | `#30F291` | `#98971a` | `#7bd389` | `#7dd3a6` | `#4f8a5a` | `#6f9a3a` |
+| `warn` | do-not-disturb; the warning step in the terminal-side ramps | `#F2D230` | `#fabd2f` | `#c3b1f0` | `#f27c35` | `#c0862a` | `#b8641e` |
+| `ok` | a charging battery | `#30F291` | `#98971a` | `#8de6ff` | `#7dd3a6` | `#4f8a5a` | `#6f9a3a` |
 | `urgent` | low battery, overdue, offline | `#F24848` | `#fb4934` | `#ff6b81` | `#eb4030` | `#c4475c` | `#c0392b` |
 | `dormant` | empty workspaces, zeroed counters | `#898D99` | `#928374` | `#7f8fbf` | `#62939f` | `#877c82` | `#7d7d74` |
 | `text` | default foreground | `#C8D0E0` | `#ebdbb2` | `#e6eefc` | `#efe6d3` | `#1d1719` | `#1c1b14` |

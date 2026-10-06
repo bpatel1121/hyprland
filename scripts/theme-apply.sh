@@ -181,12 +181,24 @@ if [ -f "$CUR/lazygit/config.yml" ]; then
     ln -sfn "$CUR/lazygit/config.yml" "$HOME/.config/lazygit/config.yml"
 fi
 
-# btop reads its theme by NAME from btop.conf, which isn't theme-managed. Link
-# every theme in under one fixed name so btop.conf can say color_theme =
-# "current" once and never be touched again.
+# btop reads its theme by NAME from btop.conf. Link every theme in under one
+# fixed name, then point btop.conf at that name. btop rewrites btop.conf on
+# exit (it saves its own state there), so the file is not managed as a whole:
+# the two keys this needs are set in place, and anything else in it is left
+# to btop. theme_background off lets the terminal's own pane show through.
 if [ -f "$CUR/btop/theme.theme" ]; then
     mkdir -p "$HOME/.config/btop/themes"
     ln -sfn "$CUR/btop/theme.theme" "$HOME/.config/btop/themes/current.theme"
+    conf="$HOME/.config/btop/btop.conf"
+    [ -f "$conf" ] || : > "$conf"
+    for kv in 'color_theme = "current"' 'theme_background = False'; do
+        k=${kv%% *}
+        if grep -q "^$k " "$conf"; then
+            sed -i "s|^$k .*|$kv|" "$conf"
+        else
+            printf '%s\n' "$kv" >> "$conf"
+        fi
+    done
 fi
 
 # --- GTK ---------------------------------------------------------------------

@@ -7,13 +7,13 @@ gui:
   theme:
     activeBorderColor: ["#5bd7fa", "bold"]
     inactiveBorderColor: ["#51578c"]
-    searchingActiveBorderColor: ["#e9c46a", "bold"]
+    searchingActiveBorderColor: ["#c3b1f0", "bold"]
     selectedLineBgColor: ["#223b6e"]
     optionsTextColor: ["#e8f4ff"]
     cherryPickedCommitFgColor: ["#e8f4ff"]
     cherryPickedCommitBgColor: ["#1c3570"]
-    # navy on the warn yellow, not white: white on #e9c46a is under 2:1
+    # navy on the warn lavender, not white: white on #c3b1f0 is under 2:1
     markedBaseCommitFgColor: ["#0b1838"]
-    markedBaseCommitBgColor: ["#e9c46a"]
+    markedBaseCommitBgColor: ["#c3b1f0"]
     unstagedChangesColor: ["#ff6b81"]
     defaultFgColor: ["#e6eefc"]

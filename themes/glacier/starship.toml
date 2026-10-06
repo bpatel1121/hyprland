@@ -6,7 +6,7 @@
 #   path    snow     #e6eefc   where you are
 #   branch  ice cyan #5bd7fa   what you're on (the frame color)
 #   arrow   white    #e8f4ff   where you type  (red when the last cmd failed)
-#   dirty ● warn     #e9c46a   uncommitted work exists
+#   dirty ● warn     #c3b1f0   uncommitted work exists (the violet in the ice shadows)
 #   venv 󰌠  white    #e8f4ff   a virtualenv is active (glyph only, no name)
 #
 # Glyph choices (󰘬 ● ❯ ❮ ↑ ↓ ×) are the JetBrainsMono-Nerd-Font-verified set
@@ -42,7 +42,7 @@ disabled = true
 description = "one dot when there are uncommitted changes"
 when = 'test -n "$(git status --porcelain 2>/dev/null)"'
 command = "printf ●"
-style = "fg:#e9c46a"
+style = "fg:#c3b1f0"
 format = " [$output]($style)"
 
 # Leading chip when a virtualenv is active, nothing when one isn't. Ahead of
@@ -89,5 +89,5 @@ disabled = true
 [conda]
 symbol = "\ue715"
 ignore_base = false
-style = "fg:#7bd389"
+style = "fg:#8de6ff"
 format = "[$symbol]($style) "

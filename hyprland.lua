@@ -94,7 +94,10 @@ hl.on("hyprland.start", function()
     -- panels) fails silently with no prompt at all. The package was installed
     -- but never started, so this had been quietly broken.
     hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
-    hl.exec_cmd(scripts .. "theme-apply.sh") -- wallpaper, cursor, GTK, symlinks
+    -- Through bash, not by path: a copy of the script that lost its executable
+    -- bit (every file sync does this) then still applies, instead of leaving
+    -- the desktop on the old wallpaper with no error anyone sees.
+    hl.exec_cmd("bash " .. scripts .. "theme-apply.sh") -- wallpaper, cursor, GTK, symlinks
     hl.exec_cmd("firefox")
 end)
 

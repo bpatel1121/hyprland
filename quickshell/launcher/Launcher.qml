@@ -295,7 +295,8 @@ Scope {
         if (item === undefined)
             return;
         if (root.themesMode) {
-            Quickshell.execDetached([Paths.script("theme-switch.sh"), item.name]);
+            // Through bash so a synced copy without its executable bit still runs.
+            Quickshell.execDetached(["bash", Paths.script("theme-switch.sh"), item.name]);
         } else {
             root.launch(item);
             root.remember(item);

@@ -6,7 +6,9 @@
 -- the brights clear 6:1 (ratios in the comments) — WezTerm brightens bold
 -- text to the bright slot by default, so the brights have to read as text,
 -- not just as swatches. Cold throughout: the one magenta is a lavender, and
--- warm shows up only in the three state slots.
+-- warm shows up only in the ANSI red/green/yellow slots, which keep real hues
+-- because ls and git mean something by them; the bar's own warn/ok are the
+-- palette's lavender and lit ice (palette.json), not these.
 return {
     foreground    = "#e6eefc",           -- text (snow)
     background    = "#15295a",           -- surface (deepIce)
@@ -18,8 +20,8 @@ return {
     ansi = {
         "#0b1838", -- black   = ground (sky)
         "#ff6b81", -- red     = urgent (5.1:1)
-        "#7bd389", -- green   = ok (7.7:1)
-        "#e9c46a", -- yellow  = warn (8.4:1)
+        "#7bd389", -- green   = the terminal's own green (7.7:1); not a bar role
+        "#e9c46a", -- yellow  = the terminal's own yellow (8.4:1); not a bar role
         "#5aa0e6", -- blue    = the painting's mid blue, a notch up to clear 4.5:1 (5.1:1)
         "#b39df5", -- magenta = a cold lavender; the one hue not in the painting (6.1:1)
         "#e8f4ff", -- cyan    = readout, white ice: the READOUT slot — cyan-coded output

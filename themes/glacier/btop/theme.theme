@@ -4,7 +4,7 @@
 # says color_theme = "current" once and never changes).
 #
 # Same role assignments as the rest of the desktop: ice cyan frames the boxes,
-# white is the live readout, gradients climb white -> green/yellow -> red so a
+# white is the live readout, gradients climb white -> lit ice / shadow violet -> rose so a
 # hot CPU reads like a loud cava bar or a critical bar module. Warm shows up
 # only as state; at rest the whole screen is navy, white and cyan.
 
@@ -17,7 +17,7 @@ theme[selected_fg]="#5bd7fa"
 theme[inactive_fg]="#51578c"
 theme[graph_text]="#7f8fbf"
 theme[meter_bg]="#223b6e"
-theme[proc_misc]="#7bd389"
+theme[proc_misc]="#8de6ff"
 
 # Box outlines — ice cyan is the frame color everywhere in this desktop.
 theme[cpu_box]="#5bd7fa"
@@ -26,26 +26,27 @@ theme[net_box]="#5bd7fa"
 theme[proc_box]="#5bd7fa"
 theme[div_line]="#223b6e"
 
-# Temperature: cool white -> yellow -> red at the top.
+# Temperature: cool white -> shadow violet -> rose at the top. No yellow, no green:
+# the painting has neither, so the ramps shift within the one hue.
 theme[temp_start]="#e8f4ff"
-theme[temp_mid]="#e9c46a"
+theme[temp_mid]="#c3b1f0"
 theme[temp_end]="#ff6b81"
 
 # CPU load.
 theme[cpu_start]="#e8f4ff"
-theme[cpu_mid]="#7bd389"
+theme[cpu_mid]="#8de6ff"
 theme[cpu_end]="#ff6b81"
 
 # Free / cached / available / used memory.
 theme[free_start]="#223b6e"
-theme[free_mid]="#7bd389"
-theme[free_end]="#7bd389"
+theme[free_mid]="#8de6ff"
+theme[free_end]="#8de6ff"
 theme[cached_start]="#223b6e"
 theme[cached_mid]="#e8f4ff"
 theme[cached_end]="#e8f4ff"
 theme[available_start]="#223b6e"
-theme[available_mid]="#e9c46a"
-theme[available_end]="#e9c46a"
+theme[available_mid]="#c3b1f0"
+theme[available_end]="#c3b1f0"
 theme[used_start]="#223b6e"
 theme[used_mid]="#5bd7fa"
 theme[used_end]="#ff6b81"
@@ -60,5 +61,5 @@ theme[upload_end]="#5bd7fa"
 
 # Process box gradient.
 theme[process_start]="#e8f4ff"
-theme[process_mid]="#e9c46a"
+theme[process_mid]="#c3b1f0"
 theme[process_end]="#ff6b81"

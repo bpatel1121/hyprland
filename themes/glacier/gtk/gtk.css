@@ -7,7 +7,7 @@
  * Accent text is navy on the cyan (10:1) — white on it would vanish.
  *
  * Palette: sky #0b1838 · deepIce #15295a · iceEdge #223b6e · hair #51578c
- *          swords #5bd7fa · cap #e8f4ff · ok #7bd389 · warn #e9c46a
+ *          swords #5bd7fa · cap #e8f4ff · ok (lit ice) #8de6ff · warn (shadow violet) #c3b1f0
  *          urgent #ff6b81 · hairLit #7f8fbf · snow #e6eefc
  */
 
@@ -34,10 +34,10 @@
 @define-color destructive_color    #ff6b81;
 @define-color destructive_bg_color #ff6b81;
 @define-color destructive_fg_color #0b1838;
-@define-color success_color        #7bd389;
-@define-color success_bg_color     #7bd389;
-@define-color warning_color        #e9c46a;
-@define-color warning_bg_color     #e9c46a;
+@define-color success_color        #8de6ff;
+@define-color success_bg_color     #8de6ff;
+@define-color warning_color        #c3b1f0;
+@define-color warning_bg_color     #c3b1f0;
 @define-color error_color          #ff6b81;
 @define-color error_bg_color       #ff6b81;
 
@@ -52,7 +52,7 @@
 @define-color insensitive_fg_color      #51578c;
 @define-color borders                   #223b6e;
 @define-color unfocused_borders         #223b6e;
-@define-color warning_color_gtk3        #e9c46a;
+@define-color warning_color_gtk3        #c3b1f0;
 
 /* Rounded corners on GTK popovers/menus, to sit with Hyprland's rounding = 12. */
 popover, menu, .context-menu {

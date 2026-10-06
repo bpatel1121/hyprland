@@ -9,10 +9,15 @@ other themes, in one cold hue: **ice cyan** (the swords) is the frame — the
 islands' hairline, the window border, the notification edge, btop's boxes,
 the lock input's ring — **white** (the cap) is every readout, and **pale
 cyan** (the near-white ice) is the launcher, the one surface that covers the
-bar. Warm never appears at rest: yellow for do-not-disturb, green for a
-charging battery, red for alerts, and they are the only warm pixels on the
-desktop, which is what makes them read as state; pending updates light up in
-the readout white like every other figure, not in a color of their own. `readoutBright` is declared
+bar. Warm never appears on the shell at all: the painting has no yellow and
+no green, so `warn` is the **violet in the ice shadows** (do-not-disturb, the
+prompt's dirty dot, the middle step of btop's ramps) and `ok` is **lit ice**
+(a charging bolt, a ramp's cool end) — state read as a shift within the one
+hue rather than a foreign one — and only `urgent` leaves it, as a cold rose.
+Pending updates light up in the readout white like every other figure. The
+terminal keeps a real ANSI yellow and green (`wezterm/colors.lua`), because
+`ls` and `git` mean something by them; those are the terminal's own, not the
+bar's. `readoutBright` is declared
 (pure white), so the active workspace is the emissive **white → ice
 lozenge** — a lit snowflake — rather than the solid block gruvbox and the
 light themes draw.
