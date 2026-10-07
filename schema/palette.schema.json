@@ -83,8 +83,8 @@
             "properties": {
                 "glow":         { "type": "boolean", "description": "Draw a soft text glow in the accent color on lit elements (the clock, chips, hovered tiles, the OSD readout)." },
                 "glowRadius":   { "type": "number", "minimum": 0, "maximum": 32, "description": "Blur radius of that glow, in px. The old CSS used `text-shadow: 0 0 <radius>px`." },
-                "texture":      { "type": "string", "enum": ["none", "scanlines", "hatch", "grain", "sheen", "horizon", "vignette", "rim"], "description": "The overlay drawn on every panel fill, clipped to its corners (components/Texture.qml): `scanlines` 1px black every 3px; `hatch` 45° lines of `frame`; `grain` a seeded speckle of `text`; `sheen` white light from the top edge; `horizon` `frame` rising from the bottom edge; `vignette` black closing in from the corners; `rim` `frame` catching the right edge." },
-                "textureAlpha": { "type": "number", "minimum": 0, "maximum": 1, "description": "Override the texture's resting strength (scanlines 0.14, hatch 0.07, grain 0.10, sheen 0.12, horizon 0.18, vignette 0.35, rim 0.30)." }
+                "texture":      { "type": "string", "enum": ["none", "scanlines", "hatch", "grain", "sheen", "horizon", "vignette", "rim", "halftone", "chrome"], "description": "The overlay drawn on every panel fill, clipped to its corners (components/Texture.qml): `scanlines` 1px black every 3px; `hatch` 45° lines of `frame`; `grain` a seeded speckle of `text`; `sheen` white light from the top edge; `horizon` `frame` rising from the bottom edge; `vignette` black closing in from the corners; `rim` `frame` catching the right edge; `halftone` a screentone dot grid of `frame`; `chrome` a lit top half over a shadowed bottom with a hard horizon." },
+                "textureAlpha": { "type": "number", "minimum": 0, "maximum": 1, "description": "Override the texture's resting strength (scanlines 0.14, hatch 0.07, grain 0.10, sheen 0.12, horizon 0.18, vignette 0.35, rim 0.30, halftone 0.10, chrome 0.16)." }
             },
             "additionalProperties": false
         },

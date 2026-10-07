@@ -1,0 +1,73 @@
+# Manga · light — btop
+#
+# Linked in as ~/.config/btop/themes/current.theme by theme-apply.sh (btop.conf
+# says color_theme = "current" once and never changes).
+#
+# Same role assignments as the rest of the desktop, printed: INK frames the
+# boxes and titles them (the frame is ink here, so unlike a colored frame it
+# can carry text), the MID INK is the highlighted key letters — the things you
+# act on, the launcher's weight — and a selected row is an ink block with
+# cardstock print, like the bar's active workspace. Greys only, and every ramp
+# runs by WEIGHT: quiet is pencil (dim), the middle is the mid grey (warn, the
+# pending weight) or the drawing's ink (readout), and the top is pure ink
+# (urgent) — a ramp that gets DARKER as it gets worse, the way ink does, so
+# no ramp ends in a light grey. There is no red: a hot CPU is the heaviest
+# figure on the page.
+
+theme[main_bg]="#f5f5f5"
+theme[main_fg]="#161616"
+theme[title]="#111111"
+theme[hi_fg]="#4a4a4a"
+theme[selected_bg]="#111111"
+theme[selected_fg]="#e8e8e8"
+theme[inactive_fg]="#858585"
+theme[graph_text]="#858585"
+theme[meter_bg]="#cfcfcf"
+theme[proc_misc]="#4a4a4a"
+
+# Box outlines — ink is the frame color everywhere in this desktop.
+theme[cpu_box]="#111111"
+theme[mem_box]="#111111"
+theme[net_box]="#111111"
+theme[proc_box]="#111111"
+theme[div_line]="#cfcfcf"
+
+# Temperature: pencil -> mid grey -> pure ink at the top.
+theme[temp_start]="#858585"
+theme[temp_mid]="#5c5c5c"
+theme[temp_end]="#000000"
+
+# CPU load: pencil -> the drawing's ink (readout) -> pure ink.
+theme[cpu_start]="#858585"
+theme[cpu_mid]="#2e2e2e"
+theme[cpu_end]="#000000"
+
+# Free / cached / available / used memory — by weight: free is the lightest
+# ink (ok), cached pencil, available the mid grey, used darkens to pure ink.
+theme[free_start]="#cfcfcf"
+theme[free_mid]="#8e8e8e"
+theme[free_end]="#8e8e8e"
+theme[cached_start]="#cfcfcf"
+theme[cached_mid]="#858585"
+theme[cached_end]="#858585"
+theme[available_start]="#cfcfcf"
+theme[available_mid]="#5c5c5c"
+theme[available_end]="#5c5c5c"
+theme[used_start]="#cfcfcf"
+theme[used_mid]="#4a4a4a"
+theme[used_end]="#000000"
+
+# Disk io — the drawing's ink is the readout; the frame's ink is the only
+# other weight loud enough to stand next to it, and the two are the bar's
+# own pairing.
+theme[download_start]="#cfcfcf"
+theme[download_mid]="#2e2e2e"
+theme[download_end]="#2e2e2e"
+theme[upload_start]="#cfcfcf"
+theme[upload_mid]="#111111"
+theme[upload_end]="#111111"
+
+# Process box gradient.
+theme[process_start]="#858585"
+theme[process_mid]="#5c5c5c"
+theme[process_end]="#000000"

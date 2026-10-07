@@ -1,0 +1,69 @@
+/* Mercury · liquid metal on true black — GTK
+ *
+ * Symlinked by theme-apply.sh to BOTH ~/.config/gtk-3.0/gtk.css and
+ * ~/.config/gtk-4.0/gtk.css; each toolkit reads its own color names and
+ * ignores the other's. Greys only, like the desktop: the lit MID TONE is the
+ * accent — the launcher's weight, on the things you act on: links, checked
+ * switches, focus rings, a selected row — matching the launcher's frame and
+ * its selected row, so a file dialog looks like it belongs to this desktop
+ * (manga makes the same call with its mid ink; this is the dark mirror).
+ * Accent print is black on the mid tone (7.5:1). Everything else is the
+ * metal's own greys: true-black windows, the shadow side for views and
+ * cards, a seam for borders. State is weight, not hue: destructive and
+ * error are pure white (urgent), warning the heated grey, success the
+ * cooled one — a dialog's red button is a white one here, the brightest
+ * thing in the dialog, which is what polished metal would do.
+ *
+ * Palette: void #000000 · shadow side #101010 · seam #2a2a2a · tarnish #6a6a6a
+ *          chrome #dedede · silver #b4b4b4 · mid tone #9a9a9a · heated #c8c8c8
+ *          cooled #7e7e7e · white-hot #ffffff · pewter #8c8c8c · speck #ececec
+ */
+
+/* ---- GTK4 / libadwaita ----------------------------------------------------- */
+@define-color accent_color        #9a9a9a;
+@define-color accent_bg_color     #9a9a9a;
+@define-color accent_fg_color     #000000;
+
+@define-color window_bg_color     #000000;
+@define-color window_fg_color     #ececec;
+@define-color view_bg_color       #101010;
+@define-color view_fg_color       #ececec;
+@define-color headerbar_bg_color  #101010;
+@define-color headerbar_fg_color  #ececec;
+@define-color sidebar_bg_color    #101010;
+@define-color sidebar_fg_color    #ececec;
+@define-color card_bg_color       #101010;
+@define-color card_fg_color       #ececec;
+@define-color popover_bg_color    #101010;
+@define-color popover_fg_color    #ececec;
+@define-color dialog_bg_color     #000000;
+@define-color dialog_fg_color     #ececec;
+
+@define-color destructive_color    #ffffff;
+@define-color destructive_bg_color #ffffff;
+@define-color destructive_fg_color #000000;
+@define-color success_color        #7e7e7e;
+@define-color success_bg_color     #7e7e7e;
+@define-color warning_color        #c8c8c8;
+@define-color warning_bg_color     #c8c8c8;
+@define-color error_color          #ffffff;
+@define-color error_bg_color       #ffffff;
+
+/* ---- GTK3 / adw-gtk3 ------------------------------------------------------- */
+@define-color theme_bg_color            #000000;
+@define-color theme_fg_color            #ececec;
+@define-color theme_base_color          #101010;
+@define-color theme_text_color          #ececec;
+@define-color theme_selected_bg_color   #9a9a9a;
+@define-color theme_selected_fg_color   #000000;
+@define-color insensitive_bg_color      #101010;
+@define-color insensitive_fg_color      #6a6a6a;
+@define-color borders                   #2a2a2a;
+@define-color unfocused_borders         #2a2a2a;
+@define-color warning_color_gtk3        #c8c8c8;
+
+/* Rounded corners on GTK popovers/menus, to sit with Hyprland's rounding = 10
+ * (a menu is a chip-sized thing, not a window: a step under the one radius). */
+popover, menu, .context-menu {
+    border-radius: 8px;
+}

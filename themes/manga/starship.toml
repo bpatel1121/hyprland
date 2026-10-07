@@ -1,0 +1,108 @@
+# Manga · light — starship
+#
+# theme-apply.sh symlinks this to ~/.config/starship.toml.
+#
+# COLORS ARE ANSI SLOT NAMES, NOT HEX. A prompt painted in 24-bit hex is baked
+# into the terminal cells, so after SUPER+T every prompt already on screen kept
+# the old theme's colors. Slot names (red, cyan, bright-purple...) resolve
+# through WezTerm's live palette, which theme-apply.sh recolors in place, so
+# old prompts flip with the rest of the screen. Which slot carries which role
+# is this theme's wezterm/colors.lua — read the two together.
+#
+# Same minimal one-line layout as the others, palette re-cast for a page with
+# no hue — the prompt is ink at three weights:
+#   path    type     default fg      where you are
+#   branch  mid ink  white           what you're on (the launcher's weight, 7.2:1
+#                                    on cardstock — the frame is ink here, the
+#                                    same as the path, so the branch steps down
+#                                    a weight instead of changing hue)
+#   arrow   ink      bright-purple   where you type  (brick red when the last cmd failed)
+#   dirty ● ochre    yellow          uncommitted work exists
+#   venv 󰌠  ink      bright-purple   a virtualenv is active (glyph only, no name)
+#
+# The arrow IS the frame's ink, as the arrow is the readout in the dark
+# themes: on a page with one ink the prompt is the one thing you act on. The
+# two hues — the dirty dot and the failed arrow — are the terminal's one
+# exception: git and a failed command mean something by color, and that is
+# exactly what the terminal keeps its ink-dark hues for (wezterm/colors.lua).
+#
+# Glyph choices (󰘬 ● ❯ ❮ ↑ ↓ ×) are the JetBrainsMono-Nerd-Font-verified set
+# from the cyberpunk config — see its comments before "fixing" any of them.
+
+# The literal space before $character is load-bearing (see cyberpunk config).
+format = "$conda${custom.venv}$directory$git_branch${custom.git_dirty} $character"
+add_newline = true
+
+[directory]
+style = "bold"
+format = "[$path]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = true
+read_only = " ro"
+read_only_style = "fg:red"
+
+[git_branch]
+symbol = "󰘬 "
+style = "fg:white"
+format = "  [$symbol$branch]($style)"
+
+# Off in favour of the single dirty dot below (same reasoning as cyberpunk).
+[git_status]
+disabled = true
+
+# One ochre dot when the working tree has anything uncommitted, nothing when
+# clean. Do NOT add a `shell = [...]` key and keep the `when` condition — see
+# the cyberpunk config for why both matter.
+[custom.git_dirty]
+description = "one dot when there are uncommitted changes"
+when = 'test -n "$(git status --porcelain 2>/dev/null)"'
+command = "printf ●"
+style = "fg:yellow"
+format = " [$output]($style)"
+
+# Leading chip when a virtualenv is active, nothing when one isn't. Ahead of
+# $directory so a glance down the left edge says which shells are in an env,
+# without costing the path a character. Symbol only, no venv name. Takes the
+# arrow's ink — "an env is live" is state being reported on the thing you
+# act on. See the cyberpunk config for the full reasoning and the note on why
+# there is no `shell` key.
+#
+# 󰌠 is nf-md-language_python (U+F0320) — same Material Design block as 󰘬.
+[custom.venv]
+description = "one glyph when a python virtualenv is active"
+when = 'test -n "$VIRTUAL_ENV"'
+command = "printf 󰌠"
+style = "fg:bright-purple"
+format = "[$output]($style) "
+
+# Ink on success; brick red on failure. The two are far apart in peripheral
+# vision, which is all the arrow has to be.
+[character]
+success_symbol = "[❯](fg:bright-purple)"
+error_symbol = "[❯](fg:red)"
+vimcmd_symbol = "[❮](fg:bright-black)"
+
+# Everything else off — this is the "minimal" part.
+[cmd_duration]
+disabled = true
+[package]
+disabled = true
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[docker_context]
+disabled = true
+
+# The conda glyph is nf-dev-python (U+E715), written as a TOML escape rather
+# than the raw private-use character the dark configs carry.
+[conda]
+symbol = ""
+ignore_base = false
+style = "fg:bright-purple"
+format = "[$symbol]($style) "

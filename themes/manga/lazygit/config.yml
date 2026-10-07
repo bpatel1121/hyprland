@@ -1,0 +1,23 @@
+# lazygit — manga. Ink frame, state by weight, no hue: the active panel
+# border is the frame color (ink — a printed line), the inactive borders are
+# pencil, selection is a raised panel band, and the marked base commit is an
+# ink block with cardstock print — the same block the bar's active workspace
+# wears. The mid ink is the options line (the keys you can press) and a
+# cherry-picked commit (a thing you picked up, the launcher's weight);
+# searching is the mid grey (pending), and unstaged work is pure ink — the
+# heaviest figure on the page, where every other theme puts red.
+gui:
+  nerdFontsVersion: "3"
+  showRandomTip: false
+  theme:
+    activeBorderColor: ["#111111", "bold"]
+    inactiveBorderColor: ["#858585"]
+    searchingActiveBorderColor: ["#5c5c5c", "bold"]
+    selectedLineBgColor: ["#cfcfcf"]
+    optionsTextColor: ["#4a4a4a"]
+    cherryPickedCommitFgColor: ["#f5f5f5"]
+    cherryPickedCommitBgColor: ["#4a4a4a"]
+    markedBaseCommitFgColor: ["#e8e8e8"]
+    markedBaseCommitBgColor: ["#111111"]
+    unstagedChangesColor: ["#000000", "bold"]
+    defaultFgColor: ["#161616"]

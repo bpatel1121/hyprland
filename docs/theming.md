@@ -87,27 +87,27 @@ had independently converged on (those stylesheets are gone from the tree; the
 roles are what survived them). Graphite, the light monochrome one, was written
 straight into the vocabulary:
 
-| role | what it is | cyberpunk | gruvbox | glacier | harbor | verdigris | vesper | graphite | inkwash |
-|---|---|---|---|---|---|---|---|---|---|
-| `ground` | the desktop floor | `#030408` | `#1d2021` | `#0b1838` | `#0e1a20` | `#151712` | `#0a1c36` | `#e9e4e8` | `#ebe9e5` |
-| `surface` | raised panels, popovers, inputs | `#0A0E1A` | `#282828` | `#15295a` | `#172730` | `#202928` | `#102a4e` | `#f6f3f5` | `#f6f5f2` |
-| `hairline` | separators, unfocused borders | `#212638` | `#3c3836` | `#223b6e` | `#243a44` | `#2b372f` | `#1d3d66` | `#cfc8cf` | `#d6d3cb` |
-| `dim` | de-emphasised text and glyphs | `#4D5A80` | `#665c54` | `#51578c` | `#4f7a84` | `#6a8460` | `#4d87b5` | `#8f8181` | `#8a8a7a` |
-| `frame` | **the identity color** | `#F230B2` | `#fe8019` | `#5bd7fa` | `#e0ab5a` | `#7ea763` | `#f25a3c` | `#2b2427` | `#c89a3e` |
-| `readout` | every telemetry value | `#29BECC` | `#83a598` | `#e8f4ff` | `#f6c870` | `#cfdcc3` | `#eebfa6` | `#8a4f96` | `#3f4d2a` |
-| `warn` | do-not-disturb; the warning step in the terminal-side ramps | `#F2D230` | `#fabd2f` | `#c3b1f0` | `#f27c35` | `#c9b85a` | `#f2c96b` | `#c0862a` | `#b8641e` |
-| `ok` | a charging battery | `#30F291` | `#98971a` | `#8de6ff` | `#7dd3a6` | `#a6d98a` | `#7fbdea` | `#4f8a5a` | `#6f9a3a` |
-| `urgent` | low battery, overdue, offline | `#F24848` | `#fb4934` | `#ff6b81` | `#eb4030` | `#d05f51` | `#ee4068` | `#c4475c` | `#c0392b` |
-| `dormant` | empty workspaces, zeroed counters | `#898D99` | `#928374` | `#7f8fbf` | `#62939f` | `#8c9a74` | `#839aab` | `#877c82` | `#7d7d74` |
-| `text` | default foreground | `#C8D0E0` | `#ebdbb2` | `#e6eefc` | `#efe6d3` | `#d9dcc8` | `#f3e6dd` | `#1d1719` | `#1c1b14` |
-| `launcher` | the one hue the bar never uses | `#A130F2` | `#d3869b` | `#b6ecf9` | `#82e0fa` | `#e3e894` | `#e48c74` | `#92589e` | `#286884` |
+| role | what it is | cyberpunk | gruvbox | glacier | harbor | verdigris | vesper | graphite | inkwash | mercury | manga |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `ground` | the desktop floor | `#030408` | `#1d2021` | `#0b1838` | `#0e1a20` | `#151712` | `#0a1c36` | `#e9e4e8` | `#ebe9e5` | `#000000` | `#e8e8e8` |
+| `surface` | raised panels, popovers, inputs | `#0A0E1A` | `#282828` | `#15295a` | `#172730` | `#202928` | `#102a4e` | `#f6f3f5` | `#f6f5f2` | `#101010` | `#f5f5f5` |
+| `hairline` | separators, unfocused borders | `#212638` | `#3c3836` | `#223b6e` | `#243a44` | `#2b372f` | `#1d3d66` | `#cfc8cf` | `#d6d3cb` | `#2a2a2a` | `#cfcfcf` |
+| `dim` | de-emphasised text and glyphs | `#4D5A80` | `#665c54` | `#51578c` | `#4f7a84` | `#6a8460` | `#4d87b5` | `#8f8181` | `#8a8a7a` | `#6a6a6a` | `#858585` |
+| `frame` | **the identity color** | `#F230B2` | `#fe8019` | `#5bd7fa` | `#e0ab5a` | `#7ea763` | `#f25a3c` | `#2b2427` | `#c89a3e` | `#dedede` | `#111111` |
+| `readout` | every telemetry value | `#29BECC` | `#83a598` | `#e8f4ff` | `#f6c870` | `#cfdcc3` | `#eebfa6` | `#8a4f96` | `#3f4d2a` | `#b4b4b4` | `#2e2e2e` |
+| `warn` | do-not-disturb; the warning step in the terminal-side ramps | `#F2D230` | `#fabd2f` | `#c3b1f0` | `#f27c35` | `#c9b85a` | `#f2c96b` | `#c0862a` | `#b8641e` | `#c8c8c8` | `#5c5c5c` |
+| `ok` | a charging battery | `#30F291` | `#98971a` | `#8de6ff` | `#7dd3a6` | `#a6d98a` | `#7fbdea` | `#4f8a5a` | `#6f9a3a` | `#7e7e7e` | `#8e8e8e` |
+| `urgent` | low battery, overdue, offline | `#F24848` | `#fb4934` | `#ff6b81` | `#eb4030` | `#d05f51` | `#ee4068` | `#c4475c` | `#c0392b` | `#ffffff` | `#000000` |
+| `dormant` | empty workspaces, zeroed counters | `#898D99` | `#928374` | `#7f8fbf` | `#62939f` | `#8c9a74` | `#839aab` | `#877c82` | `#7d7d74` | `#8c8c8c` | `#767676` |
+| `text` | default foreground | `#C8D0E0` | `#ebdbb2` | `#e6eefc` | `#efe6d3` | `#d9dcc8` | `#f3e6dd` | `#1d1719` | `#1c1b14` | `#ececec` | `#161616` |
+| `launcher` | the one hue the bar never uses | `#A130F2` | `#d3869b` | `#b6ecf9` | `#82e0fa` | `#e3e894` | `#e48c74` | `#92589e` | `#286884` | `#9a9a9a` | `#4a4a4a` |
 
 Alongside them, the per-surface identity — the structural differences between
 the themes, which used to be scattered across four stylesheets:
 
 | block | what it holds |
 |---|---|
-| `effects` | `glow` (cyberpunk's `text-shadow`, drawn by `GlowText.qml`), `glowRadius`, and `texture` — the overlay every panel fill carries, drawn by `Texture.qml` and clipped to the panel's corners: `scanlines` (gruvbox), `hatch` (graphite's pencil lines), `grain` (inkwash's paper speckle), `sheen` (glacier's light on ice), `horizon` (harbor's lamplight from the bottom edge), `vignette` (verdigris's stone lit from the middle), `rim` (vesper's light catching the right edge) or `none` (cyberpunk, whose glow is the signature). `textureAlpha` overrides a kind's resting strength. A theme declares these; no surface guesses from the colors. |
+| `effects` | `glow` (cyberpunk's `text-shadow`, drawn by `GlowText.qml`), `glowRadius`, and `texture` — the overlay every panel fill carries, drawn by `Texture.qml` and clipped to the panel's corners: `scanlines` (gruvbox), `hatch` (graphite's pencil lines), `grain` (inkwash's paper speckle), `sheen` (glacier's light on ice), `horizon` (harbor's lamplight from the bottom edge), `vignette` (verdigris's stone lit from the middle), `rim` (vesper's light catching the right edge), `halftone` (manga's screentone), `chrome` (mercury's polished split) or `none` (cyberpunk, whose glow is the signature). `textureAlpha` overrides a kind's resting strength. A theme declares these; no surface guesses from the colors. |
 | `bar.island` / `bar.chip` | island fill, opacity, radius, frame weight and alpha, chip radius and tint; `accentLine` is cyberpunk's 2px lit hairline along the inside top edge (0 draws none) |
 | `launcher` | window opacity, radius, frame weight, input and row radii, font size |
 | `osd` | pill opacity, radius (999 is a full pill), frame weight, track radius |
@@ -148,6 +148,16 @@ skin kept for the launcher, one 10px radius everywhere, and the `rim`
 texture — `frame` catching the right edge of every panel and fading in over
 its last 18% — with the window border turned horizontal, red fading to peach
 left to right, and no drift at all.
+
+[mercury](themes/mercury.md) and [manga](themes/manga.md) are the two
+black-and-white themes, one dark and one light, and every role in both is a
+grey: state is read by weight (an alert is the brightest thing on mercury
+and the blackest on manga, and the pulse carries it) rather than by hue. The
+one place a real hue survives is the terminal's ANSI table, muted toward
+grey, because `ls` and `git` are not legible without one. Mercury sits on
+true black (an OLED's pixels are off there) with the `chrome` texture, a lit
+top half over a shadowed bottom; manga is ink on a printed page with
+`halftone`, a screentone dot grid.
 
 `schema/palette.schema.json` describes all of it; the `$schema` key at the top of
 each palette gives editors completion and inline validation.

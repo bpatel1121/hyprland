@@ -1,0 +1,53 @@
+// Mercury · liquid metal on true black — fastfetch
+//
+// Same frame/content split as the bar, in metal: CHROME keys, SILVER values
+// and title. Greys only — the `colors` module at the bottom puts the actual
+// palette on screen, which is where the terminal's six muted hues show, and
+// nowhere else on this desktop.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+    "logo": {
+        "source": "arch",
+        "padding": { "top": 1, "right": 3 },
+        // ANSI palette INDEXES, not literal RGB, like the other configs — so
+        // already-printed output recolors live on SUPER+T. Bright magenta (95)
+        // is the FRAME slot in every theme's wezterm palette (chrome here) and
+        // white (37) is the readout, the silver. Chrome body, silver core: a
+        // logo at two weights of metal.
+        "color": { "1": "95", "2": "37" }
+    },
+
+    "display": {
+        "separator": "  ",
+        "color": {
+            "keys":  "95",   // the FRAME slot: chrome #dedede — the identity sits in bright magenta in every theme
+            "title": "37"    // the readout, silver #b4b4b4 — in the white slot, not cyan: cyan is the terminal's grey-teal here, a hue (wezterm/colors.lua)
+        }
+    },
+
+    "modules": [
+        "break",
+        { "type": "title", "keyWidth": 10 },
+        "separator",
+
+        { "type": "os",         "key": "󰣇 os     " },
+        { "type": "kernel",     "key": "󰌢 kernel " },
+        { "type": "uptime",     "key": "󰅐 uptime " },
+        { "type": "packages",   "key": "󰮯 pkgs   " },
+        { "type": "shell",      "key": "󰆍 shell  " },
+        { "type": "wm",         "key": "󰕮 wm     " },
+        { "type": "terminal",   "key": "󰆍 term   " },
+        { "type": "font",       "key": "󰛖 font   " },
+
+        "break",
+        { "type": "cpu",        "key": "󰻠 cpu    " },
+        { "type": "gpu",        "key": "󰢮 gpu    " },
+        { "type": "memory",     "key": "󰍛 memory " },
+        { "type": "disk",       "key": "󰋊 disk   " },
+
+        "break",
+        { "type": "colors", "symbol": "circle", "paddingLeft": 2 },
+        "break"
+    ]
+}

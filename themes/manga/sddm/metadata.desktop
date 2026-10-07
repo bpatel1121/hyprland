@@ -1,0 +1,16 @@
+[SddmGreeterTheme]
+Name=hypr-manga
+Description=Manga light login greeter matching the hyprland repo's manga theme (a printed page, purely black and white)
+Author=Brij Patel
+Copyright=(c) Brij Patel
+License=GPL-3.0
+Type=sddm-theme
+Version=1.0
+Website=https://github.com/bpatel1121/hyprland
+Screenshot=
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=
+Theme-Id=hypr-manga
+Theme-API=2.0
+QtVersion=6

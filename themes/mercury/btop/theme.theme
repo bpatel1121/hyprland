@@ -1,0 +1,73 @@
+# Mercury · liquid metal on true black — btop
+#
+# Linked in as ~/.config/btop/themes/current.theme by theme-apply.sh (btop.conf
+# says color_theme = "current" once and never changes).
+#
+# Same role assignments as the rest of the desktop, in metal: CHROME frames
+# the boxes and titles them (a near-white frame can carry text, unlike a
+# colored one), the lit MID TONE is the highlighted key letters — the things
+# you act on, the launcher's weight — and a selected row is a chrome block
+# with black print, the bar's lozenge one step under white. Greys only, and
+# every ramp runs by WEIGHT, the dark half of manga's rule: quiet is the
+# tarnish (dim), the middle is the silver (readout) or the heated grey (warn,
+# the pending weight), and the top is pure white (urgent) — a ramp that gets
+# BRIGHTER as it gets worse, metal heating white, so no ramp ends in a dark
+# grey. There is no red: a hot CPU is the whitest figure on the screen.
+
+theme[main_bg]="#000000"
+theme[main_fg]="#ececec"
+theme[title]="#dedede"
+theme[hi_fg]="#9a9a9a"
+theme[selected_bg]="#dedede"
+theme[selected_fg]="#000000"
+theme[inactive_fg]="#6a6a6a"
+theme[graph_text]="#8c8c8c"
+theme[meter_bg]="#2a2a2a"
+theme[proc_misc]="#9a9a9a"
+
+# Box outlines — chrome is the frame color everywhere in this desktop.
+theme[cpu_box]="#dedede"
+theme[mem_box]="#dedede"
+theme[net_box]="#dedede"
+theme[proc_box]="#dedede"
+theme[div_line]="#2a2a2a"
+
+# Temperature: silver -> heated -> white-hot at the top (readout -> warn -> urgent).
+theme[temp_start]="#b4b4b4"
+theme[temp_mid]="#c8c8c8"
+theme[temp_end]="#ffffff"
+
+# CPU load: the same ramp — the readout, brightening as it gets worse.
+theme[cpu_start]="#b4b4b4"
+theme[cpu_mid]="#c8c8c8"
+theme[cpu_end]="#ffffff"
+
+# Free / cached / available / used memory — by weight: free is the cooled
+# grey (ok), cached the tarnish (dim), available the heated grey (warn), used
+# climbs through the chrome to pure white.
+theme[free_start]="#2a2a2a"
+theme[free_mid]="#7e7e7e"
+theme[free_end]="#7e7e7e"
+theme[cached_start]="#2a2a2a"
+theme[cached_mid]="#6a6a6a"
+theme[cached_end]="#6a6a6a"
+theme[available_start]="#2a2a2a"
+theme[available_mid]="#c8c8c8"
+theme[available_end]="#c8c8c8"
+theme[used_start]="#2a2a2a"
+theme[used_mid]="#dedede"
+theme[used_end]="#ffffff"
+
+# Disk io — the silver is the readout; the chrome is the only other weight
+# loud enough to stand next to it, and the two are the bar's own pairing.
+theme[download_start]="#2a2a2a"
+theme[download_mid]="#b4b4b4"
+theme[download_end]="#b4b4b4"
+theme[upload_start]="#2a2a2a"
+theme[upload_mid]="#dedede"
+theme[upload_end]="#dedede"
+
+# Process box gradient.
+theme[process_start]="#b4b4b4"
+theme[process_mid]="#c8c8c8"
+theme[process_end]="#ffffff"

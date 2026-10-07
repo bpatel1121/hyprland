@@ -1,0 +1,142 @@
+/* Mercury · liquid metal on true black — swaync (notifications + control center)
+ *
+ * Metal dialect: black glass cards (the shadow side, frosted by the
+ * swaync-blur rule), a 1px CHROME edge at 50% (the islands' specular rim),
+ * 10px corners (the windows' rounding — the one radius), no glow — metal
+ * catches light, it does not emit — and no hue. Palette discipline: CHROME
+ * frames, SILVER is the content, the lit MID TONE is the touch weight —
+ * hover, actions, the DND switch when it is on — as it is on the launcher;
+ * a critical notification's edge is pure white (urgent), the only thing
+ * brighter than the frame, and 2px: state by weight, not hue (manga's rule,
+ * mirrored). The control center carries the theme's chrome — a white sheen
+ * on its top half, a hard horizon, shadow below — as every shell panel does
+ * (vesper puts its rim in the same place). Same layer-shell rules as the
+ * bar: NO outer box-shadow, no `transparent` keyword (GTK composites both as
+ * black halos).
+ */
+
+@define-color void     #000000;
+@define-color shadow   #101010;
+@define-color seam     #2a2a2a;
+@define-color chrome   #dedede;
+@define-color silver   #b4b4b4;
+@define-color midTone  #9a9a9a;
+@define-color hot      #ffffff;
+@define-color pewter   #8c8c8c;
+@define-color fg       #ececec;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  /* GtkListBoxRow ships default padding — the last few off-grid pixels. */
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+.notification {
+  background-color: rgba(16, 16, 16, 0.85);    /* shadow side, frosted by swaync-blur rule */
+  border: 1px solid rgba(222, 222, 222, 0.50); /* the chrome rim — bar.island.borderOpacity */
+  border-radius: 10px;
+  margin: 8px 14px;                            /* the same grid as gaps_out and the bar */
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @fg; font-weight: bold; }
+.notification-content .body    { color: @pewter; }
+.notification-content .time    { color: @pewter; font-size: 11px; }
+/* Urgent by weight: pure white, and a heavier line. */
+.notification.critical { border: 2px solid @hot; }
+/* No X, anywhere. Dismissal is click-the-notification (default action +
+ * hide-on-action in swaync/config.json) and the control center's "clear"
+ * button. An element that does not exist cannot be misaligned. */
+.close-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  box-shadow: none;
+}
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @fg;
+  border-radius: 7px;
+}
+/* Hover is the touch weight: mid-tone type on a seam band — the action is
+ * the thing you act on, so it gets the launcher's weight. */
+.notification-action:hover { color: @midTone; background-color: @seam; }
+
+/* ---- control center: black glass with a chrome edge, lit from above ---- */
+.control-center {
+  background-color: rgba(0, 0, 0, 0.80);       /* void, frosted — the islands' fill */
+  /* the chrome: a white sheen fading over the top half, a hard horizon at
+   * 48 %, shadow deepening below — Texture.qml's split at the panel
+   * texture's 0.2 (the shadow 0.6x, then 1.5x it), as on every shell panel */
+  background-image: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.05) 48%,
+      rgba(0, 0, 0, 0.12) 48%, rgba(0, 0, 0, 0.30) 100%);
+  border: 1px solid rgba(222, 222, 222, 0.60);
+  border-radius: 10px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(222, 222, 222, 0.35); }
+
+/* silver type, no bloom — the bar's readout, at card scale */
+.widget-title { color: @silver; font-weight: bold; }
+.widget-title > button {
+  background-color: @shadow;
+  color: @pewter;
+  border: 1px solid rgba(222, 222, 222, 0.35);
+  border-radius: 7px;
+}
+.widget-title > button:hover { color: @hot; border-color: @hot; }
+
+.widget-dnd { color: @fg; }
+.widget-dnd > switch {
+  background-color: @shadow;
+  border: 1px solid @seam;
+  border-radius: 7px;
+}
+.widget-dnd > switch:checked { background-color: @midTone; }
+.widget-dnd > switch slider { background-color: @pewter; border-radius: 6px; }
+.widget-dnd > switch:checked slider { background-color: @void; }  /* black knob on the mid tone */
+
+/* ---- now playing: a black-glass pane. Keeps swaync's blurred-art backdrop
+ * (content-derived); frame, type, and controls speak the theme. ---- */
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(16, 16, 16, 0.60);
+  border: 1px solid rgba(222, 222, 222, 0.35);
+  border-radius: 7px;
+  padding: 10px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-album-art { border-radius: 6px; }
+.widget-mpris .widget-mpris-title { color: @silver; font-weight: bold; }
+.widget-mpris .widget-mpris-subtitle { color: @pewter; }
+/* controls + carousel arrows — silver at rest, chrome when touched: the
+ * frame is the lift, as it is on the bar's chips */
+.widget-mpris button {
+  color: @silver;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+}
+.widget-mpris button:hover { color: @chrome; }
+
+progressbar progress { background-color: @silver; border-radius: 4px; }
+progressbar trough   { background-color: @seam; border-radius: 4px; }

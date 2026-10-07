@@ -24,6 +24,8 @@ file; it grew past the point where a reader could find anything in it.
 | [harbor](themes/harbor.md) | dusk over water — amber readouts on teal, smoke-cyan launcher, lamplight rising from the foot of every panel |
 | [verdigris](themes/verdigris.md) | candlelit stone — bone readouts in a witchlight frame on black-green stone, a pale sun for the launcher, every panel vignetted from its corners |
 | [vesper](themes/vesper.md) | rim light on cobalt — peach readouts in a red-orange frame on a cobalt sky, the rim's lit skin for the launcher, light catching the right edge of every panel |
+| [mercury](themes/mercury.md) | black and white, dark — liquid metal on true black: silver readouts in a chrome frame, state by weight, the chrome split on every panel |
+| [manga](themes/manga.md) | black and white, light — ink line art on a printed page: ink readouts in an ink frame, state by weight, screentone on every panel |
 | [graphite](themes/graphite.md) | light · grey ink on paper — ink frame, one violet for readouts and the launcher |
 | [inkwash](themes/inkwash.md) | light · ink-wash painting on paper — gold filigree frame, olive-ink readouts, cyan burst launcher |
 

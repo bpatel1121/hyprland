@@ -1,0 +1,136 @@
+{
+    "$schema": "../../schema/palette.schema.json",
+
+    "//": "Mercury · LIQUID METAL ON TRUE BLACK: purely black and white, with chrome",
+    "//1": "highlights. THE source for every shell surface (quickshell/: bar, launcher,",
+    "//2": "OSD, power menu). No upstream palette — every role is a grey lifted from the",
+    "//3": "wallpaper, a render of a liquid-metal figure, head and shoulders, on pure",
+    "//4": "black with faint white specks: the black, the metal's shadow side, its mid",
+    "//5": "tone, the specular whites. `tokens` names each role after what it is there",
+    "//6": "so the mapping stays traceable. theme.lua still owns WINDOW chrome (gaps,",
+    "//7": "border, blur, shadow); CI cross-checks it.",
+    "//8": "No-hue rule, the dark half of manga's: no hue anywhere, not even for state.",
+    "//9": "Every role is a grey, and state is told by WEIGHT, not hue — mirrored for a",
+    "//10": "dark ground, so the ramp runs BRIGHTER as it gets worse, like metal heating",
+    "//11": "white: CHROME (#dedede, the specular edge) is the frame — island rims, window",
+    "//12": "border, lock ring — brushed SILVER one weight under it is every readout, the",
+    "//13": "metal's lit mid tone is the launcher, pending (`warn`) is brighter than the",
+    "//14": "readout and fine (`ok`) quieter, and `urgent` is pure white, the only thing",
+    "//15": "brighter than the frame. A pending count reads as a brighter figure, a low",
+    "//16": "battery as the whitest thing on the bar, and the alert is the pulse Chip.qml",
+    "//17": "draws, not a color. readoutBright is the highlight, pure white too: the",
+    "//18": "active workspace is an emissive white lozenge with the digit in `ground`",
+    "//19": "(modules/Workspaces.qml) — the one specular point on the bar. The lozenge",
+    "//20": "and the alert share a hex on purpose; what tells them apart is the pulse.",
+    "//21": "The ground is TRUE BLACK: the panel is an OLED, and a black pixel is off —",
+    "//22": "the metal's shadow side (#101010) is the first lit surface above it.",
+
+    "name": "mercury",
+    "polarity": "dark",
+
+    "roles": {
+        "ground":   "#000000",
+        "surface":  "#101010",
+        "hairline": "#2a2a2a",
+        "dim":      "#6a6a6a",
+        "frame":    "#dedede",
+        "readout":  "#b4b4b4",
+        "warn":     "#c8c8c8",
+        "ok":       "#7e7e7e",
+        "urgent":   "#ffffff",
+        "dormant":  "#8c8c8c",
+        "text":     "#ececec",
+        "launcher": "#9a9a9a",
+
+        "readoutBright": "#ffffff",
+        "surfaceAlt":    "#1a1a1a"
+    },
+
+    "//tokens": "What in the picture -> role, so a palette bump stays traceable. Sampled: the ground is #000000, the metal's shadow side #0d0d0d, its mid tone #5a5a5a, the highlights up to #ffffff. The quiet greys (tarnish, pewter) and the state greys are the shadow and the highlight stepped by weight. warn/ok/urgent are weights, not scenery: pending is a step brighter than the silver, fine a step under the mid tone, urgent is the highlight itself — white-hot.",
+    "tokens": {
+        "void":       "ground",
+        "shadowSide": "surface",
+        "seam":       "hairline",
+        "shadowLit":  "surfaceAlt",
+        "tarnish":    "dim",
+        "pewter":     "dormant",
+        "chrome":     "frame",
+        "silver":     "readout",
+        "highlight":  "readoutBright",
+        "midTone":    "launcher",
+        "heated":     "warn",
+        "cooled":     "ok",
+        "whiteHot":   "urgent",
+        "speck":      "text"
+    },
+
+    "//contrast": "Measured (WCAG, sRGB blend) on the three surfaces that carry type: `surface`; the bar island — `#000000` at 0.70 over the top strip, which is pure black (#000000 measured, p99 = 1; composite #000000); the launcher window — `ground` at 0.80 over the picture's centre (#262626, the figure's head → #080808). dim 3.5 / 3.9 / 3.7, dormant 5.7 / 6.2 / 6.0, frame 14.1 / 15.6 / 14.9, readout 9.2 / 10.1 / 9.7, readoutBright 19.0 / 21.0 / 20.0, launcher 6.8 / 7.5 / 7.1, warn 11.4 / 12.6 / 12.0, ok 4.7 / 5.2 / 4.9, urgent 19.0 / 21.0 / 20.0, text 16.1 / 17.8 / 17.0. `ground` on `readoutBright` (the lozenge's digit) 21.0:1; `ground` on `frame` 15.6:1; the launcher's selected row (launcher on its own 18% tint, #222222) 5.7:1; `ground` on `launcher` (the terminal's selection, GTK's accent print) 7.5:1.",
+    "//quiet": "`dim` is the tarnish: the brief's #6a6a6a already clears 3:1 on `surface` (3.5:1), so it is not printed up — on true black the quiet greys read brighter than they would on any other dark ground, and the risk runs the other way (a quiet grey that looks like a readout). The state greys are kept apart by at least a weight: readout 9.2 → warn 11.4 → urgent 19.0 on `surface`, and `ok` (4.7:1) sits a step under the launcher so a charging percentage reads as cooler metal, never as a readout.",
+
+    "font": {
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 13,
+        "sizeAccent": 16
+    },
+
+    "//effects": "Polished metal, not neon: no text glow. The panel texture is chrome — a white sheen on the top half of every panel fading to nothing just above the middle, a hard horizon, shadow deepening on the bottom half (components/Texture.qml `chrome`): the classic chrome split, the bar lit from above. 0.2 over the kind's resting 0.16: the fill is black glass over black, and the sheen has to read as light on metal, not a grey tint.",
+    "effects": {
+        "glow":         false,
+        "glowRadius":   0,
+        "texture":      "chrome",
+        "textureAlpha": 0.2
+    },
+
+    "//bar": "Bar identity. Black glass on black: islands in `ground` (#000000) at 0.70 — the strip the bar covers is pure black, so the fill can be well under opaque and what shows through the blur is the specks — with a 1px CHROME rim at 50% (the specular edge, the one lit line on each island), 10px corners (the one radius), no accent line, and a WHITE bloom (0.14 over 16px): the bloom is drawn in `frame`, which is near-white — a chrome edge catching light, the one bloom the theme allows. The composite is #000000: `dim` 3.9:1, `dormant` 6.2:1, `readout` 10.1:1, `text` 17.8:1.",
+    "bar": {
+        "island": {
+            "color":         "#000000",
+            "opacity":       0.7,
+            "radius":        10,
+            "borderWidth":   1,
+            "borderOpacity": 0.5,
+            "accentLine":    0,
+            "glow":          0.14,
+            "glowRange":     16
+        },
+        "chip": {
+            "radius":  7,
+            "opacity": 0.08
+        }
+    },
+
+    "//launcher": "Launcher identity: a 1px frame in the metal's lit mid tone (`launcher`, the one surface that covers the bar gets the one weight the bar never uses) around black glass at 0.8, 10px window (the one corner), 7px input + rows (the chips' corner). The selected row is the mid tone on its own 18% tint: 5.7:1.",
+    "launcher": {
+        "opacity":       0.8,
+        "radius":        10,
+        "borderWidth":   1,
+        "inputRadius":   7,
+        "entryRadius":   7,
+        "fontSize":      15
+    },
+
+    "//osd": "OSD identity: a full pill — a drop of mercury — with a 1px chrome frame and a white track (the readout, brushed silver), 0.8 so the black still shows under it.",
+    "osd": {
+        "opacity":     0.8,
+        "radius":      999,
+        "borderWidth": 1,
+        "trackRadius": 4
+    },
+
+    "//session": "Power-menu identity: 10px tiles (the one corner) with a 1px chrome edge at 50% (the islands' rim), over a 0.8 black scrim — the figure goes to the dark behind the menu, and on an OLED most of the screen simply goes off.",
+    "session": {
+        "windowOpacity": 0.8,
+        "tileOpacity":   0.8,
+        "radius":        10,
+        "borderWidth":   1,
+        "borderOpacity": 0.5,
+        "fontSize":      18
+    },
+
+    "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim). 0.7, above the night themes' resting 0.55: black does not need dimming — a black pixel at any brightness is still off — and what dims is the figure's highlights, a little, so the lock reads as the metal under lower light rather than a greyed photo. The stack sits over pure black either way (hyprlock.conf, LAYOUT NOTE).",
+    "wallpaper": {
+        "brightness": 0.7,
+        "contrast":   1.0,
+        "blurSize":   8
+    }
+}

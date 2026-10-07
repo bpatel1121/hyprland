@@ -1,0 +1,68 @@
+/* Manga · light — GTK
+ *
+ * Symlinked by theme-apply.sh to BOTH ~/.config/gtk-3.0/gtk.css and
+ * ~/.config/gtk-4.0/gtk.css; each toolkit reads its own color names and
+ * ignores the other's. Greys only, like the desktop: the MID INK is the
+ * accent — the launcher's weight, on the things you act on: links, checked
+ * switches, focus rings, a selected row — matching the launcher's frame and
+ * its selected row, so a file dialog looks like it belongs to this desktop.
+ * Accent print is the page on the mid ink (8.1:1). Everything else is the
+ * page's own greys: cardstock windows, the page for views and cards, a
+ * panel rule for borders. State is weight, not hue: destructive and error
+ * are pure ink (urgent), warning the mid grey, success the lightest ink —
+ * a dialog's red button is a black one here, which is what a printed page
+ * would do.
+ *
+ * Palette: cardstock #e8e8e8 · page #f5f5f5 · panel rule #cfcfcf · pencil #858585
+ *          ink #111111 · drawing #2e2e2e · mid ink #4a4a4a · pending #5c5c5c
+ *          light ink #8e8e8e · pure ink #000000 · lighter ink #767676 · type #161616
+ */
+
+/* ---- GTK4 / libadwaita ----------------------------------------------------- */
+@define-color accent_color        #4a4a4a;
+@define-color accent_bg_color     #4a4a4a;
+@define-color accent_fg_color     #f5f5f5;
+
+@define-color window_bg_color     #e8e8e8;
+@define-color window_fg_color     #161616;
+@define-color view_bg_color       #f5f5f5;
+@define-color view_fg_color       #161616;
+@define-color headerbar_bg_color  #f5f5f5;
+@define-color headerbar_fg_color  #161616;
+@define-color sidebar_bg_color    #f5f5f5;
+@define-color sidebar_fg_color    #161616;
+@define-color card_bg_color       #f5f5f5;
+@define-color card_fg_color       #161616;
+@define-color popover_bg_color    #f5f5f5;
+@define-color popover_fg_color    #161616;
+@define-color dialog_bg_color     #e8e8e8;
+@define-color dialog_fg_color     #161616;
+
+@define-color destructive_color    #000000;
+@define-color destructive_bg_color #000000;
+@define-color destructive_fg_color #f5f5f5;
+@define-color success_color        #8e8e8e;
+@define-color success_bg_color     #8e8e8e;
+@define-color warning_color        #5c5c5c;
+@define-color warning_bg_color     #5c5c5c;
+@define-color error_color          #000000;
+@define-color error_bg_color       #000000;
+
+/* ---- GTK3 / adw-gtk3 ------------------------------------------------------- */
+@define-color theme_bg_color            #e8e8e8;
+@define-color theme_fg_color            #161616;
+@define-color theme_base_color          #f5f5f5;
+@define-color theme_text_color          #161616;
+@define-color theme_selected_bg_color   #4a4a4a;
+@define-color theme_selected_fg_color   #f5f5f5;
+@define-color insensitive_bg_color      #f5f5f5;
+@define-color insensitive_fg_color      #858585;
+@define-color borders                   #cfcfcf;
+@define-color unfocused_borders         #cfcfcf;
+@define-color warning_color_gtk3        #5c5c5c;
+
+/* Printed corners on GTK popovers/menus, to sit with Hyprland's rounding = 4
+ * (a menu is a chip-sized thing, not a window: a step under the one radius). */
+popover, menu, .context-menu {
+    border-radius: 2px;
+}

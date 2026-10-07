@@ -31,6 +31,10 @@ import "../config"
 //   rim        vesper    `frame` catching the right edge of every panel and
 //                        fading in, with a hairline of it on the edge — the
 //                        picture's rim light, from the sun behind her.
+//   halftone   manga     a grid of ink dots, one every 4px — screentone, the
+//                        shading of a printed manga page.
+//   chrome     mercury   light along the top half, a hard horizon at the
+//                        middle, dark along the bottom — polished metal.
 Canvas {
     id: root
 
@@ -62,6 +66,8 @@ Canvas {
         case "horizon":   return 0.18;
         case "vignette":  return 0.35;
         case "rim":       return 0.30;
+        case "halftone":  return 0.10;
+        case "chrome":    return 0.16;
         default:          return 0;
         }
     }
@@ -146,6 +152,37 @@ Canvas {
             ctx.fillRect(0, 0, w, h);
             ctx.fillStyle = root.css(root.ink, Math.min(1, root.alpha * 2.5));
             ctx.fillRect(w - 1, 0, 1, h);
+            break;
+        }
+        case "halftone": {
+            // Screentone: a dot every 4px on a square grid, offset every
+            // other row so it reads as tone, not as a lattice.
+            ctx.fillStyle = root.css(root.ink, root.alpha);
+            let row = 0;
+            for (let y = 2; y < h; y += 4, row++) {
+                for (let x = (row % 2) * 2 + 1; x < w; x += 4) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 0.9, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+            break;
+        }
+        case "chrome": {
+            // The classic chrome split: a white sheen from the top fading to
+            // nothing just above the middle, a hard horizon, then shadow
+            // deepening to the bottom. Alpha is the sheen; the shadow is
+            // 1.5x it, so the bar reads as lit from above.
+            const top = ctx.createLinearGradient(0, 0, 0, h * 0.48);
+            top.addColorStop(0, "rgba(255,255,255," + root.alpha + ")");
+            top.addColorStop(1, "rgba(255,255,255," + (root.alpha * 0.25) + ")");
+            ctx.fillStyle = top;
+            ctx.fillRect(0, 0, w, h * 0.48);
+            const bottom = ctx.createLinearGradient(0, h * 0.48, 0, h);
+            bottom.addColorStop(0, "rgba(0,0,0," + (root.alpha * 0.6) + ")");
+            bottom.addColorStop(1, "rgba(0,0,0," + Math.min(1, root.alpha * 1.5) + ")");
+            ctx.fillStyle = bottom;
+            ctx.fillRect(0, h * 0.48, w, h - h * 0.48);
             break;
         }
         case "vignette": {

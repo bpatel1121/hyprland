@@ -1,0 +1,136 @@
+/* Manga · light — swaync (notifications + control center)
+ *
+ * Printed dialect: near-opaque page cards, a 1px INK edge at 90% (an inked
+ * panel border), 4px corners (a printed panel's corner is nearly square — the
+ * one radius), no glow, no hue. Same layer-shell rules as the bar: no outer
+ * box-shadow, no `transparent` keyword (GTK composites both as black halos —
+ * and a black halo around a WHITE card is the worst case of all). Palette
+ * discipline: INK frames and INK is the content, the MID INK is the touch
+ * weight — hover, actions, the DND switch when it is on — as it is on the
+ * launcher; a critical notification's edge is pure ink (urgent), the one
+ * thing darker than the frame, and 2px: state by weight, not hue. The
+ * control center carries the theme's screentone — a grid of ink dots every
+ * 4px — as every shell panel does (vesper puts its rim in the same place).
+ */
+
+@define-color cardstock #e8e8e8;
+@define-color page      #f5f5f5;
+@define-color rule      #cfcfcf;
+@define-color ink       #111111;
+@define-color midInk    #4a4a4a;
+@define-color pureInk   #000000;
+@define-color pencil    #858585;
+@define-color lighter   #767676;
+@define-color type      #161616;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* ---- floating notifications ---- */
+.notification-row {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  /* GtkListBoxRow ships default padding — the last few off-grid pixels. */
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+.notification {
+  background-color: rgba(245, 245, 245, 0.94);  /* page; frosted by swaync-blur rule — near-opaque, a line drawing through paper just goes grey */
+  border: 1px solid rgba(17, 17, 17, 0.90);     /* the ink rim — an inked panel border, bar.island.borderOpacity */
+  border-radius: 4px;
+  margin: 8px 14px;                            /* the same grid as gaps_out and the bar */
+  padding: 0;
+}
+.notification-content { padding: 10px 12px; }
+.notification-content .summary { color: @type; font-weight: bold; }
+.notification-content .body    { color: @pencil; }
+.notification-content .time    { color: @pencil; font-size: 11px; }
+/* Urgent by weight: the pure ink, and a heavier line. */
+.notification.critical { border: 2px solid @pureInk; }
+/* No X, anywhere. Dismissal is click-the-notification (default action +
+ * hide-on-action in swaync/config.json) and the control center's "clear"
+ * button. An element that does not exist cannot be misaligned. */
+.close-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  box-shadow: none;
+}
+.notification-default-action,
+.notification-action {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+  color: @type;
+  border-radius: 3px;
+}
+/* Hover is the touch weight: mid-ink type on a cardstock band — the action
+ * is the thing you act on, so it gets the launcher's weight. */
+.notification-action:hover { color: @midInk; background-color: @cardstock; }
+
+/* ---- control center: a cardstock sheet with an ink edge, screentoned ---- */
+.control-center {
+  background-color: rgba(232, 232, 232, 0.94);  /* cardstock, near-opaque (see above) */
+  /* the screentone: an ink dot every 4px at the panel texture's 0.12 — the
+   * halftone every shell panel carries, drawn here as a tiled gradient */
+  background-image: radial-gradient(circle, rgba(17, 17, 17, 0.12) 0.9px, rgba(17, 17, 17, 0) 1px);
+  background-size: 4px 4px;
+  border: 1px solid rgba(17, 17, 17, 0.90);
+  border-radius: 4px;
+  padding: 8px;
+}
+.control-center-list { background-color: rgba(0, 0, 0, 0); }
+.control-center .notification { border: 1px solid rgba(17, 17, 17, 0.55); }
+
+.widget-title { color: @ink; font-weight: bold; }
+.widget-title > button {
+  background-color: @page;
+  color: @pencil;
+  border: 1px solid rgba(17, 17, 17, 0.55);
+  border-radius: 3px;
+}
+.widget-title > button:hover { color: @pureInk; border-color: @pureInk; }
+
+.widget-dnd { color: @type; }
+.widget-dnd > switch {
+  background-color: @page;
+  border: 1px solid @rule;
+  border-radius: 3px;
+}
+.widget-dnd > switch:checked { background-color: @midInk; }
+.widget-dnd > switch slider { background-color: @lighter; border-radius: 2px; }
+.widget-dnd > switch:checked slider { background-color: @page; }  /* page knob on the mid ink */
+
+/* ---- now playing: a page card over the art. Keeps swaync's blurred-art
+ * backdrop (content-derived); frame, type, and controls speak the theme. ---- */
+.widget-mpris { background-color: rgba(0, 0, 0, 0); }
+.widget-mpris .widget-mpris-player {
+  background-color: rgba(245, 245, 245, 0.80);
+  border: 1px solid rgba(17, 17, 17, 0.70);
+  border-radius: 3px;
+  padding: 10px;
+  margin: 6px 2px;
+}
+.widget-mpris .widget-mpris-album-art { border-radius: 3px; }
+.widget-mpris .widget-mpris-title    { color: @ink; font-weight: bold; }
+.widget-mpris .widget-mpris-subtitle { color: @pencil; }
+/* controls + carousel arrows — ink at rest, the mid ink when touched */
+.widget-mpris button {
+  color: @ink;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  border: none;
+}
+.widget-mpris button:hover { color: @midInk; }
+
+progressbar progress { background-color: @ink; border-radius: 2px; }
+progressbar trough   { background-color: @rule; border-radius: 2px; }

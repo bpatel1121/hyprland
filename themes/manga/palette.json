@@ -1,0 +1,130 @@
+{
+    "$schema": "../../schema/palette.schema.json",
+
+    "//": "Manga · the PRINTED PAGE: purely black and white, no hue anywhere.",
+    "//1": "THE source for every shell surface (quickshell/: bar, launcher, OSD, power",
+    "//2": "menu). No upstream palette — every role is a grey lifted from the wallpaper,",
+    "//3": "a black-ink line drawing of a girl in a uniform with blades on a flat",
+    "//4": "off-white page: the page, the ink, the screentone greys in the shadow.",
+    "//5": "`tokens` names each role after what it is in the picture so the mapping",
+    "//6": "stays traceable. theme.lua still owns WINDOW chrome (gaps, border, blur,",
+    "//7": "shadow); CI cross-checks it.",
+    "//8": "No-hue rule: graphite is grey ink on paper with ONE violet, inkwash has gold",
+    "//9": "and cyan; manga has none — not even for state. Every role is a grey, and",
+    "//10": "state is told by WEIGHT, not hue: the INK (#111111) is the frame — island",
+    "//11": "rims, window border, lock ring — the drawing's own ink one weight under it",
+    "//12": "is every readout, a mid ink is the launcher, and pending (`warn`) and fine",
+    "//13": "(`ok`) are lighter inks while `urgent` is pure black, the one thing darker",
+    "//14": "than the frame. A pending count reads as a lighter figure, an overdue one as",
+    "//15": "a heavier one, and the alert is the pulse Chip.qml draws, not a color. No",
+    "//16": "readoutBright on purpose, like graphite: the active workspace is then a solid",
+    "//17": "ink block with the digit in `ground` (modules/Workspaces.qml), a printed",
+    "//18": "panel number, instead of an emissive lozenge.",
+
+    "name": "manga",
+    "polarity": "light",
+
+    "roles": {
+        "ground":   "#e8e8e8",
+        "surface":  "#f5f5f5",
+        "hairline": "#cfcfcf",
+        "dim":      "#858585",
+        "frame":    "#111111",
+        "readout":  "#2e2e2e",
+        "warn":     "#5c5c5c",
+        "ok":       "#8e8e8e",
+        "urgent":   "#000000",
+        "dormant":  "#767676",
+        "text":     "#161616",
+        "launcher": "#4a4a4a",
+
+        "surfaceAlt": "#ececec"
+    },
+
+    "//tokens": "What in the picture -> role, so a palette bump stays traceable. The page is #f5f5f5, the ink is #000, the hair solid black, the screentone greys in the shadow ~#3a3a3a; the lighter inks (pencil, the mid ink, the state greys) are those two ends stepped by weight. warn/ok/urgent are weights, not scenery: pending is a mid grey, fine is the lightest, urgent is the pure ink.",
+    "tokens": {
+        "cardstock":  "ground",
+        "page":       "surface",
+        "panelRule":  "hairline",
+        "pageShadow": "surfaceAlt",
+        "pencil":     "dim",
+        "ink":        "frame",
+        "drawing":    "readout",
+        "midInk":     "launcher",
+        "pending":    "warn",
+        "lightInk":   "ok",
+        "pureInk":    "urgent",
+        "lighterInk": "dormant",
+        "type":       "text"
+    },
+
+    "//contrast": "Measured (WCAG, sRGB blend) on the three surfaces that carry type: `surface`; the bar island — `#f5f5f5` at 0.94 over the page's top strip (#f6f6f6 measured, flat; composite #f5f5f5); the launcher window — `ground` at 0.96 over the picture's centre (#f6f6f6 → #e9e9e9); and `ground` itself, the terminal. dim 3.4 / 3.4 / 3.0 / 3.0, dormant 4.2 / 4.2 / 3.7 / 3.7, frame 17.3 / 17.3 / 15.6 / 15.4, readout 12.5 / 12.5 / 11.2 / 11.1, launcher 8.1 / 8.1 / 7.3 / 7.2, warn 6.1 / 6.1 / 5.5 / 5.5, ok 3.0 / 3.0 / 2.7 / 2.7, urgent 19.3 / 19.3 / 17.3 / 17.1, text 16.6 / 16.6 / 14.9 / 14.8. `ground` on `frame` (the active workspace's digit) 15.4:1; the launcher's selected row (launcher on its own 18% tint, #cccccc) 5.5:1; `surface` on `launcher` (the terminal's selection, GTK's accent print) 8.1:1.",
+    "//quiet": "`dim` and `dormant` are two pencil weights, not a weight and a tint: on paper the quiet greys have to be DARKER than they look right, because every surface that carries them is near-white. Both are printed to >= 3:1 on `surface` AND on `ground` (the terminal's bright black is `dim`): dim #858585 (the brief's #8a8a8a was 2.8:1 on cardstock), dormant #767676 — the launcher's secondary type, 3.7:1 on its window. `ok` is the lightest state and still carries type (the charging percentage, a Spotify title), so it too is printed down to 3.0:1 on the page (#8e8e8e; #9a9a9a was 2.6:1) — one step lighter than `dim`, and never on cardstock.",
+
+    "font": {
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 13,
+        "sizeAccent": 16
+    },
+
+    "//effects": "A printed page: no glow (ink does not emit); screentone rides every panel — a grid of `frame` ink dots, one every 4px, offset every other row (components/Texture.qml `halftone`). 0.12 over the kind's resting 0.10: the fill is near-opaque white and at 1.5x the dots have to read as tone, not vanish.",
+    "effects": {
+        "glow":         false,
+        "glowRadius":   0,
+        "texture":      "halftone",
+        "textureAlpha": 0.12
+    },
+
+    "//bar": "Bar identity. Printed panels: the clean page (surface) at 0.94 — near-opaque on purpose, a line drawing frosted through a light fill just goes grey, so the fill is page and the drawing stays outside it — with a 1px INK rim at 90% (an inked panel border, heavier than graphite's 70% pencil rim) and 4px corners: a printed panel's corner is nearly square. gruvbox is 4 too, but gruvbox is a dark CRT. No accent line, no bloom.",
+    "bar": {
+        "island": {
+            "color":         "#f5f5f5",
+            "opacity":       0.94,
+            "radius":        4,
+            "borderWidth":   1,
+            "borderOpacity": 0.9,
+            "accentLine":    0,
+            "glow":          0,
+            "glowRange":     18
+        },
+        "chip": {
+            "radius":  3,
+            "opacity": 0.07
+        }
+    },
+
+    "//launcher": "Launcher identity: a 1px mid-ink frame (`launcher`, the one surface that covers the bar gets the one weight the bar never uses) around cardstock at 0.96, 4px window (the one corner), 3px input + rows (the chips' corner). The selected row is the mid ink on its own 18% tint: 5.5:1.",
+    "launcher": {
+        "opacity":       0.96,
+        "radius":        4,
+        "borderWidth":   1,
+        "inputRadius":   3,
+        "entryRadius":   3,
+        "fontSize":      15
+    },
+
+    "//osd": "OSD identity: a 4px slab, not a pill — nothing on a printed page is a lozenge — with a 1px ink frame and a track in the drawing's ink (readout).",
+    "osd": {
+        "opacity":     0.95,
+        "radius":      4,
+        "borderWidth": 1,
+        "trackRadius": 2
+    },
+
+    "//session": "Power-menu identity: page tiles with 4px corners (the one corner) and a 1px ink edge at 90% (the inked panel border), over a 0.85 cardstock scrim — the page goes to blank paper behind the menu.",
+    "session": {
+        "windowOpacity": 0.85,
+        "tileOpacity":   0.97,
+        "radius":        4,
+        "borderWidth":   1,
+        "borderOpacity": 0.9,
+        "fontSize":      18
+    },
+
+    "//wallpaper": "Shared by hyprlock.conf (brightness) and sddm/Main.qml (1 - brightness scrim). 0.95, not 0.55: graphite's reasoning — the picture is an off-white page, and dimming paper makes slate. Barely under 1 at all, because this page is flatter and whiter than graphite's sketch paper: the lock and the greeter are read as ink on paper.",
+    "wallpaper": {
+        "brightness": 0.95,
+        "contrast":   1.0,
+        "blurSize":   6
+    }
+}

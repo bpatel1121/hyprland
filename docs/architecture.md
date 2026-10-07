@@ -36,8 +36,10 @@ themes/
 ├── harbor/                     dark · dusk over water, amber on teal (see "The harbor theme")
 ├── verdigris/                  dark · candlelit stone, witchlight and bone (see "The verdigris theme")
 ├── vesper/                     dark · rim light on cobalt, red and peach (see "The vesper theme")
+├── mercury/                    dark · BLACK AND WHITE, liquid metal on true black (see "The mercury theme")
 ├── graphite/                   LIGHT · grey ink on paper, one violet (see "The graphite theme")
 ├── inkwash/                    LIGHT · ink-wash painting, gold and cyan (see "The inkwash theme")
+├── manga/                      LIGHT · BLACK AND WHITE, ink line art on a page (see "The manga theme")
 └── cyberpunk/
     ├── theme.lua               borders, gaps, blur, shadow (read by hyprland.lua)
     ├── palette.json            color roles + the look of every shell surface (read by quickshell/)

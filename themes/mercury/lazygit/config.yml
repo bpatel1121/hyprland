@@ -1,0 +1,23 @@
+# lazygit — mercury. Chrome frame, state by weight, no hue: the active panel
+# border is the frame color (chrome — the specular edge), the inactive borders
+# are the tarnish, selection is a raised seam band, and the marked base commit
+# is a chrome block with black print — the bar's lozenge one step under white.
+# The lit mid tone is the options line (the keys you can press) and a
+# cherry-picked commit (a thing you picked up, the launcher's weight);
+# searching is the heated grey (pending), and unstaged work is pure white —
+# the brightest figure on the screen, where every other dark theme puts red.
+gui:
+  nerdFontsVersion: "3"
+  showRandomTip: false
+  theme:
+    activeBorderColor: ["#dedede", "bold"]
+    inactiveBorderColor: ["#6a6a6a"]
+    searchingActiveBorderColor: ["#c8c8c8", "bold"]
+    selectedLineBgColor: ["#2a2a2a"]
+    optionsTextColor: ["#9a9a9a"]
+    cherryPickedCommitFgColor: ["#000000"]
+    cherryPickedCommitBgColor: ["#9a9a9a"]
+    markedBaseCommitFgColor: ["#000000"]
+    markedBaseCommitBgColor: ["#dedede"]
+    unstagedChangesColor: ["#ffffff", "bold"]
+    defaultFgColor: ["#ececec"]

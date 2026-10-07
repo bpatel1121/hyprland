@@ -1,0 +1,41 @@
+# Mercury · liquid metal on true black — cava
+#
+# NOT the VU meter the other dark themes draw. With no hue there is no "red"
+# to climb to, so the wave is drawn in the metal's own weights instead, the
+# dark half of manga's rule: quiet is the TARNISH (dim), rising goes through
+# the lit MID TONE (the launcher's weight), and the peaks are CHROME (the
+# frame) — the brightest line the desktop draws, which is what loud looks
+# like on polished metal. Brighter as it gets louder, like every ramp in this
+# theme. Pure white stays out of it: it is the urgent weight, and sound
+# level is not a state.
+
+[general]
+framerate = 60
+autosens = 1
+overshoot = 20
+bars = 0            # 0 = auto-fit the terminal width
+bar_width = 2
+bar_spacing = 1
+
+[input]
+method = pulse
+source = auto
+
+[output]
+method = ncurses
+channels = stereo
+mono_option = average
+
+[color]
+background = '#101010'      # surface — the terminal's shadow side
+gradient = 1
+gradient_count = 6
+gradient_color_1 = '#6a6a6a'    # tarnish  — quiet (dim)
+gradient_color_2 = '#6a6a6a'    # tarnish
+gradient_color_3 = '#9a9a9a'    # mid tone — rising (launcher)
+gradient_color_4 = '#9a9a9a'    # mid tone
+gradient_color_5 = '#dedede'    # chrome   — loud (frame)
+gradient_color_6 = '#dedede'    # chrome   — peak
+
+[smoothing]
+noise_reduction = 45

@@ -93,9 +93,8 @@ Scope {
     // width cap would push the caption into the search field.
     readonly property real cardFraction: 0.52
     readonly property int cardGap: 24
-    // One card away from the centre: this much smaller, this much dimmer.
+    // One card away from the centre: this much smaller (scale only; no dimming).
     readonly property real sideScale: 0.82
-    readonly property real sideOpacity: 0.45
 
     // The caption under the carousel: 24px below the card, 10px between its
     // three lines, 22px discs with 8px between them.
@@ -499,8 +498,10 @@ Scope {
                         Math.abs(card.x + card.width / 2 - list.contentX - list.width / 2)
                             / (card.width + list.spacing))
 
+                    // Scale only. The side cards used to dim as well, and
+                    // a half-transparent picture next to a solid one read as
+                    // a loading state rather than depth.
                     scale: 1 - (1 - root.sideScale) * card.distance
-                    opacity: 1 - (1 - root.sideOpacity) * card.distance
 
                     // The wallpaper, cropped to the card and clipped to the
                     // islands' corners. A theme with no wallpaper (or one Qt
