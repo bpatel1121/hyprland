@@ -359,7 +359,9 @@ hl.bind(
 hl.bind(
     mainMod .. " + Print",
     hl.dsp.exec_cmd(
-        'grim -g "$(slurp)" - | wl-copy && ' .. flash .. 'notify-send -t 2500 "Screenshot" "region copied to clipboard"'
+        'g=$(slurp) || exit 0; grim -g "$g" - | wl-copy && '
+            .. flash
+            .. 'notify-send -t 2500 "Screenshot" "region copied to clipboard"'
     )
 )
 -- SUPER+SHIFT+Print: pick a region, then annotate it in satty (arrows, boxes,
